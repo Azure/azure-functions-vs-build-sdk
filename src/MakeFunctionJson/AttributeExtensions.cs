@@ -6,7 +6,7 @@ namespace MakeFunctionJson
     internal static class AttributeExtensions
     {
         /// <summary>
-        /// NameAttribute -> name
+        /// {Name}Attribute -> name
         /// </summary>
         /// <param name="attribute"></param>
         /// <returns></returns>
