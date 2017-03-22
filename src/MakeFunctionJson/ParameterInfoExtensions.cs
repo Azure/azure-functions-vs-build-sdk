@@ -138,7 +138,10 @@ namespace MakeFunctionJson
                     continue;
                 }
 
-                // Normalize and store the propertyname
+                // Check if property is supported.
+                CheckIfPropertyIsSupported(attribute.GetType().Name, property);
+
+                // Normalize and store the propertyName
                 var propertyName = NormalizePropertyName(attribute.GetType().Name, property);
                 obj[propertyName] = JToken.FromObject(propertyValue);
             }
@@ -148,26 +151,38 @@ namespace MakeFunctionJson
             return obj;
         }
 
+        private static void CheckIfPropertyIsSupported(string attributeName, PropertyInfo property)
+        {
+            var propertyName = property.Name;
+            if (attributeName == "TimerTriggerAttribute")
+            {
+                if (propertyName == "ScheduleType")
+                {
+                    throw new NotImplementedException($"Property '{propertyName}' on attribute '{attributeName}' is not supported in Azure Functions.");
+                }
+            }
+        }
+
         /// <summary>
         /// These exceptions are coming from how the script runtime is reading function.json
         /// See https://github.com/Azure/azure-webjobs-sdk-script/tree/dev/src/WebJobs.Script/Binding
         /// If there are no exceptions for a given property name on a given attribute, then return it's name with a lowerCase first character.
         /// </summary>
-        /// <param name="attrName"></param>
+        /// <param name="attributeName"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        private static string NormalizePropertyName(string attrName, PropertyInfo property)
+        private static string NormalizePropertyName(string attributeName, PropertyInfo property)
         {
             var propertyName = property.Name;
 
-            if ((attrName == "BlobAttribute") || (attrName == "BlobTriggerAttribute"))
+            if ((attributeName == "BlobAttribute") || (attributeName == "BlobTriggerAttribute"))
             {
                 if (propertyName == "BlobPath")
                 {
                     return "path";
                 }
             }
-            else if (attrName == "MobileTableAttribute")
+            else if (attributeName == "MobileTableAttribute")
             {
                 if (propertyName == "MobileAppUriSetting")
                 {
@@ -178,14 +193,14 @@ namespace MakeFunctionJson
                     return "apiKey";
                 }
             }
-            else if (attrName == "NotificationHubAttribute")
+            else if (attributeName == "NotificationHubAttribute")
             {
                 if (propertyName == "ConnectionStringSetting")
                 {
                     return "connection";
                 }
             }
-            else if (attrName == "ServiceBusAttribute")
+            else if (attributeName == "ServiceBusAttribute")
             {
                 if (propertyName == "QueueOrTopicName")
                 {
@@ -194,7 +209,7 @@ namespace MakeFunctionJson
                     return "queue";
                 }
             }
-            else if (attrName == "TwilioSmsAttribute")
+            else if (attributeName == "TwilioSmsAttribute")
             {
                 if (propertyName == "AccountSidSetting")
                 {
