@@ -220,6 +220,13 @@ namespace MakeFunctionJson
                     return "authToken";
                 }
             }
+            else if (attributeName == "TimerTriggerAttribute")
+            {
+                if (propertyName == "ScheduleExpression")
+                {
+                    return "schedule";
+                }
+            }
 
             return Char.ToLowerInvariant(propertyName.First()) + propertyName.Substring(1);
         }
