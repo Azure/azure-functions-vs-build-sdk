@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9B6D0171-3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MakeFunctionJson", "src\MakeFunctionJson\MakeFunctionJson.csproj", "{D1A5EEB2-A8D0-4E7A-8FBF-CFC5D2C23B96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{723DB86E-D7C0-4147-B5A7-6A3BE1AA9724}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "test\Runner\Runner.csproj", "{723DB86E-D7C0-4147-B5A7-6A3BE1AA9724}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

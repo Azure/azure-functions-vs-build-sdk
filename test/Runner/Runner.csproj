@@ -49,7 +49,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\MakeFunctionJson\MakeFunctionJson.csproj">
+    <ProjectReference Include="..\..\src\MakeFunctionJson\MakeFunctionJson.csproj">
       <Project>{d1a5eeb2-a8d0-4e7a-8fbf-cfc5d2c23b96}</Project>
       <Name>MakeFunctionJson</Name>
     </ProjectReference>
