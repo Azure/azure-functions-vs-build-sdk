@@ -22,7 +22,7 @@ namespace MakeFunctionJson
             }
 
             _assemblyPath = assemblyPath;
-            _outputPath = outputPath;
+            _outputPath = outputPath.Trim('"');
         }
 
         /// <summary>
