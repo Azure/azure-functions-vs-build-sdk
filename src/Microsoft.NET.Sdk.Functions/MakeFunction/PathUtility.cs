@@ -20,11 +20,7 @@ namespace MakeFunctionJson
             Uri relativeUri = fromUri.MakeRelativeUri(toUri);
             String relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
-#if NET46
-            if (toUri.Scheme.Equals("file", StringComparison.InvariantCultureIgnoreCase))
-#else
             if (toUri.Scheme.Equals("file", StringComparison.OrdinalIgnoreCase))
-#endif
             {
                 relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             }
