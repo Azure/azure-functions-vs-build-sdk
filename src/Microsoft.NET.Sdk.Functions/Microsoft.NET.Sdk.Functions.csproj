@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.5;net46</TargetFrameworks>
+    <PackageVersion>1.0.0-alpha1</PackageVersion>
+    <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="netstandard1.0\**\*">
+      <Pack>true</Pack>
+      <PackagePath>build\netstandard1.0\</PackagePath>
+    </Content>
+    <Content Include="Sdk\**\*">
+      <Pack>true</Pack>
+      <PackagePath>Sdk\</PackagePath>
+    </Content>
+    <None Include="..\..\references\Newtonsoft.Json.dll">
+      <Pack>true</Pack>
+      <PackagePath>tools\netstandard1.5\;tools\net46\</PackagePath>
+    </None>
+    <None Include="..\..\references\System.ValueTuple.dll">
+      <Pack>true</Pack>
+      <PackagePath>tools\netstandard1.5\;tools\net46\</PackagePath>
+    </None>
+    </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Framework" Version="15.1.298-preview5" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.298-preview5" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
+  </ItemGroup>
+
+</Project>

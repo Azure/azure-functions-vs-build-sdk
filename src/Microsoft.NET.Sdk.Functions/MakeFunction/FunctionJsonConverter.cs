@@ -39,7 +39,11 @@ namespace MakeFunctionJson
         /// </summary>
         internal void Run()
         {
+#if NET46
             var assembly = Assembly.LoadFrom(_assemblyPath);
+#else
+            var assembly = System.Runtime.Loader.AssemblyLoadContext.Default.LoadFromAssemblyPath(_assemblyPath);
+#endif
             // MakeRelativePath takes 2 paths and returns a relative path from first to second.
             // Since function.json for each function will live in a sub directory of the _outputPath
             // we need to send a sub-directory in for the first parameter. Hence the Path.Combine()

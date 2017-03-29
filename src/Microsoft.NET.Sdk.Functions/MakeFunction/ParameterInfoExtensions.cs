@@ -109,7 +109,11 @@ namespace MakeFunctionJson
                 }
 
                 var propertyType = property.PropertyType;
+#if NET46
                 if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+#else
+                if (propertyType.GetTypeInfo().IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+#endif
                 {
                     // Unwrap nullable types to their underlying type.
                     propertyType = Nullable.GetUnderlyingType(propertyType);
