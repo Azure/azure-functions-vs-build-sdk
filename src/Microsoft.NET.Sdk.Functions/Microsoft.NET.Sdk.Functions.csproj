@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="netstandard1.0\**\*">
+    <Content Include="Targets\netstandard1.0\**\*">
       <Pack>true</Pack>
       <PackagePath>build\netstandard1.0\</PackagePath>
     </Content>
-    <Content Include="Sdk\**\*">
+    <Content Include="Targets\Sdk\**\*">
       <Pack>true</Pack>
       <PackagePath>Sdk\</PackagePath>
     </Content>

@@ -1,6 +1,6 @@
 ﻿<!--
 ***********************************************************************************************
-Sdk.targets
+Microsoft.NET.Sdk.Functions.targets
 
 WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
           created a backup copy.  Incorrect changes to this file will make it
@@ -26,13 +26,36 @@ Copyright (c) .NET Foundation. All rights reserved.
   </PropertyGroup>
   
   <UsingTask TaskName="BuildFunctions" AssemblyFile="$(_FunctionsTaskAssemblyFullPath)"/>
+
+  <PropertyGroup>
+    <CorePublishDependsOn>
+      _InitPublishBinDirectory;
+      Publish;
+      _GenerateFunctionsJson;
+      $(_DotNetPublishFiles);
+    </CorePublishDependsOn>
+  </PropertyGroup>
   
-  <Target Name="BuildFunctionProject" AfterTargets="Build" >
+  <Target Name="_InitPublishBinDirectory" >
+    <PropertyGroup>
+      <PublishDir>$(PublishIntermediateOutputPath)\bin</PublishDir>
+    </PropertyGroup>
+
+    <!-- Remove all the files from the temp directory first-->
+    <ItemGroup>
+      <_PublishTempFiles Include="$(PublishIntermediateOutputPath)**\*.*" />
+    </ItemGroup>
+
+    <Delete Files="@(_PublishTempFiles)" ContinueOnError="true" />
+    <RemoveDir Directories="$(PublishIntermediateOutputPath)" ContinueOnError="true" Condition="Exists('$(PublishIntermediateOutputPath)')" />
+    <MakeDir Directories="$(PublishIntermediateOutputPath)" Condition="!Exists('$(PublishIntermediateOutputPath)')"/>
+  </Target>
+  
+  <Target Name="_GenerateFunctionsJson">
     
     <BuildFunctions
       TargetPath="$(TargetPath)"
-      OutputPath="$(OutDir)"
-      ProjectDirectory="$(MSBuildProjectDirectory)"/>
+      OutputPath="$(PublishIntermediateOutputPath)"/>
   </Target>
-  
+
 </Project>

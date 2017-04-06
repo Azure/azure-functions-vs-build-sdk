@@ -13,14 +13,10 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         [Required]
         public string OutputPath { get; set; }
 
-        [Required]
-        public string ProjectDirectory { get; set; }
-
         public override bool Execute()
         {
             bool isSuccess = true;
-            Log.LogMessage(MessageImportance.High, $"Building Functions Project");
-            FunctionJsonConvert.Convert(TargetPath, Path.Combine(ProjectDirectory, OutputPath));
+            FunctionJsonConvert.Convert(TargetPath, OutputPath);
             return isSuccess;
         }
     }
