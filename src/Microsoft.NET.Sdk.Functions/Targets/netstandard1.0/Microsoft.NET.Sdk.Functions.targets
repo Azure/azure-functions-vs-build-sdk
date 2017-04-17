@@ -26,12 +26,30 @@ Copyright (c) .NET Foundation. All rights reserved.
   </PropertyGroup>
   
   <UsingTask TaskName="BuildFunctions" AssemblyFile="$(_FunctionsTaskAssemblyFullPath)"/>
-
+  
+  <!-- Build Support start-->
+  <Target Name="_GenerateBuildArtifacts" 
+          AfterTargets="Build" 
+          Condition="'$(DeployOnBuild)' != 'true'">
+    
+    <ConvertToAbsolutePath Paths="$(OutputPath)">
+      <Output TaskParameter="AbsolutePaths" PropertyName="OutputFullPath"/>
+    </ConvertToAbsolutePath>
+    
+    <BuildFunctions
+      TargetPath="$(TargetPath)"
+      OutputPath="$(OutputFullPath)"
+      GenerateHostJson="true"/>
+  </Target>
+  
+  <!-- Build Support end-->
+  
+<!-- Publish Support start -->
   <PropertyGroup>
     <CorePublishDependsOn>
       _InitPublishBinDirectory;
       Publish;
-      _GenerateFunctionsJson;
+      _GeneratePublishArtifacts;
       $(_DotNetPublishFiles);
     </CorePublishDependsOn>
   </PropertyGroup>
@@ -51,11 +69,17 @@ Copyright (c) .NET Foundation. All rights reserved.
     <MakeDir Directories="$(PublishIntermediateOutputPath)" Condition="!Exists('$(PublishIntermediateOutputPath)')"/>
   </Target>
   
-  <Target Name="_GenerateFunctionsJson">
+  <Target Name="_GeneratePublishArtifacts">
+
+    <PropertyGroup>
+      <ApplicationDllName Condition="'$(ApplicationDllName)' == ''">$([System.IO.Path]::GetFileName($(TargetPath)))</ApplicationDllName>
+      <PublishTargetPath Condition="'$(PublishTargetPath)' == ''">$(PublishDir)\$(ApplicationDllName)</PublishTargetPath>
+    </PropertyGroup>
     
     <BuildFunctions
-      TargetPath="$(TargetPath)"
+      TargetPath="$(PublishTargetPath)"
       OutputPath="$(PublishIntermediateOutputPath)"/>
   </Target>
-
+<!-- Publish Support end-->
+  
 </Project>

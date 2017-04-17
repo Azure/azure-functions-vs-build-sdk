@@ -12,4 +12,8 @@ Copyright (c) .NET Foundation. All rights reserved.
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildSdksPath)\Microsoft.NET.Sdk.Publish\Sdk\Sdk.props"
            Condition="Exists('$(MSBuildSdksPath)\Microsoft.NET.Sdk.Publish\Sdk\Sdk.props')" />
+  <PropertyGroup>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  
 </Project>

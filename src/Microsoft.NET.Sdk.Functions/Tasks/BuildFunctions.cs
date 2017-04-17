@@ -13,9 +13,18 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         [Required]
         public string OutputPath { get; set; }
 
+        public bool GenerateHostJson { get; set; }
+
         public override bool Execute()
         {
             bool isSuccess = true;
+
+            if (GenerateHostJson)
+            {
+                string hostJsonString = @"{ }";
+                File.WriteAllText(Path.Combine(OutputPath, "host.json"), hostJsonString);
+            }
+
             FunctionJsonConvert.Convert(TargetPath, OutputPath);
             return isSuccess;
         }
