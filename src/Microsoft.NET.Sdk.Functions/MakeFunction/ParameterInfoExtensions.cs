@@ -231,6 +231,13 @@ namespace MakeFunctionJson
                     return "schedule";
                 }
             }
+            else if (attributeName == "EventHubTriggerAttribute")
+            {
+                if (propertyName == "EventHubName")
+                {
+                    return "path";
+                }
+            }
 
             return Char.ToLowerInvariant(propertyName.First()) + propertyName.Substring(1);
         }
