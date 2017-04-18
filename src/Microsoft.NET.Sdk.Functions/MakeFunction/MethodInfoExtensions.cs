@@ -7,14 +7,14 @@ namespace MakeFunctionJson
     internal static class MethodInfoExtensions
     {
         /// <summary>
-        /// A method is an SDK method if any of its parameters has an SDK attribute
+        /// A method is an SDK method if it has a FunctionNameAttribute AND at least one parameter has an SDK attribute.
         /// </summary>
         /// <param name="method">method to check if an SDK method or not.</param>
         /// <returns>true if <paramref name="method"/> is a WebJobs SDK method. False otherwise.</returns>
         public static bool IsWebJobsSdkMethod(this MethodInfo method)
         {
-            // TODO: This will have to add && method has FunctionNameAttribute.
-            return method.GetParameters().Any(p => p.IsWebJobsSdkParameter());
+            var functionNameAttribute = method.GetCustomAttributes().FirstOrDefault(a => a.GetType().Name == "FunctionNameAttribute");
+            return functionNameAttribute != null && method.GetParameters().Any(p => p.IsWebJobsSdkParameter());
         }
 
         /// <summary>
@@ -52,20 +52,11 @@ namespace MakeFunctionJson
             var functionNameAttribute = method.GetCustomAttributes().FirstOrDefault(a => a.GetType().Name == "FunctionNameAttribute");
             if (functionNameAttribute != null)
             {
-                // If there is a [FunctionNameAttribute] on the function, use that to get the name of the function.
                 return functionNameAttribute.GetType().GetProperty("Name").GetValue(functionNameAttribute).ToString();
             }
             else
             {
-                // Otherwise, use a naming convention that comes from the ClassName
-                // class {FunctionName}Function { }
-                var name = method.DeclaringType.Name;
-                const string suffix = "Function";
-                if (!name.EndsWith(suffix))
-                {
-                    throw new InvalidOperationException("By convention, class name must end with '" + suffix + "'");
-                }
-                return name.Substring(0, name.Length - suffix.Length);
+                throw new InvalidOperationException("Missing FunctionNameAttribute");
             }
         }
     }
