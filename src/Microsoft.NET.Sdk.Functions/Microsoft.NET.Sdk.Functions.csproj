@@ -4,6 +4,7 @@
     <TargetFrameworks>netstandard1.5;net46</TargetFrameworks>
     <PackageVersion>1.0.0-alpha1</PackageVersion>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
+    <AssemblyOriginatorKeyFile>PublicKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
