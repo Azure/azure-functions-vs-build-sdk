@@ -32,7 +32,8 @@ namespace MakeFunctionJson
             "ServiceBusTriggerAttribute",
             "ServiceBusAttribute",
             "TwilioSmsAttribute",
-            "NotificationHubAttribute"
+            "NotificationHubAttribute",
+            "HttpTriggerAttribute"
         };
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace MakeFunctionJson
         public static IEnumerable<JObject> ToFunctionJsonBindings(this ParameterInfo parameterInfo)
         {
 
-            return parameterInfo
+            var bindings = parameterInfo
                 .GetCustomAttributes()
                 .Where(a => _supportedAttributes.Contains(a.GetType().Name)) // this has to return at least 1.
                 .Select(AttributeToJObject) // Convert the Attribute into a JObject.
@@ -64,7 +65,18 @@ namespace MakeFunctionJson
                     // Add a name property on the JObject that refers to the parameter name.
                     obj["name"] = parameterInfo.Name;
                     return obj;
-                });
+                })
+                .ToList();
+
+            // If there is an httpTrigger, add a $return for http response.
+            if (bindings.Any(b => b["type"]?.ToString() == "httpTrigger"))
+            {
+                return bindings.Concat(new[] { JObject.FromObject(new { name = "$return", type = "http", direction = "out" }) });
+            }
+            else
+            {
+                return bindings;
+            }
         }
 
         /// <summary>
