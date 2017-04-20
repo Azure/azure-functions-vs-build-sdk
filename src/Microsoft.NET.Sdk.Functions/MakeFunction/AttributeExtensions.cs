@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.NET.Sdk.Functions.MakeFunction;
 
 namespace MakeFunctionJson
 {
@@ -15,7 +16,7 @@ namespace MakeFunctionJson
             const string suffix = nameof(Attribute);
             var name = attribute.GetType().Name;
             name = name.Substring(0, name.Length - suffix.Length);
-            return Char.ToLowerInvariant(name.First()) + name.Substring(1);
+            return name.ToLowerFirstCharacter();
         }
     }
 }

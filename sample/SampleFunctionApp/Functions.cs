@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using ImageResizer;
 using Microsoft.Azure.WebJobs;
+using Microsoft.ServiceBus.Messaging;
 
 namespace SDKFuncs
 {
-    public static class ResizeImageFunction
+    public static class Functions
     {
-        public static void Run(
+        [FunctionName("ResizeImage")]
+        public static void RunResizeImage(
             [BlobTrigger("sample-images/{name}")] Stream image, // input blob, large size
             [Blob("sample-images-sm/{name}", FileAccess.Write)] Stream imageSmall,
             [Blob("sample-images-md/{name}", FileAccess.Write)] Stream imageMedium)  // output blobs
@@ -39,5 +41,12 @@ namespace SDKFuncs
             { ImageSize.Small,      Tuple.Create(640, 400) },
             { ImageSize.Medium,     Tuple.Create(800, 600) }
         };
+
+
+        [FunctionName("ServiceBus")]
+        public static void RunServiceBus([ServiceBusTrigger("queue", "sub", AccessRights.Manage)] string message)
+        {
+
+        }
     }
 }

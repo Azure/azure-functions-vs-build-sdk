@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.NET.Sdk.Functions.MakeFunction;
 using Newtonsoft.Json.Linq;
 
 namespace MakeFunctionJson
@@ -147,12 +148,30 @@ namespace MakeFunctionJson
 
                 // Normalize and store the propertyName
                 var propertyName = NormalizePropertyName(attribute.GetType().Name, property);
-                obj[propertyName] = JToken.FromObject(propertyValue);
+                if (TryGetPropertyValue(property, propertyValue, out string jsonValue))
+                {
+                    obj[propertyName] = jsonValue;
+                }
+                else
+                {
+                    obj[propertyName] = JToken.FromObject(propertyValue);
+                }
             }
 
             // Serialize the direction
             obj["direction"] = direction.ToString();
             return obj;
+        }
+
+        private static bool TryGetPropertyValue(PropertyInfo property, object propertyValue, out string value)
+        {
+            value = null;
+            if (property.PropertyType.FullName == "Microsoft.ServiceBus.Messaging.AccessRights")
+            {
+                value = Enum.GetName(property.PropertyType, propertyValue).ToLowerFirstCharacter();
+                return true;
+            }
+            return false;
         }
 
         private static void CheckIfPropertyIsSupported(string attributeName, PropertyInfo property)
@@ -239,7 +258,7 @@ namespace MakeFunctionJson
                 }
             }
 
-            return Char.ToLowerInvariant(propertyName.First()) + propertyName.Substring(1);
+            return propertyName.ToLowerFirstCharacter();
         }
     }
 }
