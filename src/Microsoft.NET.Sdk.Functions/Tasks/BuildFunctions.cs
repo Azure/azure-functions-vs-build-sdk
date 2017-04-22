@@ -17,16 +17,13 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
         public override bool Execute()
         {
-            bool isSuccess = true;
-
             if (GenerateHostJson)
             {
                 string hostJsonString = @"{ }";
                 File.WriteAllText(Path.Combine(OutputPath, "host.json"), hostJsonString);
             }
 
-            FunctionJsonConvert.Convert(TargetPath, OutputPath);
-            return isSuccess;
+            return FunctionJsonConvert.TryConvert(TargetPath, OutputPath, Log);
         }
     }
 }

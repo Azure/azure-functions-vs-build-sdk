@@ -13,8 +13,17 @@ namespace MakeFunctionJson
         /// <returns>true if <paramref name="method"/> is a WebJobs SDK method. False otherwise.</returns>
         public static bool IsWebJobsSdkMethod(this MethodInfo method)
         {
-            var functionNameAttribute = method.GetCustomAttributes().FirstOrDefault(a => a.GetType().Name == "FunctionNameAttribute");
-            return functionNameAttribute != null && method.GetParameters().Any(p => p.IsWebJobsSdkParameter());
+            return method.HasFunctionNameAttribute() && method.HasWebJobSdkAttribute();
+        }
+
+        public static bool HasWebJobSdkAttribute(this MethodInfo method)
+        {
+            return method.GetParameters().Any(p => p.IsWebJobsSdkParameter());
+        }
+
+        public static bool HasFunctionNameAttribute(this MethodInfo method)
+        {
+            return method.GetCustomAttributes().FirstOrDefault(a => a.GetType().Name == "FunctionNameAttribute") != null;
         }
 
         /// <summary>
