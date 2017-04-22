@@ -25,11 +25,26 @@ namespace MakeFunctionJson
         /// <returns><see cref="FunctionJsonSchema"/> object that represents the passed in <paramref name="method"/>.</returns>
         public static FunctionJsonSchema ToFunctionJson(this MethodInfo method, string assemblyPath)
         {
+            var bindings = method.GetParameters()
+                .Where(p => p.IsWebJobsSdkParameter())
+                .Select(p => p.ToFunctionJsonBindings())
+                .SelectMany(i => i);
+            var outputBindings = method
+                .ReturnTypeCustomAttributes
+                .GetCustomAttributes(false)
+                .Cast<Attribute>()
+                .Where(a => a.IsWebJobsAttribute())
+                .Select(a => a.ToJObject())
+                .Select(a =>
+                {
+                    a["name"] = "$return";
+                    return a;
+                });
             return new FunctionJsonSchema
             {
                 // For every SDK parameter, convert it to a FunctionJson bindings.
                 // Every parameter can potentially contain more than 1 attribute that will be converted into a binding object.
-                Bindings = method.GetParameters().Where(p => p.IsWebJobsSdkParameter()).Select(p => p.ToFunctionJsonBindings()).SelectMany(i => i),
+                Bindings = bindings.Concat(outputBindings),
                 // Entry point is the fully qualified name of the function
                 EntryPoint = $"{method.DeclaringType.FullName}.{method.Name}",
                 // scriptFile == assemblyPath.
