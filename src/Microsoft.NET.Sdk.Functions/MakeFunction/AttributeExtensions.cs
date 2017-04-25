@@ -59,7 +59,7 @@ namespace MakeFunctionJson
 #if NET46
             return attribute.GetType().GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.Description.BindingAttribute");
 #else
-            return _supportedAttributes.Contains(attribute.GetType().Name);
+            return attribute.GetType().GetTypeInfo().GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.Description.BindingAttribute");
 #endif
         }
 

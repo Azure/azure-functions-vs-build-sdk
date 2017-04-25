@@ -26,6 +26,18 @@ namespace MakeFunctionJson
             }
         }
 
+        public void LogErrorFromException(Exception e)
+        {
+            if (_log != null)
+            {
+                _log.LogErrorFromException(e);
+            }
+            else
+            {
+                Console.WriteLine($"ERROR: {e}");
+            }
+        }
+
         public void LogWarning(string message)
         {
             if (_log != null)
