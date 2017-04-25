@@ -56,7 +56,11 @@ namespace MakeFunctionJson
         /// <returns></returns>
         public static bool IsWebJobsAttribute(this Attribute attribute)
         {
+#if NET46
+            return attribute.GetType().GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.Description.BindingAttribute");
+#else
             return _supportedAttributes.Contains(attribute.GetType().Name);
+#endif
         }
 
         /// <summary>
@@ -158,7 +162,11 @@ namespace MakeFunctionJson
         private static bool TryGetPropertyValue(PropertyInfo property, object propertyValue, out string value)
         {
             value = null;
-            if (property.PropertyType.FullName == "Microsoft.ServiceBus.Messaging.AccessRights")
+#if NET46
+            if (property.PropertyType.IsEnum)
+#else
+            if (property.PropertyType.GetTypeInfo().IsEnum)
+#endif
             {
                 value = Enum.GetName(property.PropertyType, propertyValue).ToLowerFirstCharacter();
                 return true;
