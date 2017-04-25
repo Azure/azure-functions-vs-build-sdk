@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,32 +21,6 @@ namespace MakeFunctionJson
             name = name.Substring(0, name.Length - suffix.Length);
             return name.ToLowerFirstCharacter();
         }
-
-        private static readonly HashSet<string> _supportedAttributes = new HashSet<string>
-        {
-            // These 2 attributes are not handled currently.
-            // They can go either on class, method, or parameter.
-            // The code flow now assumes 1:1 mapping of attributes on parameters to function.json binding.
-            // "StorageAccountAttribute",
-            // "ServiceBusAccountAttribute",
-
-            "BlobAttribute",
-            "BlobTriggerAttribute",
-            "QueueAttribute",
-            "QueueTriggerAttribute",
-            "TableAttribute",
-            "EventHubAttribute",
-            "EventHubTriggerAttribute",
-            "TimerTriggerAttribute",
-            "DocumentDBAttribute",
-            "ApiHubTableAttribute",
-            "MobileTableAttribute",
-            "ServiceBusTriggerAttribute",
-            "ServiceBusAttribute",
-            "TwilioSmsAttribute",
-            "NotificationHubAttribute",
-            "HttpTriggerAttribute"
-        };
 
         /// <summary>
         /// 
