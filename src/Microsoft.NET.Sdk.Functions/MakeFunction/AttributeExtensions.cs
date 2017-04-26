@@ -132,6 +132,41 @@ namespace MakeFunctionJson
             return obj;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="attribute"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        public static T GetValue<T>(this Attribute attribute, string propertyName)
+        {
+            var property = attribute.GetType().GetProperty(propertyName);
+            if (property != null)
+            {
+                return (T)property.GetValue(attribute);
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="attribute"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="propertyValue"></param>
+        public static void SetValue(this Attribute attribute, string propertyName, object propertyValue)
+        {
+            var property = attribute.GetType().GetProperty(propertyName);
+            if (property != null)
+            {
+                property.SetValue(attribute, propertyValue);
+            }
+        }
+
         private static bool TryGetPropertyValue(PropertyInfo property, object propertyValue, out string value)
         {
             value = null;

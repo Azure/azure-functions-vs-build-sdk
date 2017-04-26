@@ -48,5 +48,11 @@ namespace SDKFuncs
         {
 
         }
+
+        [FunctionName("QueueFunc")]
+        public static void RunQueue([QueueTrigger("queue1")] string message)
+        {
+
+        }
     }
 }

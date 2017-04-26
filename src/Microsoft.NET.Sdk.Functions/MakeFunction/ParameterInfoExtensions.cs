@@ -30,6 +30,7 @@ namespace MakeFunctionJson
             var bindings = parameterInfo
                 .GetCustomAttributes()
                 .Where(a => a.IsWebJobsAttribute()) // this has to return at least 1.
+                .Select(a => TypeUtility.GetResolvedAttribute(parameterInfo, a))
                 .Select(a => a.ToJObject()) // Convert the Attribute into a JObject.
                 .Select(obj =>
                 {

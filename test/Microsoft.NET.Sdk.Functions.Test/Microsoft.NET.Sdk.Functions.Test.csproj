@@ -204,6 +204,7 @@
   <ItemGroup>
     <Compile Include="GeneralWebJobsAttributesTests.cs" />
     <Compile Include="HttpTriggerTests.cs" />
+    <Compile Include="IConnectionProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceBusTriggerTests.cs" />
   </ItemGroup>
