@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 namespace MakeFunctionJson
 {
@@ -13,61 +9,13 @@ namespace MakeFunctionJson
     /// </summary>
     internal static class TypeUtility
     {
-        internal static string GetFriendlyName(Type type)
-        {
-            if (TypeUtility.IsNullable(type))
-            {
-                return string.Format(CultureInfo.InvariantCulture, "Nullable<{0}>", type.GetGenericArguments()[0].Name);
-            }
-            else
-            {
-                return type.Name;
-            }
-        }
-
-        internal static bool IsNullable(Type type)
-        {
-            return type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
-        }
-
-        internal static bool IsJObject(Type type)
-        {
-            return type == typeof(JObject);
-        }
-
-        // Task<T> --> T
-        // Task --> void
-        // T --> T
-        internal static Type UnwrapTaskType(Type type)
-        {
-            if (type == typeof(Task))
-            {
-                return typeof(void);
-            }
-            if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Task<>))
-            {
-                return type.GetGenericArguments()[0];
-            }
-            return type;
-        }
-
-        /// <summary>
-        /// Walk from the parameter up to the containing type, looking for an instance
-        /// of the specified attribute type, returning it if found.
-        /// </summary>
-        /// <param name="parameter">The parameter to check.</param>
-        internal static T GetHierarchicalAttributeOrNull<T>(ParameterInfo parameter) where T : Attribute
-        {
-            return (T)GetHierarchicalAttributeOrNull(parameter, typeof(T));
-        }
-
         /// <summary>
         /// Walk from the parameter up to the containing type, looking for an instance
         /// of the specified attribute type, returning it if found.
         /// </summary>
         /// <param name="parameter">The parameter to check.</param>
         /// <param name="attributeType">The attribute type to look for.</param>
-        internal static Attribute GetHierarchicalAttributeOrNull(ParameterInfo parameter, Type attributeType)
+        private static Attribute GetHierarchicalAttributeOrNull(ParameterInfo parameter, Type attributeType)
         {
             if (parameter == null)
             {
@@ -93,18 +41,8 @@ namespace MakeFunctionJson
         /// of the specified attribute type, returning it if found.
         /// </summary>
         /// <param name="method">The method to check.</param>
-        internal static T GetHierarchicalAttributeOrNull<T>(MethodInfo method) where T : Attribute
-        {
-            return (T)GetHierarchicalAttributeOrNull(method, typeof(T));
-        }
-
-        /// <summary>
-        /// Walk from the method up to the containing type, looking for an instance
-        /// of the specified attribute type, returning it if found.
-        /// </summary>
-        /// <param name="method">The method to check.</param>
         /// <param name="type">The attribute type to look for.</param>
-        internal static Attribute GetHierarchicalAttributeOrNull(MethodInfo method, Type type)
+        private static Attribute GetHierarchicalAttributeOrNull(MethodInfo method, Type type)
         {
             var attribute = method.GetCustomAttribute(type);
             if (attribute != null)
@@ -156,30 +94,6 @@ namespace MakeFunctionJson
             }
 
             return attribute;
-        }
-
-        public static bool IsAsync(MethodInfo methodInfo)
-        {
-            if (methodInfo == null)
-            {
-                throw new ArgumentNullException(nameof(methodInfo));
-            }
-
-            var stateMachineAttribute = methodInfo.GetCustomAttribute<AsyncStateMachineAttribute>();
-            if (stateMachineAttribute != null)
-            {
-                var stateMachineType = stateMachineAttribute.StateMachineType;
-                if (stateMachineType != null)
-                {
-                    return stateMachineType.GetTypeInfo().GetCustomAttribute<CompilerGeneratedAttribute>() != null;
-                }
-            }
-            return false;
-        }
-
-        public static bool IsAsyncVoid(MethodInfo methodInfo)
-        {
-            return IsAsync(methodInfo) && (methodInfo.ReturnType == typeof(void));
         }
     }
 }
