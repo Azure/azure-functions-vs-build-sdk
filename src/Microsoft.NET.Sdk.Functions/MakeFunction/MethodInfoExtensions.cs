@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json.Linq;
 
 namespace MakeFunctionJson
 {
@@ -38,7 +39,7 @@ namespace MakeFunctionJson
                 .Where(p => p.IsWebJobsSdkParameter())
                 .Select(p => p.ToFunctionJsonBindings())
                 .SelectMany(i => i);
-            var outputBindings = method
+            var returnOutputBindings = method
                 .ReturnTypeCustomAttributes
                 .GetCustomAttributes(false)
                 .Cast<Attribute>()
@@ -49,11 +50,18 @@ namespace MakeFunctionJson
                     a["name"] = "$return";
                     return a;
                 });
+
+            // If there is an httpTrigger and no $return binding, always add an http $return.
+            if (!returnOutputBindings.Any() && bindings.Any(b => b["type"]?.ToString() == "httpTrigger"))
+            {
+                returnOutputBindings = new[] { JObject.FromObject(new { name = "$return", type = "http", direction = "out" }) };
+            }
+
             return new FunctionJsonSchema
             {
                 // For every SDK parameter, convert it to a FunctionJson bindings.
                 // Every parameter can potentially contain more than 1 attribute that will be converted into a binding object.
-                Bindings = bindings.Concat(outputBindings),
+                Bindings = bindings.Concat(returnOutputBindings),
                 // Entry point is the fully qualified name of the function
                 EntryPoint = $"{method.DeclaringType.FullName}.{method.Name}",
                 // scriptFile == assemblyPath.

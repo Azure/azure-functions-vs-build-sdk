@@ -27,10 +27,10 @@ namespace MakeFunctionJson
         public static IEnumerable<JObject> ToFunctionJsonBindings(this ParameterInfo parameterInfo)
         {
 
-            var bindings = parameterInfo
+            return parameterInfo
                 .GetCustomAttributes()
                 .Where(a => a.IsWebJobsAttribute()) // this has to return at least 1.
-                .Select(a => TypeUtility.GetResolvedAttribute(parameterInfo, a))
+                .Select(a => TypeUtility.GetResolvedAttribute(parameterInfo, a)) // For IConnectionProvider logic.
                 .Select(a => a.ToJObject()) // Convert the Attribute into a JObject.
                 .Select(obj =>
                 {
@@ -39,16 +39,6 @@ namespace MakeFunctionJson
                     return obj;
                 })
                 .ToList();
-
-            // If there is an httpTrigger, add a $return for http response.
-            if (bindings.Any(b => b["type"]?.ToString() == "httpTrigger"))
-            {
-                return bindings.Concat(new[] { JObject.FromObject(new { name = "$return", type = "http", direction = "out" }) });
-            }
-            else
-            {
-                return bindings;
-            }
         }
     }
 }
