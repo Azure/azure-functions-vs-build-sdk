@@ -73,7 +73,10 @@ namespace MakeFunctionJson
                 // Entry point is the fully qualified name of the function
                 EntryPoint = $"{method.DeclaringType.FullName}.{method.Name}",
                 // scriptFile == assemblyPath.
-                ScriptFile = assemblyPath
+                ScriptFile = assemblyPath,
+                // A method is disabled is any of it's parameters have [Disabled] attribute
+                // or if the method itself or class have the [Disabled] attribute.
+                Disabled = method.IsDisabled()
             };
         }
 
@@ -98,6 +101,29 @@ namespace MakeFunctionJson
             {
                 throw new InvalidOperationException("Missing FunctionNameAttribute");
             }
+        }
+
+        /// <summary>
+        /// A method is disabled is any of it's parameters have [Disabled] attribute
+        /// or if the method itself or class have the [Disabled] attribute. 
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
+        public static bool IsDisabled(this MethodInfo method)
+        {
+            return method.GetParameters().Any(p => p.HasDisabledAsstibute()) ||
+                method.HasDisabledAttribute() ||
+                method.DeclaringType.GetTypeInfo().HasDisabledAttribute();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
+        public static bool HasDisabledAttribute(this MethodInfo method)
+        {
+            return method.GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
         }
     }
 }

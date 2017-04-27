@@ -40,5 +40,15 @@ namespace MakeFunctionJson
                 })
                 .ToList();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parameterInfo"></param>
+        /// <returns></returns>
+        public static bool HasDisabledAsstibute(this ParameterInfo parameterInfo)
+        {
+            return parameterInfo.GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
+        }
     }
 }
