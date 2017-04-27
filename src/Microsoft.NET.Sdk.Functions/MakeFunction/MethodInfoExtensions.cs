@@ -39,6 +39,7 @@ namespace MakeFunctionJson
                 .Where(p => p.IsWebJobsSdkParameter())
                 .Select(p => p.ToFunctionJsonBindings())
                 .SelectMany(i => i);
+
             var returnOutputBindings = method
                 .ReturnTypeCustomAttributes
                 .GetCustomAttributes(false)
@@ -55,6 +56,13 @@ namespace MakeFunctionJson
             if (!returnOutputBindings.Any() && bindings.Any(b => b["type"]?.ToString() == "httpTrigger"))
             {
                 returnOutputBindings = new[] { JObject.FromObject(new { name = "$return", type = "http", direction = "out" }) };
+            }
+
+            // Clear AuthLevel from httpTrigger that has a webHook property
+            var webHook = bindings.FirstOrDefault(b => b["type"]?.ToString() == "httpTrigger" && b["webHookType"]?.ToString() != null);
+            if (webHook != null)
+            {
+                webHook.Remove("authLevel");
             }
 
             return new FunctionJsonSchema
