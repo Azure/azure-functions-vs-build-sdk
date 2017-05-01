@@ -21,8 +21,8 @@ namespace Microsoft.NET.Sdk.Functions.Test
                 new BlobTriggerAttribute(string.Empty),
                 new EventHubAttribute(string.Empty),
                 new EventHubTriggerAttribute(string.Empty),
-                // new ServiceBusAttribute(),
-                // new ServiceBusTriggerAttribute()
+                new ServiceBusAttribute(string.Empty),
+                new ServiceBusTriggerAttribute(string.Empty)
             };
 
             foreach (var attribute in attributes)
