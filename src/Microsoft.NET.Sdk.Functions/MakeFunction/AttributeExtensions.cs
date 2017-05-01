@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.NET.Sdk.Functions.MakeFunction;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace MakeFunctionJson
 {
@@ -22,6 +23,32 @@ namespace MakeFunctionJson
             return name.ToLowerFirstCharacter();
         }
 
+        private static readonly HashSet<string> _supportedAttributes = new HashSet<string>
+         {
+             // These 2 attributes are not handled currently.
+             // They can go either on class, method, or parameter.
+             // The code flow now assumes 1:1 mapping of attributes on parameters to function.json binding.
+             // "StorageAccountAttribute",
+             // "ServiceBusAccountAttribute",
+
+             "BlobAttribute",
+             "BlobTriggerAttribute",
+             "QueueAttribute",
+             "QueueTriggerAttribute",
+             "TableAttribute",
+             "EventHubAttribute",
+             "EventHubTriggerAttribute",
+             "TimerTriggerAttribute",
+             "DocumentDBAttribute",
+             "ApiHubTableAttribute",
+             "MobileTableAttribute",
+             "ServiceBusTriggerAttribute",
+             "ServiceBusAttribute",
+             "TwilioSmsAttribute",
+             "NotificationHubAttribute",
+             "HttpTriggerAttribute"
+         };
+
         /// <summary>
         /// 
         /// </summary>
@@ -30,9 +57,11 @@ namespace MakeFunctionJson
         public static bool IsWebJobsAttribute(this Attribute attribute)
         {
 #if NET46
-            return attribute.GetType().GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.Description.BindingAttribute");
+            return attribute.GetType().GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.Description.BindingAttribute")
+                || _supportedAttributes.Contains(attribute.GetType().Name);
 #else
-            return attribute.GetType().GetTypeInfo().GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.Description.BindingAttribute");
+            return attribute.GetType().GetTypeInfo().GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.Description.BindingAttribute")
+                || _supportedAttributes.Contains(attribute.GetType().Name);
 #endif
         }
 

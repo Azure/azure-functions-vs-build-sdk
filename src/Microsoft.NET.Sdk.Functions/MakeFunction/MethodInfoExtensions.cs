@@ -62,6 +62,7 @@ namespace MakeFunctionJson
 
             // Clear AuthLevel from httpTrigger that has a webHook property
             var webHook = bindings.FirstOrDefault(b => b["type"]?.ToString() == "httpTrigger" && b["webHookType"]?.ToString() != null);
+
             if (webHook != null)
             {
                 webHook.Remove("authLevel");
