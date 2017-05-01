@@ -265,6 +265,13 @@ namespace MakeFunctionJson
                     return "path";
                 }
             }
+            else if (attributeName == "DocumentDBAttribute")
+            {
+                if (propertyName == "ConnectionStringSetting")
+                {
+                    return "connection";
+                }
+            }
 
             return propertyName.ToLowerFirstCharacter();
         }
