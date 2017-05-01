@@ -3,6 +3,8 @@ using FluentAssertions.Json;
 using MakeFunctionJson;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using System;
+using System.Linq;
 using Xunit;
 
 namespace Microsoft.NET.Sdk.Functions.Test
@@ -19,6 +21,22 @@ namespace Microsoft.NET.Sdk.Functions.Test
 
             jObject.Should().HaveElement("authLevel");
             jObject["authLevel"].Should().Be("function");
+        }
+
+        public class FunctionClass
+        {
+            public static void Run([HttpTrigger(WebHookType = "something")] string message) { }
+        }
+
+        [Theory]
+        [InlineData(typeof(FunctionClass), "Run")]
+        public void HttpTriggerAttributeWithWebHookTypeShouldntHaveAnAuthLevel(Type type, string methodName)
+        {
+            var method = type.GetMethod(methodName);
+            var funcJson = method.ToFunctionJson(string.Empty);
+
+            funcJson.Bindings.Should().HaveCount(2);
+            funcJson.Bindings.First()["authLevel"].Should().BeNull();
         }
     }
 }

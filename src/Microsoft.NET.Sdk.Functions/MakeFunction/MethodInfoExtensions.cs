@@ -38,7 +38,8 @@ namespace MakeFunctionJson
             var bindings = method.GetParameters()
                 .Where(p => p.IsWebJobsSdkParameter())
                 .Select(p => p.ToFunctionJsonBindings())
-                .SelectMany(i => i);
+                .SelectMany(i => i)
+                .ToArray();
 
             var returnOutputBindings = method
                 .ReturnTypeCustomAttributes
@@ -50,7 +51,8 @@ namespace MakeFunctionJson
                 {
                     a["name"] = "$return";
                     return a;
-                });
+                })
+                .ToArray();
 
             // If there is an httpTrigger and no $return binding, always add an http $return.
             if (!returnOutputBindings.Any() && bindings.Any(b => b["type"]?.ToString() == "httpTrigger"))
