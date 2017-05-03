@@ -11,9 +11,8 @@ Copyright (c) .NET Foundation. All rights reserved.
 -->
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   
-  <Import Project="$(MSBuildSdksPath)\Microsoft.NET.Sdk.Publish\Sdk\Sdk.targets"
-           Condition="Exists('$(MSBuildSdksPath)\Microsoft.NET.Sdk.Publish\Sdk\Sdk.targets')" />
-  
-  <Import Project="$(MSBuildThisFileDirectory)..\build\netstandard1.0\Microsoft.NET.Sdk.Functions.targets"
-          Condition="Exists('$(MSBuildThisFileDirectory)..\build\netstandard1.0\Microsoft.NET.Sdk.Functions.targets')" />
+	<Import Sdk="Microsoft.NET.Sdk.Publish" Project="Sdk.targets" />
+
+	<Import Sdk="Microsoft.NET.Sdk.Functions" Project="Sdk.targets" />
+	
 </Project>
