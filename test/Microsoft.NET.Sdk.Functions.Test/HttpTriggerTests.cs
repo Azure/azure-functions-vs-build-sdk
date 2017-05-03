@@ -23,20 +23,17 @@ namespace Microsoft.NET.Sdk.Functions.Test
             jObject["authLevel"].Should().Be("function");
         }
 
-        public class FunctionClass
+        [Fact]
+        public void HttpTriggerAttributeWithWebHookTypeShouldntHaveAnAuthLevel()
         {
-            public static void Run([HttpTrigger(WebHookType = "something")] string message) { }
-        }
+            var attribute = new HttpTriggerAttribute()
+            {
+                WebHookType = "something"
+            };
 
-        [Theory]
-        [InlineData(typeof(FunctionClass), "Run")]
-        public void HttpTriggerAttributeWithWebHookTypeShouldntHaveAnAuthLevel(Type type, string methodName)
-        {
-            var method = type.GetMethod(methodName);
-            var funcJson = method.ToFunctionJson(string.Empty);
+            var jObject = attribute.ToJObject();
 
-            funcJson.Bindings.Should().HaveCount(2);
-            funcJson.Bindings.First()["authLevel"].Should().BeNull();
+            jObject["authLevel"].Should().BeNull();
         }
     }
 }

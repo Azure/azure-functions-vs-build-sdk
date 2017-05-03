@@ -60,14 +60,6 @@ namespace MakeFunctionJson
                 returnOutputBindings = new[] { JObject.FromObject(new { name = "$return", type = "http", direction = "out" }) };
             }
 
-            // Clear AuthLevel from httpTrigger that has a webHook property
-            var webHook = bindings.FirstOrDefault(b => b["type"]?.ToString() == "httpTrigger" && b["webHookType"]?.ToString() != null);
-
-            if (webHook != null)
-            {
-                webHook.Remove("authLevel");
-            }
-
             return new FunctionJsonSchema
             {
                 // For every SDK parameter, convert it to a FunctionJson bindings.

@@ -158,6 +158,13 @@ namespace MakeFunctionJson
 
             // Serialize the direction
             obj["direction"] = direction.ToString();
+
+            // Clear AuthLevel from httpTrigger that has a webHook property
+            if (obj["type"]?.ToString() == "httpTrigger" && obj["webHookType"]?.ToString() != null)
+            {
+                obj.Remove("authLevel");
+            }
+
             return obj;
         }
 
