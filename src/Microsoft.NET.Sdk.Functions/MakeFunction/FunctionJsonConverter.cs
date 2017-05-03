@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Build.Utilities;
 
@@ -48,6 +49,7 @@ namespace MakeFunctionJson
         {
             try
             {
+                CleanOutputPath();
 #if NET46
                 var assembly = Assembly.LoadFrom(_assemblyPath);
 #else
@@ -83,6 +85,26 @@ namespace MakeFunctionJson
                 _log.LogErrorFromException(e);
                 return false;
             }
+        }
+
+        private void CleanOutputPath()
+        {
+            Directory.GetDirectories(_outputPath)
+                .Select(d => Path.Combine(d, "function.json"))
+                .Where(File.Exists)
+                .Select(Path.GetDirectoryName)
+                .ToList()
+                .ForEach(directory =>
+                {
+                    try
+                    {
+                        Directory.Delete(directory, recursive: true);
+                    }
+                    catch
+                    {
+                        _log.LogWarning($"Unable to clean directory {directory}.");
+                    }
+                });
         }
     }
 }
