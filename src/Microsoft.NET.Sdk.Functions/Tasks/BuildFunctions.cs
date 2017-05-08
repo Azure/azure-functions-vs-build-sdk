@@ -5,7 +5,12 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.NET.Sdk.Functions.Tasks
 {
+#if NET46
+    [LoadInSeparateAppDomain]
+    public class BuildFunctions : AppDomainIsolatedTask
+#else
     public class BuildFunctions : Task
+#endif
     {
         [Required]
         public string TargetPath { get; set; }
