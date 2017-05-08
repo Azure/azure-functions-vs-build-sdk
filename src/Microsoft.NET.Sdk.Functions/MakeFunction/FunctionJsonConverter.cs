@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Build.Utilities;
+using Newtonsoft.Json;
 
 namespace MakeFunctionJson
 {
@@ -65,6 +66,7 @@ namespace MakeFunctionJson
                             var functionJson = method.ToFunctionJson(relativeAssemblyPath);
                             var functionName = method.GetSdkFunctionName();
                             var path = Path.Combine(_outputPath, functionName, "function.json");
+                            CheckAndWarnForAppSettings(functionJson, functionName);
                             functionJson.Serialize(path);
                         }
                         else if (method.HasFunctionNameAttribute())
@@ -84,6 +86,46 @@ namespace MakeFunctionJson
             {
                 _log.LogErrorFromException(e);
                 return false;
+            }
+        }
+
+        private void CheckAndWarnForAppSettings(FunctionJsonSchema functionJson, string functionName)
+        {
+            try
+            {
+                const string settingsFileName = "local.settings.json";
+                var settingsFile = Path.Combine(_outputPath, settingsFileName);
+
+                if (!File.Exists(settingsFile))
+                {
+                    _log.LogWarning($"Cannot find file {settingsFileName} in output directory.");
+                    return;
+                }
+
+                var settings = JsonConvert.DeserializeObject<LocalSettingsJson>(File.ReadAllText(settingsFile));
+                var values = settings?.Values;
+
+                if (values != null)
+                {
+                    foreach (var binding in functionJson.Bindings)
+                    {
+                        foreach (var token in binding)
+                        {
+                            if (token.Key == "connection" || token.Key == "apiKey" || token.Key == "accountSid" || token.Key == "authToken")
+                            {
+                                var appSettingName = token.Value.ToString();
+                                if (!values.Any(v => v.Key.Equals(appSettingName, StringComparison.OrdinalIgnoreCase)))
+                                {
+                                    _log.LogWarning($"Function [{functionName}]: cannot find value named '{appSettingName}' in {settingsFileName} that matches '{token.Key}' property set on '{binding["type"]?.ToString()}'");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _log.LogWarningFromException(e);
             }
         }
 
