@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.5;net46</TargetFrameworks>
-    <PackageVersion>1.0.0-alpha3</PackageVersion>
+    <PackageVersion>1.0.0-alpha2</PackageVersion>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
     <AssemblyOriginatorKeyFile>PublicKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>False</SignAssembly>
