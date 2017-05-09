@@ -22,6 +22,8 @@ Copyright (c) .NET Foundation. All rights reserved.
     <_FunctionsTaskFramework Condition=" '$(_FunctionsTaskFramework)' == ''">net46</_FunctionsTaskFramework>
     <_FunctionsTasksDir Condition=" '$(_FunctionsTasksDir)'=='' ">$(MSBuildThisFileDirectory)..\..\tools\$(_FunctionsTaskFramework)\</_FunctionsTasksDir>
     <_FunctionsTaskAssemblyFullPath Condition=" '$(_FunctionsTaskAssemblyFullPath)'=='' ">$(_FunctionsTasksDir)\Microsoft.NET.Sdk.Functions.dll</_FunctionsTaskAssemblyFullPath>
+    <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+    <DebugType Condition="'$(DebugType)' == ''">pdbonly</DebugType>  
   </PropertyGroup>
   
   <UsingTask TaskName="BuildFunctions" AssemblyFile="$(_FunctionsTaskAssemblyFullPath)"/>
@@ -33,8 +35,6 @@ Copyright (c) .NET Foundation. All rights reserved.
 
     <PropertyGroup>
         <GenerateHostJson Condition="'$(GenerateHostJson)' == ''">true</GenerateHostJson>
-        <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
-        <DebugType Condition="'$(DebugType)' == ''">pdbonly</DebugType>
     </PropertyGroup>
     
     <ConvertToAbsolutePath Paths="$(OutputPath)">
