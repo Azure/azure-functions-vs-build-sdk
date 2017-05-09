@@ -98,7 +98,6 @@ namespace MakeFunctionJson
 
                 if (!File.Exists(settingsFile))
                 {
-                    _log.LogWarning($"Cannot find file {settingsFileName} in output directory.");
                     return;
                 }
 
