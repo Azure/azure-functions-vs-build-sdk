@@ -32,7 +32,9 @@ Copyright (c) .NET Foundation. All rights reserved.
           Condition="'$(DeployOnBuild)' != 'true'">
 
     <PropertyGroup>
-        <GenerateHostJson Condition=“‘$(GenerateHostJson)’ == ‘’”>true</GenerateHostJson>
+        <GenerateHostJson Condition="'$(GenerateHostJson)' == ''">true</GenerateHostJson>
+        <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+        <DebugType Condition="'$(DebugType)' == ''">pdbonly</DebugType>
     </PropertyGroup>
     
     <ConvertToAbsolutePath Paths="$(OutputPath)">
@@ -42,7 +44,7 @@ Copyright (c) .NET Foundation. All rights reserved.
     <BuildFunctions
       TargetPath="$(TargetPath)"
       OutputPath="$(OutputFullPath)"
-      GenerateHostJson=“$(GenerateHostJson)”/>
+      GenerateHostJson="$(GenerateHostJson)"/>
   </Target>
   
   <!-- Build Support end-->
