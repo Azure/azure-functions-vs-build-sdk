@@ -22,10 +22,11 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
         public override bool Execute()
         {
-            if (GenerateHostJson)
+            string hostJsonPath = Path.Combine(OutputPath, "host.json");
+            if (GenerateHostJson && !File.Exists(hostJsonPath))
             {
                 string hostJsonString = @"{ }";
-                File.WriteAllText(Path.Combine(OutputPath, "host.json"), hostJsonString);
+                File.WriteAllText(hostJsonPath, hostJsonString);
             }
 
             return FunctionJsonConvert.TryConvert(TargetPath, OutputPath, Log);
