@@ -22,7 +22,6 @@ Copyright (c) .NET Foundation. All rights reserved.
     <_FunctionsTaskFramework Condition=" '$(_FunctionsTaskFramework)' == ''">net46</_FunctionsTaskFramework>
     <_FunctionsTasksDir Condition=" '$(_FunctionsTasksDir)'=='' ">$(MSBuildThisFileDirectory)..\..\tools\$(_FunctionsTaskFramework)\</_FunctionsTasksDir>
     <_FunctionsTaskAssemblyFullPath Condition=" '$(_FunctionsTaskAssemblyFullPath)'=='' ">$(_FunctionsTasksDir)\Microsoft.NET.Sdk.Functions.dll</_FunctionsTaskAssemblyFullPath>
-    <GenerateHostJson Condition=“‘$(GenerateHostJson)’ == ‘’”>true</GenerateHostJson>
   </PropertyGroup>
   
   <UsingTask TaskName="BuildFunctions" AssemblyFile="$(_FunctionsTaskAssemblyFullPath)"/>
@@ -31,6 +30,10 @@ Copyright (c) .NET Foundation. All rights reserved.
   <Target Name="_GenerateBuildArtifacts" 
           AfterTargets="Build" 
           Condition="'$(DeployOnBuild)' != 'true'">
+
+    <PropertyGroup>
+        <GenerateHostJson Condition=“‘$(GenerateHostJson)’ == ‘’”>true</GenerateHostJson>
+    </PropertyGroup>
     
     <ConvertToAbsolutePath Paths="$(OutputPath)">
       <Output TaskParameter="AbsolutePaths" PropertyName="OutputFullPath"/>
