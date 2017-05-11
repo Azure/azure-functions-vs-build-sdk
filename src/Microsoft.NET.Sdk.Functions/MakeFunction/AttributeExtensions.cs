@@ -145,7 +145,7 @@ namespace MakeFunctionJson
                 CheckIfPropertyIsSupported(attribute.GetType().Name, property);
 
                 // Normalize and store the propertyName
-                var propertyName = NormalizePropertyName(attribute.GetType().Name, property);
+                var propertyName = NormalizePropertyName(attribute, property);
                 if (TryGetPropertyValue(property, propertyValue, out string jsonValue))
                 {
                     obj[propertyName] = jsonValue;
@@ -238,8 +238,9 @@ namespace MakeFunctionJson
         /// <param name="attributeName"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        private static string NormalizePropertyName(string attributeName, PropertyInfo property)
+        private static string NormalizePropertyName(Attribute attribute, PropertyInfo property)
         {
+            var attributeName = attribute.GetType().Name;
             var propertyName = property.Name;
 
             if ((attributeName == "BlobAttribute") || (attributeName == "BlobTriggerAttribute"))
@@ -271,9 +272,38 @@ namespace MakeFunctionJson
             {
                 if (propertyName == "QueueOrTopicName")
                 {
-                    // The attribute has a QueueOrTopicName while function.json has distinct queue and topic.
-                    // I just picked queue.
-                    return "queue";
+                    // Will need to check another property 'EntityType' on the attribute
+                    // If it's Queue, then it should be "queueName"
+                    // If it's Topic, then it should be "topicName"
+                    var entityTypeProperty = attribute.GetType().GetProperty("EntityType");
+                    if (entityTypeProperty != null)
+                    {
+                        var value = entityTypeProperty.GetValue(attribute);
+                        if (TryGetPropertyValue(entityTypeProperty, value, out string stringValue))
+                        {
+                            if (stringValue == "topic")
+                            {
+                                return "topicName";
+                            }
+                            else if (stringValue == "queue")
+                            {
+                                return "queueName";
+                            }
+                        }
+                    }
+                    // We can't figure out what EntityType is, just assume queueName.
+                    return "queueName";
+                }
+                else if (propertyName == "Access")
+                {
+                    return "accessRights";
+                }
+            }
+            else if (attributeName == "ServiceBusTriggerAttribute")
+            {
+                if (propertyName == "Access")
+                {
+                    return "accessRights";
                 }
             }
             else if (attributeName == "TwilioSmsAttribute")

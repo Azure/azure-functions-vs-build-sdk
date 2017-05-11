@@ -223,6 +223,7 @@
     <Compile Include="HttpTriggerTests.cs" />
     <Compile Include="IConnectionProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceBussAttributeTests.cs" />
     <Compile Include="ServiceBusTriggerTests.cs" />
   </ItemGroup>
   <ItemGroup>

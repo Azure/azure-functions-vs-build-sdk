@@ -17,8 +17,8 @@ namespace Microsoft.NET.Sdk.Functions.Test
 
             var jObject = attribute.ToJObject();
 
-            jObject.Should().HaveElement("access");
-            jObject["access"].Should().Be("manage");
+            jObject.Should().HaveElement("accessRights");
+            jObject["accessRights"].Should().Be("manage");
         }
     }
 }
