@@ -108,7 +108,14 @@ namespace MakeFunctionJson
                 {
                     // FirstOrDefault returns a KeyValuePair<string, string> which is a struct so it can't be null.
                     var azureWebJobsStorage = values.FirstOrDefault(pair => pair.Key.Equals("AzureWebJobsStorage", StringComparison.OrdinalIgnoreCase)).Value;
-                    if (string.IsNullOrWhiteSpace(azureWebJobsStorage) && functionJson.Bindings.Any(b => b["type"]?.ToString() != "httpTrigger"))
+                    var isHttpTrigger = functionJson
+                        .Bindings
+                        .Where(b => b["type"] != null)
+                        .Select(b => b["type"].ToString())
+                        .Where(b => b.IndexOf("Trigger") != -1)
+                        .Any(t => t == "httpTrigger");
+
+                    if (string.IsNullOrWhiteSpace(azureWebJobsStorage) && !isHttpTrigger)
                     {
                         _log.LogWarning($"Function [{functionName}]: Missing value for AzureWebJobsStorage in {settingsFileName}. This is required for all triggers other than HTTP.");
                     }
