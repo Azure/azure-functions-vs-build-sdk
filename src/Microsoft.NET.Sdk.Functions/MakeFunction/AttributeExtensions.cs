@@ -338,6 +338,13 @@ namespace MakeFunctionJson
                     return "connection";
                 }
             }
+            else if (attributeName == "EventHubAttribute")
+            {
+                if (propertyName == "EventHubName")
+                {
+                    return "path";
+                }
+            }
 
             return propertyName.ToLowerFirstCharacter();
         }
