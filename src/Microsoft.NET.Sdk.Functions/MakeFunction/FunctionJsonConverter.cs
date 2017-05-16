@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,6 +13,7 @@ namespace MakeFunctionJson
         private string _assemblyPath;
         private string _outputPath;
         private readonly FakeLogger _log;
+        private readonly IDictionary<string, MethodInfo> _functionNamesSet;
 
         internal FunctionJsonConverter(string assemblyPath, string outputPath, TaskLoggingHelper log)
         {
@@ -32,6 +34,7 @@ namespace MakeFunctionJson
                 _outputPath = Path.Combine(Directory.GetCurrentDirectory(), _outputPath);
             }
             _log = new FakeLogger(log);
+            _functionNamesSet = new Dictionary<string, MethodInfo>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -50,6 +53,7 @@ namespace MakeFunctionJson
         {
             try
             {
+                this._functionNamesSet.Clear();
                 CleanOutputPath();
 #if NET46
                 var assembly = Assembly.LoadFrom(_assemblyPath);
@@ -66,8 +70,14 @@ namespace MakeFunctionJson
                             var functionJson = method.ToFunctionJson(relativeAssemblyPath);
                             var functionName = method.GetSdkFunctionName();
                             var path = Path.Combine(_outputPath, functionName, "function.json");
-                            CheckAndWarnForAppSettings(functionJson, functionName);
-                            functionJson.Serialize(path);
+                            if (CheckAppSettingsAndFunctionName(functionJson, method))
+                            {
+                                functionJson.Serialize(path);
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
                         else if (method.HasFunctionNameAttribute())
                         {
@@ -89,16 +99,28 @@ namespace MakeFunctionJson
             }
         }
 
-        private void CheckAndWarnForAppSettings(FunctionJsonSchema functionJson, string functionName)
+        private bool CheckAppSettingsAndFunctionName(FunctionJsonSchema functionJson, MethodInfo method)
         {
             try
             {
+                var functionName = method.GetSdkFunctionName();
+                if (this._functionNamesSet.ContainsKey(functionName))
+                {
+                    var dupMethod = this._functionNamesSet[functionName];
+                    this._log.LogError($"Function {method.DeclaringType.FullName}.{method.Name} and {dupMethod.DeclaringType.FullName}.{dupMethod.Name} have the same value for FunctionNameAttribute. Each function must have a unique name.");
+                    return false;
+                }
+                else
+                {
+                    this._functionNamesSet.Add(functionName, method);
+                }
+
                 const string settingsFileName = "local.settings.json";
                 var settingsFile = Path.Combine(_outputPath, settingsFileName);
 
                 if (!File.Exists(settingsFile))
                 {
-                    return;
+                    return true; // no file to check.
                 }
 
                 var settings = JsonConvert.DeserializeObject<LocalSettingsJson>(File.ReadAllText(settingsFile));
@@ -140,6 +162,8 @@ namespace MakeFunctionJson
             {
                 _log.LogWarningFromException(e);
             }
+            // We only return false on an error, not a warning.
+            return true;
         }
 
         private void CleanOutputPath()
