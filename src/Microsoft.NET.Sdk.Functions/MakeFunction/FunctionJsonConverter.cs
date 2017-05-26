@@ -68,8 +68,9 @@ namespace MakeFunctionJson
                 }
 
                 CleanOutputPath();
+                CopyFunctionArtifacts();
 
-                return TryGenerateFunctionJsons() && TryCopyFunctionArtifacts();
+                return TryGenerateFunctionJsons();
             }
             catch (Exception e)
             {
@@ -78,29 +79,28 @@ namespace MakeFunctionJson
             }
         }
 
-        private bool TryCopyFunctionArtifacts()
+        private void CopyFunctionArtifacts()
         {
             var sourceFile = string.Empty;
             var targetFile = string.Empty;
-            try
+
+            var assemblyDir = Path.GetDirectoryName(_assemblyPath);
+            foreach (var file in _functionsArtifacts)
             {
-                var assemblyDir = Path.GetDirectoryName(_assemblyPath);
-                foreach (var file in _functionsArtifacts)
+                sourceFile = Path.Combine(assemblyDir, file);
+                targetFile = Path.Combine(_outputPath, file);
+                if (File.Exists(sourceFile) && !sourceFile.Equals(targetFile, StringComparison.OrdinalIgnoreCase))
                 {
-                    sourceFile = Path.Combine(assemblyDir, file);
-                    targetFile = Path.Combine(_outputPath, file);
-                    if (File.Exists(sourceFile))
+                    try
                     {
                         File.Copy(sourceFile, targetFile, overwrite: true);
                     }
+                    catch (Exception e)
+                    {
+                        _log.LogWarning($"Unable to copy '{sourceFile}' to '{targetFile}'");
+                        _log.LogWarningFromException(e);
+                    }
                 }
-                return true;
-            }
-            catch (Exception e)
-            {
-                _log.LogError($"Unable to copy '{sourceFile}' to '{targetFile}'");
-                _log.LogErrorFromException(e);
-                return false;
             }
         }
 
