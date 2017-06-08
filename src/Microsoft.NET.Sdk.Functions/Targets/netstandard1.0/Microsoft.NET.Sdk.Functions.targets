@@ -61,7 +61,7 @@ Copyright (c) .NET Foundation. All rights reserved.
   
   <Target Name="_InitPublishBinDirectory" >
     <PropertyGroup>
-      <PublishDir>$(PublishIntermediateOutputPath)\bin</PublishDir>
+      <PublishDir>$(PublishIntermediateOutputPath)</PublishDir>
     </PropertyGroup>
 
     <!-- Remove all the files from the temp directory first-->
