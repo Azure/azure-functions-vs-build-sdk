@@ -67,7 +67,7 @@ namespace MakeFunctionJson
                     _logger.LogWarning(message);
                     _logger.LogWarningFromException(e);
                 }
-                return false;
+                return !isError;
             }
         }
     }

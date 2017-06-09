@@ -118,12 +118,16 @@ namespace MakeFunctionJson
                 {
                     if (method.IsWebJobsSdkMethod())
                     {
-                        var functionJson = method.ToFunctionJson(relativeAssemblyPath);
                         var functionName = method.GetSdkFunctionName();
                         var artifactName = Path.Combine(functionName, "function.json");
                         var path = Path.Combine(_outputPath, artifactName);
-                        if (!File.Exists(path) &&
-                            CheckAppSettingsAndFunctionName(functionJson, method) &&
+                        if (File.Exists(path))
+                        {
+                            continue;
+                        }
+
+                        var functionJson = method.ToFunctionJson(relativeAssemblyPath);
+                        if (CheckAppSettingsAndFunctionName(functionJson, method) &&
                             _buildArtifactsLog.TryAddBuildArtifact(artifactName))
                         {
                             functionJson.Serialize(path);
