@@ -11,9 +11,9 @@ namespace MakeFunctionJson
             return typeInfo.ImplementedInterfaces.Any(i => i.Name.Equals(interfaceName, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static bool HasDisabledAttribute(this TypeInfo type)
+        public static Attribute GetDisabledAttribute(this TypeInfo type)
         {
-            return type.GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
+            return type.GetCustomAttributes().FirstOrDefault(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
         }
     }
 }

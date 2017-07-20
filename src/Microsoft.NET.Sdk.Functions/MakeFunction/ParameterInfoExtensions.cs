@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace MakeFunctionJson
 {
@@ -46,9 +47,9 @@ namespace MakeFunctionJson
         /// </summary>
         /// <param name="parameterInfo"></param>
         /// <returns></returns>
-        public static bool HasDisabledAsstibute(this ParameterInfo parameterInfo)
+        public static Attribute GetDisabledAttribute(this ParameterInfo parameterInfo)
         {
-            return parameterInfo.GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
+            return parameterInfo.GetCustomAttributes().FirstOrDefault(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
         }
     }
 }

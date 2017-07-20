@@ -10,7 +10,7 @@ namespace MakeFunctionJson
         public IEnumerable<JObject> Bindings { get; set; }
 
         [JsonProperty("disabled")]
-        public bool Disabled { get; set; }
+        public object Disabled { get; set; }
 
         [JsonProperty("scriptFile")]
         public string ScriptFile { get; set; }
