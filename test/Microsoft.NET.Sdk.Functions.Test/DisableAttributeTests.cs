@@ -24,7 +24,7 @@ namespace Microsoft.NET.Sdk.Functions.Test
             public static void Run([QueueTrigger("")] string message) { }
         }
 
-        public class FunctionClass3
+        public class FunctionsClass3
         {
             public static void Run([QueueTrigger("")] string message) { }
         }
