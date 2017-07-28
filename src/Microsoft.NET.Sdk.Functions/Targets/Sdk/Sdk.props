@@ -13,6 +13,6 @@ Copyright (c) .NET Foundation. All rights reserved.
 
 	<Import Sdk="Microsoft.NET.Sdk.Publish" Project="Sdk.props" /> 
 
-	<Import Sdk="Microsoft.NET.Sdk.Functions" Project="Sdk.props" /> 
+	<Import Project="$(MSBuildThisFileDirectory)..\build\netstandard1.0\Microsoft.NET.Sdk.Functions.props" />
 
 </Project>
