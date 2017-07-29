@@ -34,7 +34,7 @@ Copyright (c) .NET Foundation. All rights reserved.
   <!-- This target gets called after Build for generating 
        function.json for all functions in the project                     -->
   <!--********************************************************************-->
-  <Target Name="_GenerateBuildArtifacts" 
+  <Target Name="_GenerateFunctionsBuildArtifacts" 
           AfterTargets="Build" 
           Condition="'$(DeployOnBuild)' != 'true'">
 
@@ -60,7 +60,7 @@ Copyright (c) .NET Foundation. All rights reserved.
        invokes the publish target to do the actual publish.
                                                                           -->
   <!--********************************************************************-->
-  <Target Name="OverridePackForFunctions" 
+  <Target Name="_FunctionsPackDependsOnPublish" 
           AfterTargets="Pack"
           DependsOnTargets="Publish" />
 
@@ -69,8 +69,9 @@ Copyright (c) .NET Foundation. All rights reserved.
        function.json for the functions present in the project.
                                                                           -->
   <!--********************************************************************-->
-  <Target Name="FunctionsFolderPublish" 
-          AfterTargets="Publish">
+  <Target Name="_FunctionsPublish" 
+          AfterTargets="Publish"
+          Condition="'$(DeployOnBuild)' != 'true'">
     
      <PropertyGroup>
         <GenerateHostJson Condition="'$(GenerateHostJson)' == ''">true</GenerateHostJson>
@@ -101,7 +102,7 @@ Copyright (c) .NET Foundation. All rights reserved.
     <CorePublishDependsOn>
       _InitPublishBinDirectory;
       Publish;
-      _GeneratePublishArtifacts;
+      _GenerateFunctionsPublishArtifacts;
       $(_DotNetPublishFiles);
     </CorePublishDependsOn>
   </PropertyGroup>
@@ -121,7 +122,12 @@ Copyright (c) .NET Foundation. All rights reserved.
     <MakeDir Directories="$(PublishIntermediateOutputPath)" Condition="!Exists('$(PublishIntermediateOutputPath)')"/>
   </Target>
   
-  <Target Name="_GeneratePublishArtifacts">
+  
+  <!--********************************************************************-->
+  <!-- This target generates the function.json for functions
+                                                                          -->
+  <!--********************************************************************-->
+  <Target Name="_GenerateFunctionsPublishArtifacts">
     <PropertyGroup>
       <ApplicationDllName Condition="'$(ApplicationDllName)' == ''">$([System.IO.Path]::GetFileName($(TargetPath)))</ApplicationDllName>
       <PublishTargetPath Condition="'$(PublishTargetPath)' == ''">$(PublishDir)\$(ApplicationDllName)</PublishTargetPath>
