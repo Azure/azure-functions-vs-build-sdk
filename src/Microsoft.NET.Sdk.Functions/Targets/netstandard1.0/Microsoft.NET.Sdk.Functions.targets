@@ -140,7 +140,8 @@ Copyright (c) .NET Foundation. All rights reserved.
 
   <!--********************************************************************-->
   <!-- CopyLocalLockFileAssemblies does not copy all the required assemblies 
-       to the bin folder. These adhoc targets fixes the issue.
+       to the TargetDir folder. This target will copy all the required files
+       to the TargetDir folder.
                                                                           -->
   <!--********************************************************************-->
 
@@ -208,7 +209,7 @@ Copyright (c) .NET Foundation. All rights reserved.
   />
 
   <!-- 
-     Cleanup the TargetDir folder on Clean to delete the generated content.
+     CLean should delete all the generated Content.
    -->
   <Target
     Name="CleanupTargetDir"
