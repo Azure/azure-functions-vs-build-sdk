@@ -1,0 +1,101 @@
+<!--
+***********************************************************************************************
+Microsoft.NET.Sdk.Functions.Publish.targets
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+***********************************************************************************************
+-->
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Sdk="Microsoft.NET.Sdk.Publish" Project="Sdk.targets" />
+  
+  <!--********************************************************************-->
+  <!-- This target gets called during folder publish from VS since 
+       Function project is a class library project rather than
+       a console project. IsPakable property for the functions projects
+       is set to false, so, pack target wont pack the project. This target
+       invokes the publish target to do the actual publish.
+                                                                          -->
+  <!--********************************************************************-->
+  <Target Name="_FunctionsPackDependsOnPublish" 
+          AfterTargets="Pack"
+          DependsOnTargets="Publish" />
+
+  <!--********************************************************************-->
+  <!-- This target gets called after every publish target to generate the 
+       function.json for the functions present in the project.
+                                                                          -->
+  <!--********************************************************************-->
+  <Target Name="_FunctionsPublish" 
+          AfterTargets="Publish"
+          Condition="'$(DeployOnBuild)' != 'true'">
+    
+     <PropertyGroup>
+        <GenerateHostJson Condition="'$(GenerateHostJson)' == ''">true</GenerateHostJson>
+    </PropertyGroup>
+    
+    <ConvertToAbsolutePath Paths="$(PublishDir)">
+      <Output TaskParameter="AbsolutePaths" PropertyName="PublishDirFullPath"/>
+    </ConvertToAbsolutePath>
+
+    <PropertyGroup>
+      <ApplicationDllName Condition="'$(ApplicationDllName)' == ''">$([System.IO.Path]::GetFileName($(TargetPath)))</ApplicationDllName>
+      <PublishTargetPath Condition="'$(PublishTargetPath)' == ''">$(PublishDirFullPath)\$(ApplicationDllName)</PublishTargetPath>
+    </PropertyGroup>
+    
+    <BuildFunctions
+      TargetPath="$(PublishTargetPath)"
+      OutputPath="$(PublishDirFullPath)"
+      GenerateHostJson="$(GenerateHostJson)"/>
+  </Target>
+  
+  <!--********************************************************************-->
+  <!-- This target gets called when publish is invoked with DeployOnBuild
+       set. This target is responsible for overriding the publish targets
+       from Publish SDK and generating function.json during publish.
+                                                                          -->
+  <!--********************************************************************-->
+  <PropertyGroup>
+    <CorePublishDependsOn>
+      _InitPublishBinDirectory;
+      Publish;
+      _GenerateFunctionsPublishArtifacts;
+      $(_DotNetPublishFiles);
+    </CorePublishDependsOn>
+  </PropertyGroup>
+  
+  <Target Name="_InitPublishBinDirectory" >
+    <PropertyGroup>
+      <PublishDir>$(PublishIntermediateOutputPath)</PublishDir>
+    </PropertyGroup>
+
+    <!-- Remove all the files from the temp directory first-->
+    <ItemGroup>
+      <_PublishTempFiles Include="$(PublishIntermediateOutputPath)**\*.*" />
+    </ItemGroup>
+
+    <Delete Files="@(_PublishTempFiles)" ContinueOnError="true" />
+    <RemoveDir Directories="$(PublishIntermediateOutputPath)" ContinueOnError="true" Condition="Exists('$(PublishIntermediateOutputPath)')" />
+    <MakeDir Directories="$(PublishIntermediateOutputPath)" Condition="!Exists('$(PublishIntermediateOutputPath)')"/>
+  </Target>
+  
+  
+  <!--********************************************************************-->
+  <!-- This target generates the function.json for functions
+                                                                          -->
+  <!--********************************************************************-->
+  <Target Name="_GenerateFunctionsPublishArtifacts">
+    <PropertyGroup>
+      <ApplicationDllName Condition="'$(ApplicationDllName)' == ''">$([System.IO.Path]::GetFileName($(TargetPath)))</ApplicationDllName>
+      <PublishTargetPath Condition="'$(PublishTargetPath)' == ''">$(PublishDir)\$(ApplicationDllName)</PublishTargetPath>
+    </PropertyGroup>
+    
+    <BuildFunctions
+      TargetPath="$(PublishTargetPath)"
+      OutputPath="$(PublishIntermediateOutputPath)"/>
+  </Target>
+  
+</Project>
