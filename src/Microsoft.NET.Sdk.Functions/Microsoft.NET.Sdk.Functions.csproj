@@ -34,8 +34,8 @@
   </Target>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Framework" Version="15.1.298-preview5" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.298-preview5" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="15.1.1012" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.1012" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
     <PackageReference Include="System.ValueTuple" Version="4.3.0" />
