@@ -48,7 +48,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     
     <PropertyGroup>
       <PublishDir>$(FunctionsDir)\bin</PublishDir>
-      <FunctionsTargetPath>$(PublishDir)\$([System.IO.Path]::GetFileName($(TargetPath)))</FunctionsTargetPath>
+      <FunctionsTargetPath>$(PublishDir)\$(TargetFileName)</FunctionsTargetPath>
       <FunctionsOutputPath>$(FunctionsDir)</FunctionsOutputPath>
     </PropertyGroup>
     
@@ -66,7 +66,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
     <PropertyGroup>
       <PublishDir>$(PublishIntermediateOutputPath)\bin</PublishDir>
-      <FunctionsTargetPath>$(PublishDir)\$([System.IO.Path]::GetFileName($(TargetPath)))</FunctionsTargetPath>
+      <FunctionsTargetPath>$(PublishDir)\$(TargetFileName)</FunctionsTargetPath>
       <FunctionsOutputPath>$(PublishIntermediateOutputPath)</FunctionsOutputPath>
     </PropertyGroup>
 
