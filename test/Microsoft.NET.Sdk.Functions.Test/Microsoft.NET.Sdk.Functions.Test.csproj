@@ -217,7 +217,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DisableAttributeTests.cs" />
     <Compile Include="DocumentDbAttributeTests.cs" />
     <Compile Include="EventHubAttributeTests.cs" />
     <Compile Include="GeneralWebJobsAttributesTests.cs" />

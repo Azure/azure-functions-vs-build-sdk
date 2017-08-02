@@ -12,11 +12,11 @@ namespace MakeFunctionJson
         /// </summary>
         /// <param name="parameterInfo"></param>
         /// <returns></returns>
-        public static bool IsWebJobsSdkParameter(this ParameterInfo parameterInfo)
+        public static bool IsWebJobSdkTriggerParameter(this ParameterInfo parameterInfo)
         {
             return parameterInfo
-                .GetCustomAttributes()
-                .Any(a => a.IsWebJobsAttribute());
+               .GetCustomAttributes()
+               .Any(a => a.IsWebJobsAttribute() && a.ToAttributeFriendlyName().IndexOf("Trigger") > -1);
         }
 
         /// <summary>
@@ -39,16 +39,6 @@ namespace MakeFunctionJson
                     return obj;
                 })
                 .ToList();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="parameterInfo"></param>
-        /// <returns></returns>
-        public static bool HasDisabledAsstibute(this ParameterInfo parameterInfo)
-        {
-            return parameterInfo.GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
         }
     }
 }

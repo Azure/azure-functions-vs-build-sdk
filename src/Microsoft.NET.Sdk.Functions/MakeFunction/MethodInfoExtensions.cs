@@ -19,7 +19,7 @@ namespace MakeFunctionJson
 
         public static bool HasWebJobSdkAttribute(this MethodInfo method)
         {
-            return method.GetParameters().Any(p => p.IsWebJobsSdkParameter());
+            return method.GetParameters().Any(p => p.IsWebJobSdkTriggerParameter());
         }
 
         public static bool HasFunctionNameAttribute(this MethodInfo method)
@@ -35,43 +35,19 @@ namespace MakeFunctionJson
         /// <returns><see cref="FunctionJsonSchema"/> object that represents the passed in <paramref name="method"/>.</returns>
         public static FunctionJsonSchema ToFunctionJson(this MethodInfo method, string assemblyPath)
         {
-            var bindings = method.GetParameters()
-                .Where(p => p.IsWebJobsSdkParameter())
-                .Select(p => p.ToFunctionJsonBindings())
-                .SelectMany(i => i)
-                .ToArray();
-
-            var returnOutputBindings = method
-                .ReturnTypeCustomAttributes
-                .GetCustomAttributes(false)
-                .Cast<Attribute>()
-                .Where(a => a.IsWebJobsAttribute())
-                .Select(a => a.ToJObject())
-                .Select(a =>
-                {
-                    a["name"] = "$return";
-                    return a;
-                })
-                .ToArray();
-
-            // If there is an httpTrigger and no $return binding, always add an http $return.
-            if (!returnOutputBindings.Any() && bindings.Any(b => b["type"]?.ToString() == "httpTrigger"))
-            {
-                returnOutputBindings = new[] { JObject.FromObject(new { name = "$return", type = "http", direction = "out" }) };
-            }
-
             return new FunctionJsonSchema
             {
                 // For every SDK parameter, convert it to a FunctionJson bindings.
                 // Every parameter can potentially contain more than 1 attribute that will be converted into a binding object.
-                Bindings = bindings.Concat(returnOutputBindings),
+                Bindings = method.GetParameters()
+                    .Where(p => p.IsWebJobSdkTriggerParameter())
+                    .Select(p => p.ToFunctionJsonBindings())
+                    .SelectMany(i => i)
+                    .ToArray(),
                 // Entry point is the fully qualified name of the function
                 EntryPoint = $"{method.DeclaringType.FullName}.{method.Name}",
                 // scriptFile == assemblyPath.
-                ScriptFile = assemblyPath,
-                // A method is disabled is any of it's parameters have [Disabled] attribute
-                // or if the method itself or class have the [Disabled] attribute.
-                Disabled = method.IsDisabled()
+                ScriptFile = assemblyPath
             };
         }
 
@@ -96,29 +72,6 @@ namespace MakeFunctionJson
             {
                 throw new InvalidOperationException("Missing FunctionNameAttribute");
             }
-        }
-
-        /// <summary>
-        /// A method is disabled is any of it's parameters have [Disabled] attribute
-        /// or if the method itself or class have the [Disabled] attribute. 
-        /// </summary>
-        /// <param name="method"></param>
-        /// <returns></returns>
-        public static bool IsDisabled(this MethodInfo method)
-        {
-            return method.GetParameters().Any(p => p.HasDisabledAsstibute()) ||
-                method.HasDisabledAttribute() ||
-                method.DeclaringType.GetTypeInfo().HasDisabledAttribute();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="method"></param>
-        /// <returns></returns>
-        public static bool HasDisabledAttribute(this MethodInfo method)
-        {
-            return method.GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
         }
     }
 }
