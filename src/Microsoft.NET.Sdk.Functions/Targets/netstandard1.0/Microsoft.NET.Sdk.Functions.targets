@@ -8,7 +8,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
 ***********************************************************************************************
 -->
-<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
     <_FunctionsTaskFramework Condition=" '$(MSBuildRuntimeType)' == 'Core'">netstandard1.5</_FunctionsTaskFramework>
@@ -20,8 +21,9 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <UsingTask TaskName="BuildFunctions" AssemblyFile="$(_FunctionsTaskAssemblyFullPath)"/>
-  
+  <UsingTask TaskName="BuildFunctions"
+             AssemblyFile="$(_FunctionsTaskAssemblyFullPath)"/>
+
   <ItemGroup>
     <ProjectCapability Include="AzureFunctions"/>
   </ItemGroup>
@@ -31,7 +33,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   Import the PackageReferences target
   ***********************************************************************************************
  -->
-  <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.References.targets" Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.References.targets')" />
+  <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.References.targets"
+          Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.References.targets')" />
 
 
   <!--
@@ -39,14 +42,15 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   Import the Build target
   ***********************************************************************************************
  -->
-  <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Build.targets" Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Build.targets')" />
+  <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Build.targets"
+          Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Build.targets')" />
 
   <!--
   ***********************************************************************************************
   Import the Publish target
   ***********************************************************************************************
  -->
-  <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.targets" Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.targets')" />
-
+  <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.targets"
+          Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.targets')" />
 
 </Project>

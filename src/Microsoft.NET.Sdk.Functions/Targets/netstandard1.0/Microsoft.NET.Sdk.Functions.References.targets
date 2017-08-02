@@ -8,14 +8,25 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
 ***********************************************************************************************
 -->
-<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.WebJobs" Version="2.1.0-beta1" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="2.1.0-beta1" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="1.0.0-beta1" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.ServiceBus" Version="2.1.0-beta1" PrivateAssets="All" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Azure.WebJobs"
+                      Version="2.1.0-beta1"
+                      PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions"
+                      Version="2.1.0-beta1"
+                      PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http"
+                      Version="1.0.0-beta1"
+                      PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.ServiceBus"
+                      Version="2.1.0-beta1"
+                      PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json"
+                      Version="9.0.1"
+                      PrivateAssets="All" />
   </ItemGroup>
-  
+
 </Project>

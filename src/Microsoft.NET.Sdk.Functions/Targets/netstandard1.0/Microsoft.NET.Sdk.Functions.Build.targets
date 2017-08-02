@@ -8,40 +8,37 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
 ***********************************************************************************************
 -->
-<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  
-  <!--********************************************************************-->
-  <!-- This target gets called after Build for generating 
-       function.json for all functions in the project                     -->
-  <!--********************************************************************-->
-  <Target Name="_GenerateFunctionsBuildArtifacts" 
-          AfterTargets="Build" 
-          Condition="'$(DeployOnBuild)' != 'true'">
+<Project ToolsVersion="14.0"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <PropertyGroup>
-        <GenerateHostJson Condition="'$(GenerateHostJson)' == ''">true</GenerateHostJson>
-    </PropertyGroup>
-    
-    <ConvertToAbsolutePath Paths="$(OutputPath)">
-      <Output TaskParameter="AbsolutePaths" PropertyName="OutputFullPath"/>
-    </ConvertToAbsolutePath>
-    
+  <!--
+    ============================================================
+                  _GenerateFunctionsPostBuild
+
+    Generates the function.json for all the functions in the project.
+    ============================================================
+    -->
+  <Target Name="_GenerateFunctionsPostBuild"
+          AfterTargets="Build">
+
     <BuildFunctions
       TargetPath="$(TargetPath)"
-      OutputPath="$(OutputFullPath)"
-      GenerateHostJson="$(GenerateHostJson)"/>
+      OutputPath="$(TargetDir)"/>
+
   </Target>
 
-  <!--********************************************************************-->
-  <!-- CopyLocalLockFileAssemblies does not copy all the required assemblies 
-       to the TargetDir folder. This target will copy all the required files
-       to the TargetDir folder.
-                                                                          -->
-  <!--********************************************************************-->
+  <!--
+    ============================================================
+        _ResolveAdditionalReferenceCopyLocalPathsForFunctions
 
+    CopyLocalLockFileAssemblies does not copy all the required assemblies 
+    to the TargetDir folder. This target will copy all the required files
+    to the TargetDir folder.
+    ============================================================
+    -->
   <Target
-   Name="ResolveAdditionalReferenceCopyLocalPathsForFunctions"
-   DependsOnTargets="RunResolvePublishAssembliesForFunctions"
+   Name="_ResolveAdditionalReferenceCopyLocalPathsForFunctions"
+   DependsOnTargets="_RunResolvePublishAssembliesForFunctions"
    AfterTargets="ResolveReferences"
      >
 
@@ -92,29 +89,36 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   </Target>
 
   <!-- 
-     We only need to call RunResolvePublishAssemblies during build when we do not 
+     We only need to call _RunResolvePublishAssembliesForFunctions during build when we do not 
      have a RuntimeIdentifier.Otherwise, we already have everything we need from
      CopyLocalLockFileAssemblies.
    -->
   <Target
-    Name="RunResolvePublishAssembliesForFunctions"
+    Name="_RunResolvePublishAssembliesForFunctions"
     Condition="'$(RuntimeIdentifier)' == ''"
     DependsOnTargets="RunResolvePublishAssemblies"
   />
 
-  <!-- 
-     CLean should delete all the generated Content.
-   -->
+  <!--
+    ============================================================
+                     _CleanFunctions
+
+    Cleans up all the files in $(TargetDir)
+    ============================================================
+    -->
   <Target
-    Name="CleanupTargetDir"
+    Name="_CleanFunctions"
     AfterTargets="Clean">
 
     <ItemGroup>
       <_FilesInTargetDir Include="$(TargetDir)\**\*" />
     </ItemGroup>
 
-    <Delete Files="@(_FilesInTargetDir)" ContinueOnError="true" />
-    <RemoveDir Directories="$(TargetDir)" ContinueOnError="true" />  
+    <Delete Files="@(_FilesInTargetDir)"
+            ContinueOnError="true" />
+
+    <RemoveDir Directories="$(TargetDir)"
+               ContinueOnError="true" />
   </Target>
-  
+
 </Project>
