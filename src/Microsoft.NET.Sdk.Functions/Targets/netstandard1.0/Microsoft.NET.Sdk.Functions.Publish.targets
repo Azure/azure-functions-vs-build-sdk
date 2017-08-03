@@ -47,8 +47,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     </ConvertToAbsolutePath>
     
     <PropertyGroup>
-      <PublishDir>$(FunctionsDir)\bin</PublishDir>
-      <FunctionsTargetPath>$(PublishDir)\$(TargetFileName)</FunctionsTargetPath>
+      <PublishDir>$(FunctionsDir)</PublishDir>
+      <FunctionsTargetPath>$(PublishDir)\bin\$(TargetFileName)</FunctionsTargetPath>
       <FunctionsOutputPath>$(FunctionsDir)</FunctionsOutputPath>
     </PropertyGroup>
     
@@ -65,8 +65,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   <Target Name="_InitializeDeployOnBuildProperties" >
 
     <PropertyGroup>
-      <PublishDir>$(PublishIntermediateOutputPath)\bin</PublishDir>
-      <FunctionsTargetPath>$(PublishDir)\$(TargetFileName)</FunctionsTargetPath>
+      <PublishDir>$(PublishIntermediateOutputPath)</PublishDir>
+      <FunctionsTargetPath>$(PublishDir)\bin\$(TargetFileName)</FunctionsTargetPath>
       <FunctionsOutputPath>$(PublishIntermediateOutputPath)</FunctionsOutputPath>
     </PropertyGroup>
 
@@ -126,23 +126,20 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     ============================================================
     -->
   <Target Name="_GenerateFunctionsAndCopyContentFiles">
+
+    <!-- Copy the application dll to the bin folder-->
+    <Move SourceFiles="$(PublishDir)\$(TargetFileName)"
+      DestinationFiles="$(PublishDir)\bin\$(TargetFileName)"
+      OverwriteReadOnlyFiles="true" />
+
+    <!-- Copy the application pdb to the bin folder-->
+    <Move SourceFiles="$(PublishDir)\$(TargetName).pdb"
+      DestinationFiles="$(PublishDir)\bin\$(TargetName).pdb"
+      OverwriteReadOnlyFiles="true" />
     
     <BuildFunctions
       TargetPath="$(FunctionsTargetPath)"
       OutputPath="$(FunctionsOutputPath)"/>
-
-    <ItemGroup>
-      <ContentFilesToMove Include="$(FunctionsOutputPath)\bin\**\*"
-                          Exclude="$(FunctionsOutputPath)\bin\**\*.dll;
-                                   $(FunctionsOutputPath)\bin\**\*.exe;
-                                   $(FunctionsOutputPath)\bin\**\*.pdb"/>
-    </ItemGroup>
-
-    <Move SourceFiles="@(ContentFilesToMove)"
-          DestinationFiles="$(FunctionsOutputPath)\%(RecursiveDir)%(Filename)%(Extension)"
-          OverwriteReadOnlyFiles="true"
-          />
-
   </Target>
 
 </Project>
