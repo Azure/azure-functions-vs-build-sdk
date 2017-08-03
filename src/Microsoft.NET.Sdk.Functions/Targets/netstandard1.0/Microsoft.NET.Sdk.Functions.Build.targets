@@ -20,9 +20,19 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     -->
   <Target Name="_GenerateFunctionsPostBuild"
           AfterTargets="Build">
-
+    
+    <!-- Copy the application dll to bin -->
+    <Move SourceFiles="$(TargetPath)"
+          DestinationFiles="$(TargetDir)\bin\$(TargetFileName)"
+          OverwriteReadOnlyFiles="true" />
+    
+    <!-- Copy the application dll pdb to bin -->
+    <Move SourceFiles="$(TargetDir)$(TargetName).pdb"
+          DestinationFiles="$(TargetDir)\bin\$(TargetName).pdb"
+          OverwriteReadOnlyFiles="true" />
+      
     <BuildFunctions
-      TargetPath="$(TargetPath)"
+      TargetPath="$(TargetDir)\bin\$(TargetFileName)"
       OutputPath="$(TargetDir)"/>
 
   </Target>
@@ -71,6 +81,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
         Include="@(_RidSpecificAssembliesByDestination->'%(OriginalItemSpec)')"
         Exclude="@(ReferenceCopyLocalPaths)"
        />
+      
     </ItemGroup>
 
     <!--
@@ -82,8 +93,17 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       <ReferenceCopyLocalPaths
         Include="@(ReferencePath)"
         Exclude="@(ReferenceCopyLocalPaths)"
-        DestinationSubDirectory="$(RefAssembliesFolderName)\"
-        />
+        DestinationSubDirectory="$(RefAssembliesFolderName)\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ReferenceCopyLocalPaths>
+        <DestinationSubDirectory>bin\%(ReferenceCopyLocalPaths.DestinationSubDirectory)</DestinationSubDirectory>
+      </ReferenceCopyLocalPaths>
+
+      <ResolvedAssembliesToPublish>
+        <DestinationSubPath>bin\%(ResolvedAssembliesToPublish.DestinationSubPath)</DestinationSubPath>
+      </ResolvedAssembliesToPublish>
     </ItemGroup>
 
   </Target>
