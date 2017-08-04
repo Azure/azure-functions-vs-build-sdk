@@ -217,6 +217,13 @@ namespace MakeFunctionJson
                     return "path";
                 }
             }
+            else if (attributeName == "ApiHubFileTrigger")
+            {
+                if (propertyName == "ConnectionStringSetting")
+                {
+                    return "connection";
+                }
+            }
 
             return propertyName.ToLowerFirstCharacter();
         }
