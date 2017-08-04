@@ -127,14 +127,14 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     -->
   <Target Name="_GenerateFunctionsAndCopyContentFiles">
 
-    <!-- Copy the application dll to the bin folder-->
-    <Move SourceFiles="$(PublishDir)\$(TargetFileName)"
-      DestinationFiles="$(PublishDir)\bin\$(TargetFileName)"
-      OverwriteReadOnlyFiles="true" />
-
-    <!-- Copy the application pdb to the bin folder-->
-    <Move SourceFiles="$(PublishDir)\$(TargetName).pdb"
-      DestinationFiles="$(PublishDir)\bin\$(TargetName).pdb"
+    <ItemGroup>
+      <FunctionsPublishAssemblies Include="$(PublishDir)\*.dll;
+                                           $(PublishDir)\*.pdb" />
+    </ItemGroup>
+    
+    <!-- Copy the additional assemblies to the bin folder-->
+    <Move SourceFiles="@(FunctionsPublishAssemblies)"
+      DestinationFiles="$(PublishDir)\bin\%(Filename)%(Extension)"
       OverwriteReadOnlyFiles="true" />
     
     <BuildFunctions
