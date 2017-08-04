@@ -21,20 +21,46 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   <Target Name="_GenerateFunctionsPostBuild"
           AfterTargets="Build">
     
-    <!-- Copy the application dll to bin -->
-    <Move SourceFiles="$(TargetPath)"
-          DestinationFiles="$(TargetDir)\bin\$(TargetFileName)"
-          OverwriteReadOnlyFiles="true" />
+    <!-- TODO: CopyFilesToOutputDirectory does not look at the outdir to copy the pdbs. hence copying it manually. -->
+    <!-- Copy the application pdb to the bin folder-->
+    <Move SourceFiles="$(TargetDir)\$(TargetName).pdb"
+      DestinationFiles="$(TargetDir)\bin\$(TargetName).pdb"
+      OverwriteReadOnlyFiles="true" 
+      Condition="Exists('$(TargetDir)\$(TargetName).pdb')" />
     
-    <!-- Copy the application dll pdb to bin -->
-    <Move SourceFiles="$(TargetDir)$(TargetName).pdb"
-          DestinationFiles="$(TargetDir)\bin\$(TargetName).pdb"
-          OverwriteReadOnlyFiles="true" />
-      
     <BuildFunctions
-      TargetPath="$(TargetDir)\bin\$(TargetFileName)"
+      TargetPath="$(TargetPath)"
       OutputPath="$(TargetDir)"/>
 
+  </Target>
+  
+    <!--
+    ============================================================
+                  _FunctionsBeforeCopyFilesToOutputDirectory
+
+    Sets the correct runtime folder for functions
+    ============================================================
+    -->
+  <Target Name="_FunctionsBeforeCopyFilesToOutputDirectory"
+          BeforeTargets="CopyFilesToOutputDirectory">
+      <PropertyGroup>
+        <BackUpOutDirPropertyValue>$(OutDir)</BackUpOutDirPropertyValue>
+        <OutDir>$(OutDir)bin\</OutDir>
+      </PropertyGroup>
+  </Target>
+  
+      <!--
+    ============================================================
+                  _FunctionsAfterCopyFilesToOutputDirectory
+
+    Resets the correct runtime folder for functions
+    ============================================================
+    -->
+  <Target Name="_FunctionsAfterCopyFilesToOutputDirectory"
+          AfterTargets="CopyFilesToOutputDirectory">
+      <PropertyGroup>
+        <OutDir>$(BackUpOutDirPropertyValue)</OutDir>
+      </PropertyGroup>
   </Target>
 
   <!--
@@ -96,6 +122,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
         DestinationSubDirectory="$(RefAssembliesFolderName)\"/>
     </ItemGroup>
 
+    <!-- Force the binaries to be copied to the bin folder.-->
     <ItemGroup>
       <ReferenceCopyLocalPaths>
         <DestinationSubDirectory>bin\%(ReferenceCopyLocalPaths.DestinationSubDirectory)</DestinationSubDirectory>
@@ -105,7 +132,12 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
         <DestinationSubPath>bin\%(ResolvedAssembliesToPublish.DestinationSubPath)</DestinationSubPath>
       </ResolvedAssembliesToPublish>
     </ItemGroup>
-
+  
+    <!-- Target path needs to point to the correct dll so that P2P references work. -->
+    <PropertyGroup>
+        <TargetPath>$(TargetDir)\bin\$(TargetFileName)</TargetPath>
+    </PropertyGroup>
+  
   </Target>
 
   <!-- 
