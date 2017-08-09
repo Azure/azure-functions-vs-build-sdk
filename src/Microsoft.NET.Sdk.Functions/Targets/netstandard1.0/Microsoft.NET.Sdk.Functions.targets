@@ -30,15 +30,6 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
   <!--
   ***********************************************************************************************
-  Import the PackageReferences target
-  ***********************************************************************************************
- -->
-  <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.References.targets"
-          Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.References.targets')" />
-
-
-  <!--
-  ***********************************************************************************************
   Import the Build target
   ***********************************************************************************************
  -->

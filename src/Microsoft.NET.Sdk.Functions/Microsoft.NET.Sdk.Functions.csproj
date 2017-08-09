@@ -36,7 +36,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" Version="15.1.1012" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.1012" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="[9.0.1]" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
     <PackageReference Include="System.ValueTuple" Version="4.3.0" />
   </ItemGroup>
@@ -44,8 +44,10 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>
-  
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-  </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[2.1.0-beta1]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[2.1.0-beta1]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[1.0.0-beta1]" />
+  </ItemGroup>
 </Project>
