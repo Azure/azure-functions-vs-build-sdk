@@ -97,6 +97,14 @@ namespace MakeFunctionJson
                     return settingName;
                 }
 
+                var providerType = attribute.GetValue<Type>("ProviderType");
+                if (providerType != null)
+                {
+                    return providerType;
+                }
+
+                // With neither settingName or providerType, no arguments were given and it should always be true
+
                 return true;
             }
 
@@ -112,6 +120,37 @@ namespace MakeFunctionJson
         public static Attribute GetDisabledAttribute(this MethodInfo method)
         {
             return method.GetCustomAttributes().FirstOrDefault(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
+        }
+
+        /// <summary>
+        /// A method has an unsupported attributes if it has any of the following:
+        ///     1) [Disabled("%settingName%")]
+        ///     2) [Disabled(typeof(TypeName))]
+        /// However this [Disabled("settingName")] is valid.
+        /// </summary>
+        /// <param name="method"></param>
+        /// <param name="error"></param>
+        /// <returns></returns>
+        public static bool HasUnsuportedAttributes(this MethodInfo method, out string error)
+        {
+            error = string.Empty;
+            var disabled = method.GetDisabled();
+            if (disabled is string disabledStr &&
+                disabledStr.StartsWith("%") &&
+                disabledStr.EndsWith("%"))
+            {
+                error = "'%' expressions are not supported for 'Disable'. Use 'Disable(\"settingName\") instead of 'Disable(\"%settingName%\")'";
+                return true;
+            }
+            else if (disabled is Type)
+            {
+                error = "the constructor 'DisableAttribute(Type)' is not supported.";
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

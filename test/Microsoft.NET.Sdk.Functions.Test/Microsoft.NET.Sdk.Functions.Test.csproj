@@ -226,6 +226,7 @@
   <ItemGroup>
     <Compile Include="DisableAttributeTests.cs" />
     <Compile Include="GeneralWebJobsAttributesTests.cs" />
+    <Compile Include="HasUnsupportedAttributesTests.cs" />
     <Compile Include="HttpTriggerTests.cs" />
     <Compile Include="IConnectionProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

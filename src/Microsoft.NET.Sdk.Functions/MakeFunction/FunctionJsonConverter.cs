@@ -116,7 +116,12 @@ namespace MakeFunctionJson
             {
                 foreach (var method in type.GetMethods())
                 {
-                    if (method.IsWebJobsSdkMethod())
+                    if (method.HasUnsuportedAttributes(out string error))
+                    {
+                        _log.LogError(error);
+                        return false;
+                    }
+                    else if (method.IsWebJobsSdkMethod())
                     {
                         var functionName = method.GetSdkFunctionName();
                         var artifactName = Path.Combine(functionName, "function.json");
