@@ -97,23 +97,6 @@ namespace MakeFunctionJson
                     return settingName;
                 }
 
-                // Although Microsoft.Azure.WebJobs.Script.ScriptHost.IsDisabled(..) implementation suggests this is not supported (yet), we'll write the full
-                // type name in which the IsDisabled method would be searched if it were implemented. Assuming this is how it would be implemented.
-                // This assumption is based on the discussion in https://github.com/Azure/azure-webjobs-sdk/issues/578
-                var providerType = attribute.GetValue<Type>("ProviderType");
-                if (providerType != null)
-                {
-                    // Test if this type actually has an IsDisabled method matching the signature.
-                    var isDisabledMethod = providerType.GetMethod("IsDisabled", new[] { typeof(MethodInfo) });
-                    if (isDisabledMethod == null || isDisabledMethod.ReturnType != typeof(bool))
-                    {
-                        // The developer defined a type that has no IsDisabled method.
-                        throw new MissingMethodException($"The IsDisabled method does not exist in given type {providerType.FullName} or does not have the correct signature");
-                    }
-                    return providerType.FullName;
-                }
-
-                // With neither settingName or providerType, no arguments were given and it should always be true
                 return true;
             }
 

@@ -14,14 +14,9 @@ namespace Microsoft.NET.Sdk.Functions.Test
         {
             var attributes = new Attribute[]
             {
-                new QueueAttribute(string.Empty),
                 new QueueTriggerAttribute(string.Empty),
-                new TableAttribute(string.Empty),
-                new BlobAttribute(string.Empty),
                 new BlobTriggerAttribute(string.Empty),
-                new EventHubAttribute(string.Empty),
                 new EventHubTriggerAttribute(string.Empty),
-                new ServiceBusAttribute(string.Empty),
                 new ServiceBusTriggerAttribute(string.Empty)
             };
 

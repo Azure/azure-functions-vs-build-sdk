@@ -49,7 +49,7 @@ namespace Microsoft.NET.Sdk.Functions.Test
         [InlineData(typeof(FunctionsClass1), "Run2", false)]
         [InlineData(typeof(FunctionsClass1), "Run3", true)]
         [InlineData(typeof(FunctionsClass1), "Run4", "function-disabled-setting")]
-        [InlineData(typeof(FunctionsClass1), "Run5", "Microsoft.NET.Sdk.Functions.Test.DisableAttributeTests+FunctionsClass1")]
+        //[InlineData(typeof(FunctionsClass1), "Run5", "Microsoft.NET.Sdk.Functions.Test.DisableAttributeTests+FunctionsClass1")]
         [InlineData(typeof(FunctionsClass2), "Run", true)]
         [InlineData(typeof(FunctionsClass3), "Run", false)]
         public void MethodsWithDisabledParametersShouldBeDisabled(Type type, string methodName, object expectedIsDisabled)
@@ -57,14 +57,6 @@ namespace Microsoft.NET.Sdk.Functions.Test
             var method = type.GetMethod(methodName);
             var funcJson = method.ToFunctionJson(string.Empty);
             funcJson.Disabled.Should().Be(expectedIsDisabled);
-        }
-
-        [Theory]
-        [InlineData(typeof(FunctionsClass4), "Run")]
-        public void MethodsWithBadProviderShouldThrowException(Type type, string methodName)
-        {
-            var method = type.GetMethod(methodName);
-            Assert.Throws<MissingMethodException>(() => method.ToFunctionJson(string.Empty));
         }
     }
 }
