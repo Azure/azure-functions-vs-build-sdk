@@ -23,10 +23,10 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     
     <!-- TODO: CopyFilesToOutputDirectory does not look at the outdir to copy the pdbs. hence copying it manually. -->
     <!-- Copy the application pdb to the bin folder-->
-    <Move SourceFiles="$(TargetDir)\$(TargetName).pdb"
-      DestinationFiles="$(TargetDir)\bin\$(TargetName).pdb"
+    <Move SourceFiles="$(TargetDir)$(TargetName).pdb"
+      DestinationFiles="$(TargetDir)bin\$(TargetName).pdb"
       OverwriteReadOnlyFiles="true" 
-      Condition="Exists('$(TargetDir)\$(TargetName).pdb')" />
+      Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
     
     <BuildFunctions
       TargetPath="$(TargetPath)"
@@ -135,7 +135,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   
     <!-- Target path needs to point to the correct dll so that P2P references work. -->
     <PropertyGroup>
-        <TargetPath>$(TargetDir)\bin\$(TargetFileName)</TargetPath>
+        <TargetPath>$(TargetDir)bin\$(TargetFileName)</TargetPath>
     </PropertyGroup>
   
   </Target>
@@ -163,7 +163,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     AfterTargets="Clean">
 
     <ItemGroup>
-      <_FilesInTargetDir Include="$(TargetDir)\**\*" />
+      <_FilesInTargetDir Include="$(TargetDir)**\*" />
     </ItemGroup>
 
     <Delete Files="@(_FilesInTargetDir)"

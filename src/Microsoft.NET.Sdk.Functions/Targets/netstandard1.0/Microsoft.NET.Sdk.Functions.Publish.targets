@@ -48,7 +48,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     
     <PropertyGroup>
       <PublishDir>$(FunctionsDir)</PublishDir>
-      <FunctionsTargetPath>$(PublishDir)\bin\$(TargetFileName)</FunctionsTargetPath>
+      <PublishDir Condition="!HasTrailingSlash('$(PublishDir)')">$(PublishDir)\</PublishDir>
+      <FunctionsTargetPath>$(PublishDir)bin\$(TargetFileName)</FunctionsTargetPath>
       <FunctionsOutputPath>$(FunctionsDir)</FunctionsOutputPath>
     </PropertyGroup>
     
@@ -66,7 +67,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
     <PropertyGroup>
       <PublishDir>$(PublishIntermediateOutputPath)</PublishDir>
-      <FunctionsTargetPath>$(PublishDir)\bin\$(TargetFileName)</FunctionsTargetPath>
+      <PublishDir Condition="!HasTrailingSlash('$(PublishDir)')">$(PublishDir)\</PublishDir>
+      <FunctionsTargetPath>$(PublishDir)bin\$(TargetFileName)</FunctionsTargetPath>
       <FunctionsOutputPath>$(PublishIntermediateOutputPath)</FunctionsOutputPath>
     </PropertyGroup>
 
@@ -128,13 +130,13 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   <Target Name="_GenerateFunctionsAndCopyContentFiles">
 
     <ItemGroup>
-      <FunctionsPublishAssemblies Include="$(PublishDir)\*.dll;
-                                           $(PublishDir)\*.pdb" />
+      <FunctionsPublishAssemblies Include="$(PublishDir)*.dll;
+                                           $(PublishDir)*.pdb" />
     </ItemGroup>
     
     <!-- Copy the additional assemblies to the bin folder-->
     <Move SourceFiles="@(FunctionsPublishAssemblies)"
-      DestinationFiles="$(PublishDir)\bin\%(Filename)%(Extension)"
+      DestinationFiles="$(PublishDir)bin\%(Filename)%(Extension)"
       OverwriteReadOnlyFiles="true" />
     
     <BuildFunctions
