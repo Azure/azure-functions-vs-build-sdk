@@ -150,6 +150,33 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     Condition="'$(RuntimeIdentifier)' == ''"
     DependsOnTargets="RunResolvePublishAssemblies"
   />
+  
+  
+    <!--
+    ============================================================
+                     _FunctionsGetTargetPathWithTargetPlatformMoniker
+
+     When building a referenced class library from the IDE, it just gathers the build outputs.
+    since IDE has already built the project.
+
+    In this case a seperate msbuild call to GetTargetPath is done from ResolveProjectReferences
+    in Microsoft.Common.CurrentVersion.targets. 
+    
+    Updating the TargetPath before this call will make sure that the right path will be returned.
+    
+    This fixed the p2p reference issues from non-Rosyln project system based class library.
+    ============================================================
+    -->
+  
+    <Target Name="_FunctionsGetTargetPathWithTargetPlatformMoniker" 
+            BeforeTargets="GetTargetPathWithTargetPlatformMoniker" >
+      
+      <PropertyGroup>
+          <TargetPath>$(TargetDir)bin\$(TargetFileName)</TargetPath>
+      </PropertyGroup>
+    
+  </Target>
+  
 
   <!--
     ============================================================
