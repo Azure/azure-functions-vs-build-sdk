@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
     <PackageVersion>1.0.2</PackageVersion>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
     <AssemblyOriginatorKeyFile>PublicKey.snk</AssemblyOriginatorKeyFile>
@@ -24,24 +24,28 @@
     <ItemGroup>
       <None Include="$(OutputPath)\net46\Newtonsoft.Json.dll">
         <Pack>true</Pack>
-        <PackagePath>tools\netstandard1.5\;tools\net46\</PackagePath>
+        <PackagePath>tools\netstandard2.0\;tools\net46\</PackagePath>
       </None>
       <None Include="$(OutputPath)\net46\System.ValueTuple.dll">
         <Pack>true</Pack>
-        <PackagePath>tools\netstandard1.5\;tools\net46\</PackagePath>
+        <PackagePath>tools\netstandard2.0\;tools\net46\</PackagePath>
       </None>
     </ItemGroup>
   </Target>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" Version="15.1.1012" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.1012" />
-    <PackageReference Include="Newtonsoft.Json" Version="[9.0.1]" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
     <PackageReference Include="System.ValueTuple" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Newtonsoft.Json" Version="[10.0.3]" />
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.0-beta2]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[3.0.0-beta2]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[3.0.0-beta2]" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>
 
