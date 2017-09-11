@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+    <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
+    <PackageVersion>1.0.3</PackageVersion>
+    <AssemblyOriginatorKeyFile>PublicKey.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>False</SignAssembly>
+    <DelaySign>True</DelaySign>
+    <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
+    <FunctionsOutputPath>..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\bin\Release</FunctionsOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\netstandard1.0\**\*">
+      <Pack>true</Pack>
+      <PackagePath>build\netstandard1.0\</PackagePath>
+    </Content>
+    <Content Include="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\Sdk\**\*">
+      <Pack>true</Pack>
+      <PackagePath>Sdk\</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="PackReferenceAssemblies" AfterTargets="Build">
+    <ItemGroup>
+      <None Include="$(FunctionsOutputPath)\net46\Newtonsoft.Json.dll">
+        <Pack>true</Pack>
+        <PackagePath>tools\net46\</PackagePath>
+      </None>
+      <None Include="$(FunctionsOutputPath)\net46\Newtonsoft.Json.dll">
+        <Pack>true</Pack>
+        <PackagePath>tools\netstandard2.0\</PackagePath>
+      </None>
+      <None Include="$(FunctionsOutputPath)\net46\Microsoft.NET.Sdk.Functions.MSBuild.dll">
+        <Pack>true</Pack>
+        <PackagePath>tools\net46\</PackagePath>
+      </None>
+      <None Include="$(FunctionsOutputPath)\netstandard1.5\Microsoft.NET.Sdk.Functions.MSBuild.dll">
+        <Pack>true</Pack>
+        <PackagePath>tools\netstandard2.0\</PackagePath>
+      </None>
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Newtonsoft.Json" Version="[10.0.3]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.0-beta2]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[3.0.0-beta2]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[3.0.0-beta2]" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
+    <PackageReference Include="Newtonsoft.Json" Version="[9.0.1]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[2.1.0-beta1]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[2.1.0-beta1]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[1.0.0-beta1]" />
+    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>
