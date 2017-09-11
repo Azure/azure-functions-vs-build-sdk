@@ -3,11 +3,11 @@ dotnet restore
 if errorlevel 1 GOTO ERROR
 
 REM build the functions sdk.
-dotnet build src\Microsoft.NET.Sdk.Functions --configuration=Release
+dotnet build src\Microsoft.NET.Sdk.Functions.MSBuild --configuration=Release
 if errorlevel 1 GOTO ERROR
 
 REM Pack the functions sdk
-dotnet pack src\Microsoft.NET.Sdk.Functions --configuration=Release
+dotnet pack pack\Microsoft.NET.Sdk.Functions --configuration=Release
 if errorlevel 1 GOTO ERROR
 
 REM Remove the functions sdk in the user profile so that the built sdk will be restored.

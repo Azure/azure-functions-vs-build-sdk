@@ -1,15 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.10
+VisualStudioVersion = 15.0.26908.3000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{14D6456E-2F9D-4483-A378-03701A6EB12D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9B6D0171-3FFD-4892-B407-B633CA4E6712}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NET.Sdk.Functions", "src\Microsoft.NET.Sdk.Functions\Microsoft.NET.Sdk.Functions.csproj", "{D1A5EEB2-A8D0-4E7A-8FBF-CFC5D2C23B96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NET.Sdk.Functions.MSBuild", "src\Microsoft.NET.Sdk.Functions.MSBuild\Microsoft.NET.Sdk.Functions.MSBuild.csproj", "{D1A5EEB2-A8D0-4E7A-8FBF-CFC5D2C23B96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.NET.Sdk.Functions.Test", "test\Microsoft.NET.Sdk.Functions.Test\Microsoft.NET.Sdk.Functions.Test.csproj", "{9D59910B-B90E-4BBE-BD26-C2CBF85D37E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.NET.Sdk.Functions.MSBuild.Tests", "test\Microsoft.NET.Sdk.Functions.MSBuild.Tests\Microsoft.NET.Sdk.Functions.MSBuild.Tests.csproj", "{9D59910B-B90E-4BBE-BD26-C2CBF85D37E1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pack", "pack", "{8D555953-A625-4C7F-93A7-C737644820AB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NET.Sdk.Functions", "pack\Microsoft.NET.Sdk.Functions\Microsoft.NET.Sdk.Functions.csproj", "{5DCBB929-5248-4701-82C9-88BB566E404C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +29,10 @@ Global
 		{9D59910B-B90E-4BBE-BD26-C2CBF85D37E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D59910B-B90E-4BBE-BD26-C2CBF85D37E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D59910B-B90E-4BBE-BD26-C2CBF85D37E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DCBB929-5248-4701-82C9-88BB566E404C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DCBB929-5248-4701-82C9-88BB566E404C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DCBB929-5248-4701-82C9-88BB566E404C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DCBB929-5248-4701-82C9-88BB566E404C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,5 +40,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D1A5EEB2-A8D0-4E7A-8FBF-CFC5D2C23B96} = {14D6456E-2F9D-4483-A378-03701A6EB12D}
 		{9D59910B-B90E-4BBE-BD26-C2CBF85D37E1} = {9B6D0171-3FFD-4892-B407-B633CA4E6712}
+		{5DCBB929-5248-4701-82C9-88BB566E404C} = {8D555953-A625-4C7F-93A7-C737644820AB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DA731A15-774F-46C2-B8DF-298F828DCC2A}
 	EndGlobalSection
 EndGlobal

@@ -241,9 +241,9 @@
     <None Include="PublicKey.snk" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.NET.Sdk.Functions\Microsoft.NET.Sdk.Functions.csproj">
+    <ProjectReference Include="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Microsoft.NET.Sdk.Functions.MSBuild.csproj">
       <Project>{d1a5eeb2-a8d0-4e7a-8fbf-cfc5d2c23b96}</Project>
-      <Name>Microsoft.NET.Sdk.Functions</Name>
+      <Name>Microsoft.NET.Sdk.Functions.MSBuild</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
