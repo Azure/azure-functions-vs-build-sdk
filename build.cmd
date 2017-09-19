@@ -34,14 +34,14 @@ REM Publish the sample functon app using DeployOnBuild.
 msbuild sample\FunctionApp\FunctionApp\FunctionApp.csproj /p:DeployOnBuild=true /p:PublishUrl="bin\Release\deployOnBuildOutput" /p:configuration=Release
 if errorlevel 1 GOTO ERROR
 
+dotnet test sample\FunctionApp\UnitTestProject2\UnitTestProject2.csproj --configuration=Release --no-build
+if errorlevel 1 GOTO ERROR
+
+dotnet test sample\FunctionApp\XUnitTestProject1\XUnitTestProject1.csproj --configuration=Release --no-build
+if errorlevel 1 GOTO ERROR
+
 REM run tests on unit test projects that references the functions project.
-mstest /testcontainer:sample\FunctionApp\UnitTestProject1\bin\Release\UnitTestProject1.dll 
-if errorlevel 1 GOTO ERROR
-
-dotnet test sample\FunctionApp\UnitTestProject2\UnitTestProject2.csproj
-if errorlevel 1 GOTO ERROR
-
-dotnet test sample\FunctionApp\XUnitTestProject1\XUnitTestProject1.csproj
+dotnet test sample\FunctionApp\UnitTestProject1\UnitTestProject1.csproj --configuration=Release --no-build
 if errorlevel 1 GOTO ERROR
 
 :ERROR
