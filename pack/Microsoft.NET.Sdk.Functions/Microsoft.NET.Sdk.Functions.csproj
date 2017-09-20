@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
-    <PackageVersion>1.0.3</PackageVersion>
+    <PackageVersion>1.0.4</PackageVersion>
     <AssemblyOriginatorKeyFile>PublicKey.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>False</SignAssembly>
-    <DelaySign>True</DelaySign>
+    <SignAssembly>false</SignAssembly>
+    <DelaySign>true</DelaySign>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
     <FunctionsOutputPath>..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\bin\Release</FunctionsOutputPath>
   </PropertyGroup>
@@ -45,9 +45,9 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Newtonsoft.Json" Version="[10.0.3]" />
-    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.0-beta2]" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[3.0.0-beta2]" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[3.0.0-beta2]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.0-beta3]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[3.0.0-beta3]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[3.0.0-beta3]" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
