@@ -39,7 +39,11 @@
   <ItemGroup>
     <PackageReference Include="MSTest.TestAdapter" Version="1.1.18" />
     <PackageReference Include="MSTest.TestFramework" Version="1.1.18" />
-    <PackageReference Include="microsoft.aspnet.webapi.core" Version="5.2.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="[9.0.1]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[2.1.0-beta1]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[2.1.0-beta1]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[1.0.0-beta1]" />
+    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +55,11 @@
       <Project>{0db6af7a-dd09-4412-ad46-ce6178d01f51}</Project>
       <Name>FunctionApp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
