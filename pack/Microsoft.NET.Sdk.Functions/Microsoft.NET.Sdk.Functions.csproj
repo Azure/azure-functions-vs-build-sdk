@@ -52,9 +52,9 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
     <PackageReference Include="Newtonsoft.Json" Version="[9.0.1]" />
-    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[2.1.0-beta3]" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[2.1.0-beta3]" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[1.0.0-beta3]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[2.1.0-beta4]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[2.1.0-beta4]" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[1.0.0-beta4]" />
     <PackageReference Include="System.ValueTuple" Version="4.3.0" />
   </ItemGroup>
 
