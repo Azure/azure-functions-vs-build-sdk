@@ -28,11 +28,12 @@ namespace MakeFunctionJson
              "QueueTriggerAttribute",
              "EventHubTriggerAttribute",
              "TimerTriggerAttribute",
-             "ServiceBusTriggerAttribute"
+             "ServiceBusTriggerAttribute",
+             "CosmosDBTriggerAttribute"
          };
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="attribute"></param>
         /// <returns></returns>
@@ -115,7 +116,7 @@ namespace MakeFunctionJson
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="attribute"></param>
@@ -135,7 +136,7 @@ namespace MakeFunctionJson
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="attribute"></param>
         /// <param name="propertyName"></param>
