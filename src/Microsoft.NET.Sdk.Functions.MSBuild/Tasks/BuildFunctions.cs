@@ -1,5 +1,6 @@
-﻿using System.IO;
-using MakeFunctionJson;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -9,6 +10,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
     [LoadInSeparateAppDomain]
     public class BuildFunctions : AppDomainIsolatedTask
 #else
+
     public class BuildFunctions : Task
 #endif
     {
@@ -29,8 +31,50 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
                 File.WriteAllText(hostJsonPath, hostJsonString);
             }
 
-            return FunctionJsonConvert.TryConvert(TargetPath, OutputPath, Log);
+            Assembly taskAssembly = typeof(BuildFunctions).GetTypeInfo().Assembly;
+#if NET46
+            var info = new ProcessStartInfo
+            {
+                UseShellExecute = false,
+                CreateNoWindow = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                WorkingDirectory = Path.GetDirectoryName(taskAssembly.Location),
+                FileName = Path.Combine(Path.GetDirectoryName(taskAssembly.Location), "Microsoft.NET.Sdk.Functions.Console.exe"),
+                Arguments = $"\"{TargetPath}\" \"{OutputPath}\""
+            };
+#else
+            var info = new ProcessStartInfo
+            {
+                UseShellExecute = false,
+                CreateNoWindow = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                WorkingDirectory = Path.GetDirectoryName(taskAssembly.Location),
+                FileName = DotNetMuxer.MuxerPathOrDefault(),
+                Arguments = $"Microsoft.NET.Sdk.Functions.Console.dll \"{TargetPath}\" \"{OutputPath}\""
+            };
+#endif
+            using (var process = new Process { StartInfo = info })
+            {
+                process.Start();
+                var output = process.StandardOutput.ReadToEnd();
+                var error = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+
+                Log.LogWarning(output);
+
+                if (process.ExitCode != 0 || !string.IsNullOrEmpty(error))
+                {
+                    Log.LogError(error);
+                    Log.LogError("Metadata generation failed.");
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
         }
     }
 }
-

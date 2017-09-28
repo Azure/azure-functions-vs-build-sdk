@@ -11,10 +11,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.NET.Sdk.Functions.Test</RootNamespace>
     <AssemblyName>Microsoft.NET.Sdk.Functions.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -130,8 +131,8 @@
     <Reference Include="NCrontab, Version=3.2.20120.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ncrontab.3.3.0\lib\net35\NCrontab.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NSubstitute, Version=2.0.3.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NSubstitute.2.0.3\lib\net45\NSubstitute.dll</HintPath>
@@ -241,6 +242,10 @@
     <None Include="PublicKey.snk" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Microsoft.NET.Sdk.Functions.Console\Microsoft.NET.Sdk.Functions.Console.csproj">
+      <Project>{6cede940-9f0a-4b2a-97d4-d1eeee42af35}</Project>
+      <Name>Microsoft.NET.Sdk.Functions.Console</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Microsoft.NET.Sdk.Functions.MSBuild.csproj">
       <Project>{d1a5eeb2-a8d0-4e7a-8fbf-cfc5d2c23b96}</Project>
       <Name>Microsoft.NET.Sdk.Functions.MSBuild</Name>

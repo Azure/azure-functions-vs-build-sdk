@@ -6,6 +6,10 @@ REM build the functions sdk.
 dotnet build src\Microsoft.NET.Sdk.Functions.MSBuild --configuration=Release
 if errorlevel 1 GOTO ERROR
 
+REM build the functions sdk.
+dotnet build src\Microsoft.NET.Sdk.Functions.Console --configuration=Release
+if errorlevel 1 GOTO ERROR
+
 REM Pack the functions sdk
 dotnet pack pack\Microsoft.NET.Sdk.Functions --configuration=Release
 if errorlevel 1 GOTO ERROR
