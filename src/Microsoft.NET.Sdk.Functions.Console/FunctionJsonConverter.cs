@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Build.Utilities;
 using Newtonsoft.Json;
 
 namespace MakeFunctionJson
@@ -12,16 +11,16 @@ namespace MakeFunctionJson
     {
         private string _assemblyPath;
         private string _outputPath;
-        private readonly FakeLogger _log;
         private readonly IDictionary<string, MethodInfo> _functionNamesSet;
         private readonly BuildArtifactsLog _buildArtifactsLog;
+
         private static readonly IEnumerable<string> _functionsArtifacts = new[]
         {
             "local.settings.json",
             "host.json"
         };
 
-        internal FunctionJsonConverter(string assemblyPath, string outputPath, TaskLoggingHelper log)
+        internal FunctionJsonConverter(string assemblyPath, string outputPath)
         {
             if (string.IsNullOrEmpty(assemblyPath))
             {
@@ -39,9 +38,8 @@ namespace MakeFunctionJson
             {
                 _outputPath = Path.Combine(Directory.GetCurrentDirectory(), _outputPath);
             }
-            _log = new FakeLogger(log);
             _functionNamesSet = new Dictionary<string, MethodInfo>(StringComparer.OrdinalIgnoreCase);
-            _buildArtifactsLog = new BuildArtifactsLog(_outputPath, _log);
+            _buildArtifactsLog = new BuildArtifactsLog(_outputPath);
         }
 
         /// <summary>
@@ -52,7 +50,7 @@ namespace MakeFunctionJson
         /// |> Convert that to function.json
         /// |> Create folder \{functionName}\
         /// |> Write \{functionName}\function.json
-        /// 
+        ///
         /// This means that every <see cref="MethodInfo"/> will be N binding objects on <see cref="FunctionJsonSchema"/>
         /// Where N == total number of SDK attributes on the method parameters.
         /// </summary>
@@ -63,7 +61,7 @@ namespace MakeFunctionJson
                 this._functionNamesSet.Clear();
                 if (!_buildArtifactsLog.TryClearBuildArtifactsLog())
                 {
-                    _log.LogError("Unable to clean build artifacts file.");
+                    Logger.LogError("Unable to clean build artifacts file.");
                     return false;
                 }
 
@@ -74,7 +72,7 @@ namespace MakeFunctionJson
             }
             catch (Exception e)
             {
-                _log.LogErrorFromException(e);
+                Logger.LogErrorFromException(e);
                 return false;
             }
         }
@@ -97,8 +95,8 @@ namespace MakeFunctionJson
                     }
                     catch (Exception e)
                     {
-                        _log.LogWarning($"Unable to copy '{sourceFile}' to '{targetFile}'");
-                        _log.LogWarningFromException(e);
+                        Logger.LogWarning($"Unable to copy '{sourceFile}' to '{targetFile}'");
+                        Logger.LogWarningFromException(e);
                     }
                 }
             }
@@ -106,11 +104,8 @@ namespace MakeFunctionJson
 
         private bool TryGenerateFunctionJsons()
         {
-#if NET46
             var assembly = Assembly.LoadFrom(_assemblyPath);
-#else
-            var assembly = System.Runtime.Loader.AssemblyLoadContext.Default.LoadFromAssemblyPath(_assemblyPath);
-#endif
+
             var relativeAssemblyPath = PathUtility.MakeRelativePath(Path.Combine(_outputPath, "dummyFunctionName"), assembly.Location);
             foreach (var type in assembly.GetExportedTypes())
             {
@@ -118,7 +113,7 @@ namespace MakeFunctionJson
                 {
                     if (method.HasUnsuportedAttributes(out string error))
                     {
-                        _log.LogError(error);
+                        Logger.LogError(error);
                         return false;
                     }
                     else if (method.IsWebJobsSdkMethod())
@@ -144,11 +139,11 @@ namespace MakeFunctionJson
                     }
                     else if (method.HasFunctionNameAttribute())
                     {
-                        _log.LogWarning($"Method {method.Name} is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.");
+                        Logger.LogWarning($"Method {method.Name} is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.");
                     }
                     else if (method.HasWebJobSdkAttribute())
                     {
-                        _log.LogWarning($"Method {method.Name} is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.");
+                        Logger.LogWarning($"Method {method.Name} is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.");
                     }
                 }
             }
@@ -163,7 +158,7 @@ namespace MakeFunctionJson
                 if (this._functionNamesSet.ContainsKey(functionName))
                 {
                     var dupMethod = this._functionNamesSet[functionName];
-                    this._log.LogError($"Function {method.DeclaringType.FullName}.{method.Name} and {dupMethod.DeclaringType.FullName}.{dupMethod.Name} have the same value for FunctionNameAttribute. Each function must have a unique name.");
+                    Logger.LogError($"Function {method.DeclaringType.FullName}.{method.Name} and {dupMethod.DeclaringType.FullName}.{dupMethod.Name} have the same value for FunctionNameAttribute. Each function must have a unique name.");
                     return false;
                 }
                 else
@@ -195,7 +190,7 @@ namespace MakeFunctionJson
 
                     if (string.IsNullOrWhiteSpace(azureWebJobsStorage) && !isHttpTrigger)
                     {
-                        _log.LogWarning($"Function [{functionName}]: Missing value for AzureWebJobsStorage in {settingsFileName}. This is required for all triggers other than HTTP.");
+                        Logger.LogWarning($"Function [{functionName}]: Missing value for AzureWebJobsStorage in {settingsFileName}. This is required for all triggers other than HTTP.");
                     }
 
                     foreach (var binding in functionJson.Bindings)
@@ -207,7 +202,7 @@ namespace MakeFunctionJson
                                 var appSettingName = token.Value.ToString();
                                 if (!values.Any(v => v.Key.Equals(appSettingName, StringComparison.OrdinalIgnoreCase)))
                                 {
-                                    _log.LogWarning($"Function [{functionName}]: cannot find value named '{appSettingName}' in {settingsFileName} that matches '{token.Key}' property set on '{binding["type"]?.ToString()}'");
+                                    Logger.LogWarning($"Function [{functionName}]: cannot find value named '{appSettingName}' in {settingsFileName} that matches '{token.Key}' property set on '{binding["type"]?.ToString()}'");
                                 }
                             }
                         }
@@ -216,7 +211,7 @@ namespace MakeFunctionJson
             }
             catch (Exception e)
             {
-                _log.LogWarningFromException(e);
+                Logger.LogWarningFromException(e);
             }
             // We only return false on an error, not a warning.
             return true;
@@ -238,7 +233,7 @@ namespace MakeFunctionJson
                     }
                     catch
                     {
-                        _log.LogWarning($"Unable to clean directory {directory}.");
+                        Logger.LogWarning($"Unable to clean directory {directory}.");
                     }
                 });
         }

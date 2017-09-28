@@ -8,12 +8,10 @@ namespace MakeFunctionJson
     {
         private const string buildArtifactsLogName = "functionsSdk.out";
         private readonly HashSet<string> _artifacts;
-        private readonly FakeLogger _logger;
         private readonly string _logPath;
 
-        public BuildArtifactsLog(string outputPath, FakeLogger logger)
+        public BuildArtifactsLog(string outputPath)
         {
-            _logger = logger;
             _artifacts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             _logPath = Path.Combine(outputPath, buildArtifactsLogName);
             try
@@ -28,8 +26,8 @@ namespace MakeFunctionJson
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Unable to read file {_logPath}");
-                _logger.LogWarningFromException(e);
+                Logger.LogWarning($"Unable to read file {_logPath}");
+                Logger.LogWarningFromException(e);
             }
         }
 
@@ -59,13 +57,13 @@ namespace MakeFunctionJson
             {
                 if (isError)
                 {
-                    _logger.LogError(message);
-                    _logger.LogErrorFromException(e);
+                    Logger.LogError(message);
+                    Logger.LogErrorFromException(e);
                 }
                 else
                 {
-                    _logger.LogWarning(message);
-                    _logger.LogWarningFromException(e);
+                    Logger.LogWarning(message);
+                    Logger.LogWarningFromException(e);
                 }
                 return !isError;
             }
