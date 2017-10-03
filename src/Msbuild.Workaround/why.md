@@ -1,1 +1,0 @@
-﻿I need this project to convince msbuild\nuget\dotnet\whatevernet to include netstandard.dll in the output of netstandard2.0 for the Microsoft.NET.Sdk.Functions.Console so that it can be packed so that the full desktop msbuild can find it to load it. If this doesn't make any sense, that's okay. It doesn't make any sense to me either, but it works, so I'm shipping it.

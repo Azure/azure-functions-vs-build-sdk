@@ -26,11 +26,13 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <Move SourceFiles="$(TargetDir)$(TargetName).pdb"
       DestinationFiles="$(TargetDir)bin\$(TargetName).pdb"
       OverwriteReadOnlyFiles="true" 
-      Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+      Condition="Exists('$(TargetDir)$(TargetName).pdb')"
+      ContinueOnError="true"/>
     
-    <BuildFunctions
+    <GenerateFunctions
       TargetPath="$(TargetPath)"
-      OutputPath="$(TargetDir)"/>
+      OutputPath="$(TargetDir)"
+      UseNETCoreGenerator="$(UseNETCoreGenerator)" />
 
   </Target>
   

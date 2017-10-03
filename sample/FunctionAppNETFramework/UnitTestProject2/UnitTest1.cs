@@ -1,17 +1,17 @@
-using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Hosting;
-using FunctionApp;
-using Xunit;
+using FunctionAppNETFramework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace XUnitTestProject1
+namespace UnitTestProject2
 {
-    public class NetProjectSystem_XunitTest
+    [TestClass]
+    public class UnitTest1
     {
-        [Fact]
-        public async Task XUnitTest()
+        [TestMethod]
+        public async Task NewProjectSystem_MsTest_NETFx()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://functions.azurewebsites.net?name=test")
             {
@@ -19,18 +19,17 @@ namespace XUnitTestProject1
                 Properties = { { HttpPropertyKeys.HttpConfigurationKey, new HttpConfiguration() } }
             };
 
-            var response = await HttpTriggerCSharp.Run(requestMessage, null);
+            var response = await HttpTriggerNETFramework.Run(requestMessage , null);
 
             string responseString = await response.Content.ReadAsStringAsync();
-            Assert.True(response.IsSuccessStatusCode);
-            Assert.Equal("\"Hello test\"", responseString);
+            Assert.IsTrue(response.IsSuccessStatusCode);
+            Assert.AreEqual("\"Hello test\"", responseString);
         }
 
-
-        [Fact]
-        public void NewProjectSystem_XUnit_Empty()
+        [TestMethod]
+        public void NewProjectSystem_MsTest_Empty()
         {
-            Assert.True(true);
+            Assert.IsTrue(true);
         }
     }
 }
