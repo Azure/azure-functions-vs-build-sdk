@@ -3,14 +3,13 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
-    <PackageVersion>1.0.5</PackageVersion>
+    <PackageVersion>1.0.6</PackageVersion>
     <AssemblyOriginatorKeyFile>PublicKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>false</SignAssembly>
     <DelaySign>true</DelaySign>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
     <FunctionsBuildTaskOutputPath>..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\bin\Release</FunctionsBuildTaskOutputPath>
-    <FunctionsBuildToolOutputPath>..\..\src\Microsoft.NET.Sdk.Functions.Console\bin\Release</FunctionsBuildToolOutputPath>
-    <FunctionsBuildToolPublishOutputPath>..\..\src\Microsoft.NET.Sdk.Functions.Console\bin\publish</FunctionsBuildToolPublishOutputPath>
+    <FunctionsGeneratorOutputPath>..\..\src\Microsoft.NET.Sdk.Functions.Generator\bin\Release</FunctionsGeneratorOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,14 +25,7 @@
 
   <Target Name="PackReferenceAssemblies" AfterTargets="Build">
     <ItemGroup>
-      <None Include="$(FunctionsBuildTaskOutputPath)\net46\Newtonsoft.Json.dll">
-        <Pack>true</Pack>
-        <PackagePath>tools\net46\</PackagePath>
-      </None>
-      <None Include="$(FunctionsBuildToolPublishOutputPath)\Newtonsoft.Json.dll">
-        <Pack>true</Pack>
-        <PackagePath>tools\netstandard2.0\</PackagePath>
-      </None>
+      <!-- MSBuild task assemblies -->
       <None Include="$(FunctionsBuildTaskOutputPath)\net46\Microsoft.NET.Sdk.Functions.MSBuild.dll">
         <Pack>true</Pack>
         <PackagePath>tools\net46\</PackagePath>
@@ -42,24 +34,30 @@
         <Pack>true</Pack>
         <PackagePath>tools\netstandard2.0\</PackagePath>
       </None>
+      
+      <!-- Generator and dependent assemblies-->
+      <None Include="$(FunctionsGeneratorOutputPath)\net461\Newtonsoft.Json.dll">
+        <Pack>true</Pack>
+        <PackagePath>tools\net46\</PackagePath>
+      </None>
+      <None Include="$(FunctionsGeneratorOutputPath)\net461\Microsoft.NET.Sdk.Functions.Generator.exe">
+        <Pack>true</Pack>
+        <PackagePath>tools\net46\</PackagePath>
+      </None>
+      <None Include="$(FunctionsGeneratorOutputPath)\net461\netstandard.dll">
+        <Pack>true</Pack>
+        <PackagePath>tools\net46\</PackagePath>
+      </None>
 
-      <None Include="$(FunctionsBuildToolOutputPath)\net461\Microsoft.NET.Sdk.Functions.Console.exe">
-        <Pack>true</Pack>
-        <PackagePath>tools\net46\</PackagePath>
-      </None>
-      <None Include="$(FunctionsBuildToolOutputPath)\net461\Newtonsoft.Json.dll">
-        <Pack>true</Pack>
-        <PackagePath>tools\net46\</PackagePath>
-      </None>
-      <None Include="$(FunctionsBuildToolOutputPath)\net461\netstandard.dll">
-        <Pack>true</Pack>
-        <PackagePath>tools\net46\</PackagePath>
-      </None>
-      <None Include="$(FunctionsBuildToolOutputPath)\netcoreapp2.0\Microsoft.NET.Sdk.Functions.Console.dll">
+      <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.0\Newtonsoft.Json.dll">
         <Pack>true</Pack>
         <PackagePath>tools\netstandard2.0\</PackagePath>
       </None>
-      <None Include="$(FunctionsBuildToolOutputPath)\netcoreapp2.0\Microsoft.NET.Sdk.Functions.Console.runtimeconfig.json">
+      <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.0\Microsoft.NET.Sdk.Functions.Generator.dll">
+        <Pack>true</Pack>
+        <PackagePath>tools\netstandard2.0\</PackagePath>
+      </None>
+      <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.0\Microsoft.NET.Sdk.Functions.Generator.runtimeconfig.json">
         <Pack>true</Pack>
         <PackagePath>tools\netstandard2.0\</PackagePath>
       </None>

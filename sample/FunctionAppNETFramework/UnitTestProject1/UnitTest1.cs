@@ -1,17 +1,17 @@
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Hosting;
-using FunctionApp;
+using FunctionAppNETFramework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace UnitTestProject2
+namespace UnitTestProject1
 {
     [TestClass]
     public class UnitTest1
     {
         [TestMethod]
-        public async Task NewProjectSystem_MsTest()
+        public async Task ClassicUnitTestProject_Test_NETFx()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://functions.azurewebsites.net?name=test")
             {
@@ -19,7 +19,7 @@ namespace UnitTestProject2
                 Properties = { { HttpPropertyKeys.HttpConfigurationKey, new HttpConfiguration() } }
             };
 
-            var response = await HttpTriggerCSharp.Run(requestMessage , null);
+            var response = await HttpTriggerNETFramework.Run(requestMessage, null);
 
             string responseString = await response.Content.ReadAsStringAsync();
             Assert.IsTrue(response.IsSuccessStatusCode);
@@ -27,7 +27,7 @@ namespace UnitTestProject2
         }
 
         [TestMethod]
-        public void NewProjectSystem_MsTest_Empty()
+        public void ClassicUnitTestProject_Empty()
         {
             Assert.IsTrue(true);
         }

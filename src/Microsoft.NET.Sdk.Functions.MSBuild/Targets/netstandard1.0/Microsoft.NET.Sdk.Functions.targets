@@ -21,7 +21,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <UsingTask TaskName="BuildFunctions"
+  <UsingTask TaskName="GenerateFunctions"
              AssemblyFile="$(_FunctionsTaskAssemblyFullPath)"/>
 
   <ItemGroup>

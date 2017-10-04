@@ -138,10 +138,12 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <Move SourceFiles="@(FunctionsPublishAssemblies)"
       DestinationFiles="$(PublishDir)bin\%(Filename)%(Extension)"
       OverwriteReadOnlyFiles="true" />
-    
-    <BuildFunctions
+
+    <GenerateFunctions
       TargetPath="$(FunctionsTargetPath)"
-      OutputPath="$(FunctionsOutputPath)"/>
+      OutputPath="$(FunctionsOutputPath)"
+      UseNETCoreGenerator="$(UseNETCoreGenerator)"
+      UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"/>
   </Target>
 
 </Project>

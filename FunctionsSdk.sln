@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.26927.3000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{14D6456E-2F9D-4483-A378-03701A6EB12D}"
 EndProject
@@ -9,15 +9,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9B6D0171-3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NET.Sdk.Functions.MSBuild", "src\Microsoft.NET.Sdk.Functions.MSBuild\Microsoft.NET.Sdk.Functions.MSBuild.csproj", "{D1A5EEB2-A8D0-4E7A-8FBF-CFC5D2C23B96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.NET.Sdk.Functions.MSBuild.Tests", "test\Microsoft.NET.Sdk.Functions.MSBuild.Tests\Microsoft.NET.Sdk.Functions.MSBuild.Tests.csproj", "{9D59910B-B90E-4BBE-BD26-C2CBF85D37E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.NET.Sdk.Functions.Generator.Tests", "test\Microsoft.NET.Sdk.Functions.Generator.Tests\Microsoft.NET.Sdk.Functions.Generator.Tests.csproj", "{9D59910B-B90E-4BBE-BD26-C2CBF85D37E1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pack", "pack", "{8D555953-A625-4C7F-93A7-C737644820AB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NET.Sdk.Functions", "pack\Microsoft.NET.Sdk.Functions\Microsoft.NET.Sdk.Functions.csproj", "{5DCBB929-5248-4701-82C9-88BB566E404C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NET.Sdk.Functions.Console", "src\Microsoft.NET.Sdk.Functions.Console\Microsoft.NET.Sdk.Functions.Console.csproj", "{6CEDE940-9F0A-4B2A-97D4-D1EEEE42AF35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NET.Sdk.Functions.Generator", "src\Microsoft.NET.Sdk.Functions.Generator\Microsoft.NET.Sdk.Functions.Generator.csproj", "{6CEDE940-9F0A-4B2A-97D4-D1EEEE42AF35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Msbuild.Workaround", "src\Msbuild.Workaround\Msbuild.Workaround.csproj", "{14DF7D60-3AE6-4A5C-A2FF-BE49720DDFEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NET.Sdk.Functions.NETStandard", "src\Microsoft.NET.Sdk.Functions.NETStandard\Microsoft.NET.Sdk.Functions.NETStandard.csproj", "{14DF7D60-3AE6-4A5C-A2FF-BE49720DDFEC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{03DEE129-17B6-4CE0-B2D8-5B648D5BEE64}"
+	ProjectSection(SolutionItems) = preProject
+		build.cmd = build.cmd
+		devbuild.cmd = devbuild.cmd
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

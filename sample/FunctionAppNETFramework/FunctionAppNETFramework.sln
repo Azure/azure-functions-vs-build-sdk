@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.3
+VisualStudioVersion = 15.0.26927.3000
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionApp", "FunctionApp\FunctionApp.csproj", "{0DB6AF7A-DD09-4412-AD46-CE6178D01F51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionAppNETFramework", "FunctionAppNETFramework\FunctionAppNETFramework.csproj", "{0DB6AF7A-DD09-4412-AD46-CE6178D01F51}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{B55C7FC7-6F6E-46AC-9E30-875461F5AD9D}"
 EndProject
@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XUnitTestProject1", "XUnitT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsRefClassicClassLib", "FunctionsRefClassicClassLib\FunctionsRefClassicClassLib.csproj", "{18AC1ECC-D277-4653-A027-335EA7F3BA40}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsRefSdkClassLib", "FunctionsRefSdkClassLib\FunctionsRefSdkClassLib.csproj", "{3745AA4F-DD9E-4768-BCFE-4879A94AD1C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsRefSdkClassLib", "FunctionsRefSdkClassLib\FunctionsRefSdkClassLib.csproj", "{3745AA4F-DD9E-4768-BCFE-4879A94AD1C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

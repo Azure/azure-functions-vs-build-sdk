@@ -51,9 +51,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FunctionApp\FunctionApp.csproj">
+    <ProjectReference Include="..\FunctionAppNETFramework\FunctionAppNETFramework.csproj">
       <Project>{0db6af7a-dd09-4412-ad46-ce6178d01f51}</Project>
-      <Name>FunctionApp</Name>
+      <Name>FunctionAppNETFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

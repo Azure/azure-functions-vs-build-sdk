@@ -6,11 +6,11 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 
-namespace FunctionApp
+namespace FunctionAppNETFramework
 {
-    public static class HttpTriggerCSharp
+    public static class HttpTriggerNETFramework
     {
-        [FunctionName("HttpTriggerCSharp")]
+        [FunctionName("HttpTriggerNETFramework")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req, TraceWriter log)
         {
             //log.Info("C# HTTP trigger function processed a request.");
