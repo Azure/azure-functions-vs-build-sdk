@@ -142,7 +142,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <GenerateFunctions
       TargetPath="$(FunctionsTargetPath)"
       OutputPath="$(FunctionsOutputPath)"
-      UseNETCoreGenerator="$(UseNETCoreGenerator)"/>
+      UseNETCoreGenerator="$(UseNETCoreGenerator)"
+      UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"/>
   </Target>
 
 </Project>

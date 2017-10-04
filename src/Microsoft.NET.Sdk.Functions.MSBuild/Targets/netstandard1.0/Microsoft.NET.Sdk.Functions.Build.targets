@@ -32,7 +32,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <GenerateFunctions
       TargetPath="$(TargetPath)"
       OutputPath="$(TargetDir)"
-      UseNETCoreGenerator="$(UseNETCoreGenerator)" />
+      UseNETCoreGenerator="$(UseNETCoreGenerator)"
+      UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"/>
 
   </Target>
   

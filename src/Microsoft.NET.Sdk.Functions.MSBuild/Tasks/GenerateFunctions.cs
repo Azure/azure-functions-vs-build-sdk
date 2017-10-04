@@ -25,6 +25,8 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
         public bool UseNETCoreGenerator { get; set; }
 
+        public bool UseNETFrameworkGenerator { get; set; }
+
         public bool GenerateHostJson { get; set; }
 
         public override bool Execute()
@@ -47,7 +49,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
             }
 #else
             processStartInfo = GetProcessStartInfo(baseDirectory, isCore: true);
-            if (!UseNETCoreGenerator)
+            if (UseNETFrameworkGenerator)
             {
                 processStartInfo = GetProcessStartInfo(baseDirectory, isCore: false);
             }
