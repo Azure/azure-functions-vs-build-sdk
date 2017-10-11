@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace MakeFunctionJson
 {
@@ -18,12 +19,9 @@ namespace MakeFunctionJson
             if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
 
             Uri relativeUri = fromUri.MakeRelativeUri(toUri);
-            String relativePath = Uri.UnescapeDataString(relativeUri.ToString());
-
-            if (toUri.Scheme.Equals("file", StringComparison.OrdinalIgnoreCase))
-            {
-                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            }
+            // This will generate a path using / rather than \.
+            // This is okay on both Windows and Unix
+            var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
             return relativePath;
         }
