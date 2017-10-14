@@ -1,19 +1,17 @@
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
+﻿using System;
 using FunctionAppNETStandard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using UnitTestProject2;
 
-namespace UnitTestProject2
+namespace UnitTestNETFramework
 {
     [TestClass]
-    public class UnitTest1
+    public class UnitTestNETFramework
     {
-
         [TestMethod]
-        public void NewProjectSystem_MsTest_NETCore()
+        public void NewProjectSystem_MsTest_NETFx()
         {
             HttpRequest httpRequest = new DefaultHttpRequest();
             var response = HttpTriggerNETStandard.Run(httpRequest, null);

@@ -1,8 +1,6 @@
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
 using FunctionAppNETStandard;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 namespace XUnitTestProject1
@@ -11,9 +9,16 @@ namespace XUnitTestProject1
     {
 
         [Fact]
-        public void NewProjectSystem_XUnit_Empty()
+        public void NewProjectSystem_Xunit_NETCore()
         {
-            Assert.True(true);
+            HttpRequest httpRequest = new UnitTestProject2.DefaultHttpRequest();
+            var response = HttpTriggerNETStandard.Run(httpRequest, null);
+
+            if (response is OkObjectResult)
+            {
+                Assert.Equal("Hello, test", ((OkObjectResult)response).Value);
+            }
+
         }
     }
 }
