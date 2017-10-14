@@ -83,6 +83,9 @@ if errorlevel 1 GOTO ERROR
 
 
 REM Run tests on .NETStandard projects
+dotnet test sample\FunctionAppNETStandard\UnitTestNETFramework\UnitTestNETFramework.csproj --configuration=Release --no-build
+if errorlevel 1 GOTO ERROR
+
 dotnet test sample\FunctionAppNETStandard\UnitTestProject2\UnitTestProject2.csproj --configuration=Release --no-build
 if errorlevel 1 GOTO ERROR
 
