@@ -109,39 +109,32 @@ namespace MakeFunctionJson
             }
         }
 
-        private bool TryGenerateFunctionJsons()
+        public IEnumerable<(FunctionJsonSchema schema, FileInfo outputFile)> GenerateFunctions(IEnumerable<Type> types)
         {
-            var assembly = Assembly.LoadFrom(_assemblyPath);
-
-            var relativeAssemblyPath = PathUtility.MakeRelativePath(Path.Combine(_outputPath, "dummyFunctionName"), assembly.Location);
-            foreach (var type in assembly.GetExportedTypes())
+            foreach (var type in types)
             {
                 foreach (var method in type.GetMethods())
                 {
                     if (method.HasUnsuportedAttributes(out string error))
                     {
                         _logger.LogError(error);
-                        return false;
+                        yield return (null, null);
                     }
                     else if (method.IsWebJobsSdkMethod())
                     {
                         var functionName = method.GetSdkFunctionName();
                         var artifactName = Path.Combine(functionName, "function.json");
                         var path = Path.Combine(_outputPath, artifactName);
-                        if (File.Exists(path))
-                        {
-                            continue;
-                        }
-
+                        var relativeAssemblyPath = PathUtility.MakeRelativePath(Path.Combine(_outputPath, "dummyFunctionName"), type.Assembly.Location);
                         var functionJson = method.ToFunctionJson(relativeAssemblyPath);
                         if (CheckAppSettingsAndFunctionName(functionJson, method) &&
                             _buildArtifactsLog.TryAddBuildArtifact(artifactName))
                         {
-                            functionJson.Serialize(path);
+                            yield return (functionJson, new FileInfo(path));
                         }
                         else
                         {
-                            return false;
+                            yield return (null, null);
                         }
                     }
                     else if (method.HasFunctionNameAttribute())
@@ -153,6 +146,20 @@ namespace MakeFunctionJson
                         _logger.LogWarning($"Method {method.Name} is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.");
                     }
                 }
+            }
+        }
+        
+        private bool TryGenerateFunctionJsons()
+        {
+            var assembly = Assembly.LoadFrom(_assemblyPath);
+            var functions = GenerateFunctions(assembly.GetExportedTypes());
+            foreach (var function in functions.Where(f => !f.outputFile.Exists))
+            {
+                if (function.schema == null || function.outputFile == null)
+                {
+                    return false;
+                }
+                function.schema.Serialize(function.outputFile.FullName);
             }
             return true;
         }
