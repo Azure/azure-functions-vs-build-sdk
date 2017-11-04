@@ -11,6 +11,7 @@ namespace MakeFunctionJson
     {
         private string _assemblyPath;
         private string _outputPath;
+        private readonly ILogger _logger;
         private readonly IDictionary<string, MethodInfo> _functionNamesSet;
         private readonly BuildArtifactsLog _buildArtifactsLog;
 
@@ -20,8 +21,13 @@ namespace MakeFunctionJson
             "host.json"
         };
 
-        internal FunctionJsonConverter(string assemblyPath, string outputPath)
+        internal FunctionJsonConverter(ILogger logger, string assemblyPath, string outputPath)
         {
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+            
             if (string.IsNullOrEmpty(assemblyPath))
             {
                 throw new ArgumentNullException(nameof(assemblyPath));
@@ -32,6 +38,7 @@ namespace MakeFunctionJson
                 throw new ArgumentNullException(nameof(outputPath));
             }
 
+            _logger = logger;
             _assemblyPath = assemblyPath;
             _outputPath = outputPath.Trim('"');
             if (!Path.IsPathRooted(_outputPath))
@@ -39,7 +46,7 @@ namespace MakeFunctionJson
                 _outputPath = Path.Combine(Directory.GetCurrentDirectory(), _outputPath);
             }
             _functionNamesSet = new Dictionary<string, MethodInfo>(StringComparer.OrdinalIgnoreCase);
-            _buildArtifactsLog = new BuildArtifactsLog(_outputPath);
+            _buildArtifactsLog = new BuildArtifactsLog(logger, _outputPath);
         }
 
         /// <summary>
@@ -61,7 +68,7 @@ namespace MakeFunctionJson
                 this._functionNamesSet.Clear();
                 if (!_buildArtifactsLog.TryClearBuildArtifactsLog())
                 {
-                    Logger.LogError("Unable to clean build artifacts file.");
+                    _logger.LogError("Unable to clean build artifacts file.");
                     return false;
                 }
 
@@ -72,7 +79,7 @@ namespace MakeFunctionJson
             }
             catch (Exception e)
             {
-                Logger.LogErrorFromException(e);
+                _logger.LogErrorFromException(e);
                 return false;
             }
         }
@@ -95,8 +102,8 @@ namespace MakeFunctionJson
                     }
                     catch (Exception e)
                     {
-                        Logger.LogWarning($"Unable to copy '{sourceFile}' to '{targetFile}'");
-                        Logger.LogWarningFromException(e);
+                        _logger.LogWarning($"Unable to copy '{sourceFile}' to '{targetFile}'");
+                        _logger.LogWarningFromException(e);
                     }
                 }
             }
@@ -113,7 +120,7 @@ namespace MakeFunctionJson
                 {
                     if (method.HasUnsuportedAttributes(out string error))
                     {
-                        Logger.LogError(error);
+                        _logger.LogError(error);
                         return false;
                     }
                     else if (method.IsWebJobsSdkMethod())
@@ -139,11 +146,11 @@ namespace MakeFunctionJson
                     }
                     else if (method.HasFunctionNameAttribute())
                     {
-                        Logger.LogWarning($"Method {method.Name} is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.");
+                        _logger.LogWarning($"Method {method.Name} is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.");
                     }
                     else if (method.HasWebJobSdkAttribute())
                     {
-                        Logger.LogWarning($"Method {method.Name} is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.");
+                        _logger.LogWarning($"Method {method.Name} is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.");
                     }
                 }
             }
@@ -158,7 +165,7 @@ namespace MakeFunctionJson
                 if (this._functionNamesSet.ContainsKey(functionName))
                 {
                     var dupMethod = this._functionNamesSet[functionName];
-                    Logger.LogError($"Function {method.DeclaringType.FullName}.{method.Name} and {dupMethod.DeclaringType.FullName}.{dupMethod.Name} have the same value for FunctionNameAttribute. Each function must have a unique name.");
+                    _logger.LogError($"Function {method.DeclaringType.FullName}.{method.Name} and {dupMethod.DeclaringType.FullName}.{dupMethod.Name} have the same value for FunctionNameAttribute. Each function must have a unique name.");
                     return false;
                 }
                 else
@@ -190,7 +197,7 @@ namespace MakeFunctionJson
 
                     if (string.IsNullOrWhiteSpace(azureWebJobsStorage) && !isHttpTrigger)
                     {
-                        Logger.LogWarning($"Function [{functionName}]: Missing value for AzureWebJobsStorage in {settingsFileName}. This is required for all triggers other than HTTP.");
+                        _logger.LogWarning($"Function [{functionName}]: Missing value for AzureWebJobsStorage in {settingsFileName}. This is required for all triggers other than HTTP.");
                     }
 
                     foreach (var binding in functionJson.Bindings)
@@ -202,7 +209,7 @@ namespace MakeFunctionJson
                                 var appSettingName = token.Value.ToString();
                                 if (!values.Any(v => v.Key.Equals(appSettingName, StringComparison.OrdinalIgnoreCase)))
                                 {
-                                    Logger.LogWarning($"Function [{functionName}]: cannot find value named '{appSettingName}' in {settingsFileName} that matches '{token.Key}' property set on '{binding["type"]?.ToString()}'");
+                                    _logger.LogWarning($"Function [{functionName}]: cannot find value named '{appSettingName}' in {settingsFileName} that matches '{token.Key}' property set on '{binding["type"]?.ToString()}'");
                                 }
                             }
                         }
@@ -211,7 +218,7 @@ namespace MakeFunctionJson
             }
             catch (Exception e)
             {
-                Logger.LogWarningFromException(e);
+                _logger.LogWarningFromException(e);
             }
             // We only return false on an error, not a warning.
             return true;
@@ -233,7 +240,7 @@ namespace MakeFunctionJson
                     }
                     catch
                     {
-                        Logger.LogWarning($"Unable to clean directory {directory}.");
+                        _logger.LogWarning($"Unable to clean directory {directory}.");
                     }
                 });
         }

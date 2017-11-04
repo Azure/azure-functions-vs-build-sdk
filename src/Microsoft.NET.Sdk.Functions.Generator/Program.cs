@@ -6,18 +6,19 @@ namespace Microsoft.NET.Sdk.Functions.Console
     {
         private static void Main(string[] args)
         {
+            var logger = new ConsoleLogger();
             if (args.Length != 2)
             {
-                Logger.LogError("USAGE: <assemblyPath> <outputPath>");
+                logger.LogError("USAGE: <assemblyPath> <outputPath>");
             }
             else
             {
                 var assemblyPath = args[0];
                 var outputPath = args[1];
-                var converter = new FunctionJsonConverter(assemblyPath, outputPath);
+                var converter = new FunctionJsonConverter(logger, assemblyPath, outputPath);
                 if (!converter.TryRun())
                 {
-                    Logger.LogError("Error generating functions metadata");
+                    logger.LogError("Error generating functions metadata");
                 }
             }
         }
