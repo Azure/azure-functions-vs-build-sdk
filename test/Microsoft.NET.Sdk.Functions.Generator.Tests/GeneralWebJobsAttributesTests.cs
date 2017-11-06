@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using MakeFunctionJson;
 using Microsoft.Azure.WebJobs;
@@ -9,22 +10,19 @@ namespace Microsoft.NET.Sdk.Functions.Test
 {
     public class GeneralWebJobsAttributesTests
     {
-        [Fact]
-        public void IsWebJobsAttribute()
+        public static IEnumerable<object[]> GetAttributes()
         {
-            var attributes = new Attribute[]
-            {
-                new QueueTriggerAttribute(string.Empty),
-                new BlobTriggerAttribute(string.Empty),
-                new EventHubTriggerAttribute(string.Empty),
-                new ServiceBusTriggerAttribute(string.Empty)
-            };
+            yield return new object[] { new QueueTriggerAttribute(string.Empty) };
+            yield return new object[] { new BlobTriggerAttribute(string.Empty) };
+            yield return new object[] { new EventHubTriggerAttribute(string.Empty) };
+            yield return new object[] { new ServiceBusTriggerAttribute(string.Empty) };
+        }
 
-            foreach (var attribute in attributes)
-            {
-                attribute.IsWebJobsAttribute().Should().BeTrue(because: $"{attribute.GetType().FullName} is a WebJob's attribute");
-            }
-
+        [Theory]
+        [MemberData(nameof(GetAttributes))]
+        public void IsWebJobsAttribute(Attribute attribute)
+        {
+            attribute.IsWebJobsAttribute().Should().BeTrue(because: $"{attribute.GetType().FullName} is a WebJob's attribute");
         }
     }
 }
