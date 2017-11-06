@@ -32,6 +32,12 @@ namespace Microsoft.NET.Sdk.Functions.Test
             
             [FunctionName("MyServiceBusTrigger")]
             public static void Run6([ServiceBusTrigger("queue")] string message) { }
+                        
+            [FunctionName("MyManualTrigger"), NoAutomaticTrigger]
+            public static void Run7(string input) { }
+            
+            [FunctionName("MyManualTriggerWithoutParameters"), NoAutomaticTrigger]
+            public static void Run8() { }
         }
 
         [Theory]
@@ -41,6 +47,8 @@ namespace Microsoft.NET.Sdk.Functions.Test
         [InlineData("MyEventHubTrigger", "eventHubTrigger", "message")]
         [InlineData("MyTimerTrigger", "timerTrigger", "timer")]
         [InlineData("MyServiceBusTrigger", "serviceBusTrigger", "message")]
+        [InlineData("MyManualTrigger", "manualTrigger", "input")]
+        [InlineData("MyManualTriggerWithoutParameters", "manualTrigger", null)]
         public void FunctionMethodsAreExported(string functionName, string type, string parameterName)
         {
             var logger = new RecorderLogger();

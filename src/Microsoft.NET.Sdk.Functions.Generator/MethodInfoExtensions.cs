@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
@@ -8,7 +9,7 @@ namespace MakeFunctionJson
     internal static class MethodInfoExtensions
     {
         /// <summary>
-        /// A method is an SDK method if it has a FunctionNameAttribute AND at least one parameter has an SDK attribute.
+        /// A method is an SDK method if it has a FunctionNameAttribute AND at least one parameter has an SDK attribute or the method has a NoAutomaticTriggerAttribute.
         /// </summary>
         /// <param name="method">method to check if an SDK method or not.</param>
         /// <returns>true if <paramref name="method"/> is a WebJobs SDK method. False otherwise.</returns>
@@ -19,12 +20,28 @@ namespace MakeFunctionJson
 
         public static bool HasWebJobSdkAttribute(this MethodInfo method)
         {
-            return method.GetParameters().Any(p => p.IsWebJobSdkTriggerParameter());
+            return method.HasNoAutomaticTriggerAttribute() || method.GetParameters().Any(p => p.IsWebJobSdkTriggerParameter());
         }
 
         public static bool HasFunctionNameAttribute(this MethodInfo method)
         {
             return method.GetCustomAttributes().FirstOrDefault(a => a.GetType().Name == "FunctionNameAttribute") != null;
+        }
+
+        public static bool HasNoAutomaticTriggerAttribute(this MethodInfo method)
+        {
+            return method.GetCustomAttributes().FirstOrDefault(a => a.GetType().Name == "NoAutomaticTriggerAttribute") != null;
+        }
+
+        public static JObject ManualTriggerBinding(this MethodInfo method)
+        {
+            var binding = new Dictionary<string, string> { ["type"] = "manualTrigger", ["direction"] = "in" };
+            var stringParameter = method.GetParameters().FirstOrDefault(p => p.ParameterType == typeof(string));
+            if (stringParameter != null)
+            {
+                binding["name"] = stringParameter.Name;
+            }
+            return JObject.FromObject(binding);
         }
 
         /// <summary>
@@ -39,7 +56,7 @@ namespace MakeFunctionJson
             {
                 // For every SDK parameter, convert it to a FunctionJson bindings.
                 // Every parameter can potentially contain more than 1 attribute that will be converted into a binding object.
-                Bindings = method.GetParameters()
+                Bindings = method.HasNoAutomaticTriggerAttribute() ? new [] {method.ManualTriggerBinding()} : method.GetParameters()
                     .Where(p => p.IsWebJobSdkTriggerParameter())
                     .Select(p => p.ToFunctionJsonBindings())
                     .SelectMany(i => i)
