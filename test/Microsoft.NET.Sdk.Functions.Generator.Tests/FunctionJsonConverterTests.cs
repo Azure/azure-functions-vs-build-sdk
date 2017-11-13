@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using FluentAssertions;
@@ -60,6 +61,31 @@ namespace Microsoft.NET.Sdk.Functions.Test
             binding.Value<string>("name").Should().Be(parameterName);
             logger.Errors.Should().BeEmpty();
             logger.Warnings.Should().BeEmpty();
+        }
+        
+        public class InvalidFunctionBecauseOfMissingTrigger
+        {
+            [FunctionName("MyServiceBusTrigger")]
+            public static void Run(string message) { }
+        }
+
+        public class InvalidFunctionBecauseOfMissingFunctionName
+        {
+            public static void Run([ServiceBusTrigger("queue")] string message) { }
+        }
+
+        [Theory]
+        [InlineData(typeof(InvalidFunctionBecauseOfMissingTrigger), "Method Microsoft.NET.Sdk.Functions.Test.FunctionJsonConverterTests+InvalidFunctionBecauseOfMissingTrigger.Run is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.")]
+        [InlineData(typeof(InvalidFunctionBecauseOfMissingFunctionName), "Method Microsoft.NET.Sdk.Functions.Test.FunctionJsonConverterTests+InvalidFunctionBecauseOfMissingFunctionName.Run is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.")]
+        public void InvalidFunctionMethodProducesWarning(Type type, string warningMessage)
+        {
+            var logger = new RecorderLogger();
+            var converter = new FunctionJsonConverter(logger, ".", ".");
+            var functions = converter.GenerateFunctions(new [] {type});
+            functions.Should().BeEmpty();
+            logger.Errors.Should().BeEmpty();
+            logger.Warnings.Should().ContainSingle();
+            logger.Warnings.Single().Should().Be(warningMessage);
         }
     }
 }

@@ -139,11 +139,11 @@ namespace MakeFunctionJson
                     }
                     else if (method.HasFunctionNameAttribute())
                     {
-                        _logger.LogWarning($"Method {method.Name} is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.");
+                        _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.");
                     }
                     else if (method.HasWebJobSdkAttribute())
                     {
-                        _logger.LogWarning($"Method {method.Name} is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.");
+                        _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.");
                     }
                 }
             }
