@@ -15,12 +15,14 @@ namespace MakeFunctionJson
         /// <returns>true if <paramref name="method"/> is a WebJobs SDK method. False otherwise.</returns>
         public static bool IsWebJobsSdkMethod(this MethodInfo method)
         {
-            return method.HasFunctionNameAttribute() && method.HasWebJobSdkAttribute();
+            return method.HasFunctionNameAttribute() && method.HasValidWebJobSdkTriggerAttribute();
         }
 
-        public static bool HasWebJobSdkAttribute(this MethodInfo method)
+        public static bool HasValidWebJobSdkTriggerAttribute(this MethodInfo method)
         {
-            return method.HasNoAutomaticTriggerAttribute() || method.GetParameters().Any(p => p.IsWebJobSdkTriggerParameter());
+            var hasNoAutomaticTrigger= method.HasNoAutomaticTriggerAttribute();
+            var hasTrigger = method.HasTriggerAttribute();
+            return (hasNoAutomaticTrigger || hasTrigger) && !(hasNoAutomaticTrigger && hasTrigger);
         }
 
         public static bool HasFunctionNameAttribute(this MethodInfo method)
@@ -31,6 +33,11 @@ namespace MakeFunctionJson
         public static bool HasNoAutomaticTriggerAttribute(this MethodInfo method)
         {
             return method.GetCustomAttributes().FirstOrDefault(a => a.GetType().Name == "NoAutomaticTriggerAttribute") != null;
+        }
+
+        public static bool HasTriggerAttribute(this MethodInfo method)
+        {
+            return method.GetParameters().Any(p => p.IsWebJobSdkTriggerParameter());
         }
 
         public static JObject ManualTriggerBinding(this MethodInfo method)
