@@ -27,12 +27,12 @@ namespace MakeFunctionJson
 
         public static bool HasFunctionNameAttribute(this MethodInfo method)
         {
-            return method.GetCustomAttributes().FirstOrDefault(a => a.GetType().Name == "FunctionNameAttribute") != null;
+            return method.GetCustomAttributes().FirstOrDefault(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.FunctionNameAttribute") != null;
         }
 
         public static bool HasNoAutomaticTriggerAttribute(this MethodInfo method)
         {
-            return method.GetCustomAttributes().FirstOrDefault(a => a.GetType().Name == "NoAutomaticTriggerAttribute") != null;
+            return method.GetCustomAttributes().FirstOrDefault(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.NoAutomaticTriggerAttribute") != null;
         }
 
         public static bool HasTriggerAttribute(this MethodInfo method)
