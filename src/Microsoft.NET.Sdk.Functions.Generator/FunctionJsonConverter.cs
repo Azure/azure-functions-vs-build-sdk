@@ -139,9 +139,16 @@ namespace MakeFunctionJson
                     }
                     else if (method.HasFunctionNameAttribute())
                     {
-                        _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.");
+                        if (method.HasNoAutomaticTriggerAttribute() && method.HasTriggerAttribute())
+                        {
+                            _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} has both a 'NoAutomaticTrigger' attribute and a trigger attribute. Both can't be used together for an Azure function definition.");
+                        }
+                        else
+                        {
+                            _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.");
+                        }
                     }
-                    else if (method.HasWebJobSdkAttribute())
+                    else if (method.HasValidWebJobSdkTriggerAttribute())
                     {
                         _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.");
                     }
