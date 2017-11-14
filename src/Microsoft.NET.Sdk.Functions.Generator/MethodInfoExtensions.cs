@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
@@ -42,13 +41,13 @@ namespace MakeFunctionJson
 
         public static JObject ManualTriggerBinding(this MethodInfo method)
         {
-            var binding = new Dictionary<string, string> { ["type"] = "manualTrigger", ["direction"] = "in" };
+            var binding = new JObject { ["type"] = "manualTrigger", ["direction"] = "in" };
             var stringParameter = method.GetParameters().FirstOrDefault(p => p.ParameterType == typeof(string));
             if (stringParameter != null)
             {
                 binding["name"] = stringParameter.Name;
             }
-            return JObject.FromObject(binding);
+            return binding;
         }
 
         /// <summary>
