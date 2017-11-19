@@ -8,10 +8,7 @@ namespace MakeFunctionJson
     {
         internal static string MakeRelativePath(string fromPath, string toPath)
         {
-            if (!fromPath.EndsWith(@"\"))
-            {
-                fromPath += @"\";
-            }
+            fromPath = fromPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
 
             Uri fromUri = new Uri(fromPath);
             Uri toUri = new Uri(toPath);
