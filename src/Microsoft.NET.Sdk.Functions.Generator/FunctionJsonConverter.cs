@@ -109,7 +109,7 @@ namespace MakeFunctionJson
             }
         }
 
-        public IEnumerable<(FunctionJsonSchema schema, FileInfo outputFile)> GenerateFunctions(IEnumerable<Type> types)
+        public IEnumerable<(FunctionJsonSchema schema, FileInfo outputFile)?> GenerateFunctions(IEnumerable<Type> types)
         {
             foreach (var type in types)
             {
@@ -118,7 +118,7 @@ namespace MakeFunctionJson
                     if (method.HasUnsuportedAttributes(out string error))
                     {
                         _logger.LogError(error);
-                        yield return (null, null);
+                        yield return null;
                     }
                     else if (method.IsWebJobsSdkMethod())
                     {
@@ -134,7 +134,7 @@ namespace MakeFunctionJson
                         }
                         else
                         {
-                            yield return (null, null);
+                            yield return null;
                         }
                     }
                     else if (method.HasFunctionNameAttribute())
@@ -160,11 +160,11 @@ namespace MakeFunctionJson
         {
             var assembly = Assembly.LoadFrom(_assemblyPath);
             var functions = GenerateFunctions(assembly.GetExportedTypes()).ToList();
-            foreach (var function in functions.Where(f => f.outputFile != null && !f.outputFile.Exists))
+            foreach (var function in functions.Where(f => f.HasValue && !f.Value.outputFile.Exists).Select(f => f.Value))
             {
                 function.schema.Serialize(function.outputFile.FullName);
             }
-            return functions.All(f => f.schema != null && f.outputFile != null);
+            return functions.All(f => f.HasValue);
         }
 
         private bool CheckAppSettingsAndFunctionName(FunctionJsonSchema functionJson, MethodInfo method)
