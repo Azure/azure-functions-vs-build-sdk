@@ -55,7 +55,7 @@ namespace Microsoft.NET.Sdk.Functions.Test
             var logger = new RecorderLogger();
             var converter = new FunctionJsonConverter(logger, ".", ".");
             var functions = converter.GenerateFunctions(new [] {typeof(FunctionsClass)});
-            var schema = functions.Single(e => Path.GetFileName(e.outputFile?.DirectoryName) == functionName).schema;
+            var schema = functions.Single(e => Path.GetFileName(e.Value.outputFile.DirectoryName) == functionName).Value.schema;
             var binding = schema.Bindings.Single(); 
             binding.Value<string>("type").Should().Be(type);
             binding.Value<string>("name").Should().Be(parameterName);
