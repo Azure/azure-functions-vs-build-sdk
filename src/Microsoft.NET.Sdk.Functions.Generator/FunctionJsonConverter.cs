@@ -160,7 +160,7 @@ namespace MakeFunctionJson
         {
             var assembly = Assembly.LoadFrom(_assemblyPath);
             var functions = GenerateFunctions(assembly.GetExportedTypes());
-            foreach (var function in functions.Where(f => !f.outputFile.Exists))
+            foreach (var function in functions.Where(f => f.outputFile != null && !f.outputFile.Exists))
             {
                 if (function.schema == null || function.outputFile == null)
                 {
