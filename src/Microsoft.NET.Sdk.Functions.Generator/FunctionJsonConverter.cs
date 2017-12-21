@@ -159,16 +159,12 @@ namespace MakeFunctionJson
         private bool TryGenerateFunctionJsons()
         {
             var assembly = Assembly.LoadFrom(_assemblyPath);
-            var functions = GenerateFunctions(assembly.GetExportedTypes());
+            var functions = GenerateFunctions(assembly.GetExportedTypes()).ToList();
             foreach (var function in functions.Where(f => f.outputFile != null && !f.outputFile.Exists))
             {
-                if (function.schema == null || function.outputFile == null)
-                {
-                    return false;
-                }
                 function.schema.Serialize(function.outputFile.FullName);
             }
-            return true;
+            return functions.All(f => f.schema != null && f.outputFile != null);
         }
 
         private bool CheckAppSettingsAndFunctionName(FunctionJsonSchema functionJson, MethodInfo method)
