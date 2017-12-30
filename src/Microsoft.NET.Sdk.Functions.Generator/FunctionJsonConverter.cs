@@ -115,42 +115,45 @@ namespace MakeFunctionJson
             {
                 foreach (var method in type.GetMethods())
                 {
-                    if (method.HasUnsuportedAttributes(out string error))
+                    if (method.HasFunctionNameAttribute())
                     {
-                        _logger.LogError(error);
-                        yield return null;
-                    }
-                    else if (method.IsWebJobsSdkMethod())
-                    {
-                        var functionName = method.GetSdkFunctionName();
-                        var artifactName = Path.Combine(functionName, "function.json");
-                        var path = Path.Combine(_outputPath, artifactName);
-                        var relativeAssemblyPath = PathUtility.MakeRelativePath(Path.Combine(_outputPath, "dummyFunctionName"), type.Assembly.Location);
-                        var functionJson = method.ToFunctionJson(relativeAssemblyPath);
-                        if (CheckAppSettingsAndFunctionName(functionJson, method) &&
-                            _buildArtifactsLog.TryAddBuildArtifact(artifactName))
+                        if (method.HasUnsuportedAttributes(out string error))
                         {
-                            yield return (functionJson, new FileInfo(path));
-                        }
-                        else
-                        {
+                            _logger.LogError(error);
                             yield return null;
                         }
-                    }
-                    else if (method.HasFunctionNameAttribute())
-                    {
-                        if (method.HasNoAutomaticTriggerAttribute() && method.HasTriggerAttribute())
+                        else if (method.IsWebJobsSdkMethod())
                         {
-                            _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} has both a 'NoAutomaticTrigger' attribute and a trigger attribute. Both can't be used together for an Azure function definition.");
+                            var functionName = method.GetSdkFunctionName();
+                            var artifactName = Path.Combine(functionName, "function.json");
+                            var path = Path.Combine(_outputPath, artifactName);
+                            var relativeAssemblyPath = PathUtility.MakeRelativePath(Path.Combine(_outputPath, "dummyFunctionName"), type.Assembly.Location);
+                            var functionJson = method.ToFunctionJson(relativeAssemblyPath);
+                            if (CheckAppSettingsAndFunctionName(functionJson, method) &&
+                                _buildArtifactsLog.TryAddBuildArtifact(artifactName))
+                            {
+                                yield return (functionJson, new FileInfo(path));
+                            }
+                            else
+                            {
+                                yield return null;
+                            }
                         }
-                        else
+                        else if (method.HasFunctionNameAttribute())
                         {
-                            _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.");
+                            if (method.HasNoAutomaticTriggerAttribute() && method.HasTriggerAttribute())
+                            {
+                                _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} has both a 'NoAutomaticTrigger' attribute and a trigger attribute. Both can't be used together for an Azure function definition.");
+                            }
+                            else
+                            {
+                                _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.");
+                            }
                         }
-                    }
-                    else if (method.HasValidWebJobSdkTriggerAttribute())
-                    {
-                        _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.");
+                        else if (method.HasValidWebJobSdkTriggerAttribute())
+                        {
+                            _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.");
+                        }
                     }
                 }
             }
