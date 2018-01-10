@@ -61,8 +61,11 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
                 var output = process.StandardOutput.ReadToEnd();
                 var error = process.StandardError.ReadToEnd();
                 process.WaitForExit();
-
-                Log.LogWarning(output);
+                
+                if (!string.IsNullOrEmpty(output)) 
+                { 
+                    Log.LogWarning(output);
+                }
 
                 if (process.ExitCode != 0 || !string.IsNullOrEmpty(error))
                 {
