@@ -11,9 +11,9 @@ namespace MakeFunctionJson
     {
         private string _assemblyPath;
         private string _outputPath;
+        private readonly HashSet<string> _excludedFunctionNames;
         private readonly ILogger _logger;
         private readonly IDictionary<string, MethodInfo> _functionNamesSet;
-        private readonly BuildArtifactsLog _buildArtifactsLog;
 
         private static readonly IEnumerable<string> _functionsArtifacts = new[]
         {
@@ -21,7 +21,7 @@ namespace MakeFunctionJson
             "host.json"
         };
 
-        internal FunctionJsonConverter(ILogger logger, string assemblyPath, string outputPath)
+        internal FunctionJsonConverter(ILogger logger, string assemblyPath, string outputPath, IEnumerable<string> excludedFunctionNames = null)
         {
             if (logger == null)
             {
@@ -41,12 +41,12 @@ namespace MakeFunctionJson
             _logger = logger;
             _assemblyPath = assemblyPath;
             _outputPath = outputPath.Trim('"');
+            _excludedFunctionNames = new HashSet<string>(excludedFunctionNames ?? Enumerable.Empty<string>(), StringComparer.OrdinalIgnoreCase);
             if (!Path.IsPathRooted(_outputPath))
             {
                 _outputPath = Path.Combine(Directory.GetCurrentDirectory(), _outputPath);
             }
             _functionNamesSet = new Dictionary<string, MethodInfo>(StringComparer.OrdinalIgnoreCase);
-            _buildArtifactsLog = new BuildArtifactsLog(logger, _outputPath);
         }
 
         /// <summary>
@@ -66,12 +66,6 @@ namespace MakeFunctionJson
             try
             {
                 this._functionNamesSet.Clear();
-                if (!_buildArtifactsLog.TryClearBuildArtifactsLog())
-                {
-                    _logger.LogError("Unable to clean build artifacts file.");
-                    return false;
-                }
-
                 CleanOutputPath();
                 CopyFunctionArtifacts();
 
@@ -129,8 +123,7 @@ namespace MakeFunctionJson
                             var path = Path.Combine(_outputPath, artifactName);
                             var relativeAssemblyPath = PathUtility.MakeRelativePath(Path.Combine(_outputPath, "dummyFunctionName"), type.Assembly.Location);
                             var functionJson = method.ToFunctionJson(relativeAssemblyPath);
-                            if (CheckAppSettingsAndFunctionName(functionJson, method) &&
-                                _buildArtifactsLog.TryAddBuildArtifact(artifactName))
+                            if (CheckAppSettingsAndFunctionName(functionJson, method))
                             {
                                 yield return (functionJson, new FileInfo(path));
                             }
@@ -242,8 +235,8 @@ namespace MakeFunctionJson
             Directory.GetDirectories(_outputPath)
                 .Select(d => Path.Combine(d, "function.json"))
                 .Where(File.Exists)
-                .Where(f => _buildArtifactsLog.IsBuildArtifact(f.Replace(_outputPath, string.Empty)))
                 .Select(Path.GetDirectoryName)
+                .Where(d => !_excludedFunctionNames.Contains(new DirectoryInfo(d).Name))
                 .ToList()
                 .ForEach(directory =>
                 {

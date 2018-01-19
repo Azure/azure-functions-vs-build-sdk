@@ -138,12 +138,13 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <Move SourceFiles="@(FunctionsPublishAssemblies)"
       DestinationFiles="$(PublishDir)bin\%(Filename)%(Extension)"
       OverwriteReadOnlyFiles="true" />
-
+    
     <GenerateFunctions
       TargetPath="$(FunctionsTargetPath)"
       OutputPath="$(FunctionsOutputPath)"
       UseNETCoreGenerator="$(UseNETCoreGenerator)"
-      UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"/>
+      UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"
+      UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)" />
   </Target>
 
 </Project>

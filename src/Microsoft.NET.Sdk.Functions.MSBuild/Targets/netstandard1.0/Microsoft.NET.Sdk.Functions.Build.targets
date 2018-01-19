@@ -28,13 +28,19 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       OverwriteReadOnlyFiles="true" 
       Condition="Exists('$(TargetDir)$(TargetName).pdb')"
       ContinueOnError="true"/>
-    
+
+    <ItemGroup>
+      <UserProvidedFunctionJsonFiles Include="@(None)" Condition="Exists(%(None.Identity)) 
+                                     AND $([System.String]::Copy('%(None.Identity)').Replace('/','\').EndsWith('\function.json')) 
+                                     AND '%(None.CopyToOutputDirectory)' == 'Always'"/>
+    </ItemGroup>
+
     <GenerateFunctions
       TargetPath="$(TargetPath)"
       OutputPath="$(TargetDir)"
       UseNETCoreGenerator="$(UseNETCoreGenerator)"
-      UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"/>
-
+      UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"
+      UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)" />
   </Target>
   
     <!--
