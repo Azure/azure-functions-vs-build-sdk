@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -28,6 +29,8 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         public bool UseNETFrameworkGenerator { get; set; }
 
         public bool GenerateHostJson { get; set; }
+
+        public ITaskItem[] UserProvidedFunctionJsonFiles { get; set; }
 
         public override bool Execute()
         {
@@ -84,7 +87,18 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         {
             string workingDirectory = isCore ? Path.Combine(baseLocation, NETStandardFolder) : Path.Combine(baseLocation, NETFrameworkFolder);
             string exePath = isCore ? DotNetMuxer.MuxerPathOrDefault() : Path.Combine(workingDirectory, "Microsoft.NET.Sdk.Functions.Generator.exe");
-            string arguments = isCore ? $"Microsoft.NET.Sdk.Functions.Generator.dll \"{TargetPath}\" \"{OutputPath}\"" : $"\"{TargetPath}\" \"{OutputPath}\"";
+            string arguments = isCore ? $"Microsoft.NET.Sdk.Functions.Generator.dll \"{TargetPath} \" \"{OutputPath} \"" : $"\"{TargetPath} \" \"{OutputPath} \"";
+
+            string excludedFunctionNamesArg = UserProvidedFunctionJsonFiles?
+                    .Select(f => f.ItemSpec.Replace("/", @"\").Replace(@"\function.json", string.Empty))
+                    .Where(f => !f.Contains(@"\")) // only first level folders
+                    .Aggregate((current, next) => $"{current};{next}");
+
+            if (!string.IsNullOrEmpty(excludedFunctionNamesArg))
+            {
+                arguments += $" \"{excludedFunctionNamesArg}\"";
+            }
+
             return new ProcessStartInfo
             {
                 UseShellExecute = false,
