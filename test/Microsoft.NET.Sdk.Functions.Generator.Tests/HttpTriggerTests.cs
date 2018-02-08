@@ -35,5 +35,41 @@ namespace Microsoft.NET.Sdk.Functions.Test
 
             jObject["authLevel"].Should().BeNull();
         }
+
+        [Fact]
+        public void HttpTriggerAttributeWithWebHookTypeAndAuthLevelShouldntHaveMethods()
+        {
+            var attribute = new HttpTriggerAttribute(AuthorizationLevel.Anonymous)
+            {
+                WebHookType = "something"
+            };
+
+            var jObject = attribute.ToJObject();
+
+            jObject["methods"].Should().BeNull();
+        }
+
+        [Fact]
+        public void HttpTriggerAttributeWithWebHookTypeAndNoAuthLevelShouldntHaveMethods()
+        {
+            var attribute = new HttpTriggerAttribute()
+            {
+                WebHookType = "something"
+            };
+
+            var jObject = attribute.ToJObject();
+
+            jObject["methods"].Should().BeNull();
+        }
+
+        [Fact]
+        public void HttpTriggerAttributeWithEmptyMethodsArrayShouldntHaveMethods()
+        {
+            var attribute = new HttpTriggerAttribute(new string[] { });
+
+            var jObject = attribute.ToJObject();
+
+            jObject["methods"].Should().BeNull();
+        }
     }
 }
