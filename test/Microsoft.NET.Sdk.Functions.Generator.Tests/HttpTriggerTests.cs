@@ -71,5 +71,15 @@ namespace Microsoft.NET.Sdk.Functions.Test
 
             jObject["methods"].Should().BeNull();
         }
+
+        [Fact]
+        public void HttpTriggerAttributeWithMethodsArrayShouldHaveMethods()
+        {
+            var attribute = new HttpTriggerAttribute("get");
+
+            var jObject = attribute.ToJObject();
+
+            jObject["methods"].Should().NotBeNull();
+        }
     }
 }
