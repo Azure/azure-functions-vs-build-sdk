@@ -114,8 +114,8 @@ namespace MakeFunctionJson
                     obj.Remove("authLevel");
                 }
 
-                // Remove methods if there's nothing otherwise
-                // it generates as [] and 404s all requests to the function.
+                // Remove methods if there's nothing.
+                // Otherwise it generates as [] and 404s all requests to the function.
                 if (!obj["methods"]?.HasValues ?? false)
                 {
                     obj.Remove("methods");
