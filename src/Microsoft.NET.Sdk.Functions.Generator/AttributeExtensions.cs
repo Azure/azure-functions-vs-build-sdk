@@ -106,14 +106,16 @@ namespace MakeFunctionJson
                 }
             }
 
-            // Clear AuthLevel from httpTrigger that has a webHook property
             if (obj["type"]?.ToString() == "httpTrigger")
             {
+                // Clear AuthLevel if there's a webHookType.
                 if (obj["webHookType"]?.ToString() != null)
                 {
                     obj.Remove("authLevel");
                 }
 
+                // Remove methods if there's nothing otherwise
+                // it generates as [] and 404s all requests to the function.
                 if (!obj["methods"]?.HasValues ?? false)
                 {
                     obj.Remove("methods");
