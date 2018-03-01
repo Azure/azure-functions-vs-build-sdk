@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
-    <PackageVersion>1.0.8</PackageVersion>
+    <PackageVersion>1.0.9</PackageVersion>
     <Authors>Microsoft</Authors>
     <ProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</ProjectUrl>
     <PackageProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</PackageProjectUrl>
@@ -47,6 +47,10 @@
       
       <!-- Generator and dependent assemblies-->
       <None Include="$(FunctionsGeneratorOutputPath)\net461\Newtonsoft.Json.dll">
+        <Pack>true</Pack>
+        <PackagePath>tools\net46\</PackagePath>
+      </None>
+      <None Include="$(FunctionsGeneratorOutputPath)\net461\System.ValueTuple.dll">
         <Pack>true</Pack>
         <PackagePath>tools\net46\</PackagePath>
       </None>
