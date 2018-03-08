@@ -2,9 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.5;net46</TargetFrameworks>
-    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release'">
+    <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>PublicKey.snk</AssemblyOriginatorKeyFile>
     <DelaySign>true</DelaySign>
+    <DefineConstants>$(DefineConstants);RELESE_BUILD</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
