@@ -23,6 +23,6 @@ namespace MakeFunctionJson
         public const string ConfigurationSource = "attributes";
 
         [JsonProperty("generatedBy")]
-        public readonly string GeneratedBy = $"{typeof(FunctionJsonSchema).GetTypeInfo().Assembly.GetName().Name}-1.0.9";
+        public readonly string GeneratedBy = $"{typeof(FunctionJsonSchema).GetTypeInfo().Assembly.GetName().Name}-{typeof(FunctionJsonSchema).GetTypeInfo().Assembly.GetName().Version}";
     }
 }
