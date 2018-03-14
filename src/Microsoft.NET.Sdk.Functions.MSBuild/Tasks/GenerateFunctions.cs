@@ -102,7 +102,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
             return new ProcessStartInfo
             {
                 UseShellExecute = false,
-                CreateNoWindow = false,
+                CreateNoWindow = true,
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
                 WorkingDirectory = workingDirectory,
