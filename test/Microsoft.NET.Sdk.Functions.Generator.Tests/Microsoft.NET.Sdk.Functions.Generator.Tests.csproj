@@ -232,6 +232,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DisableAttributeTests.cs" />
+    <Compile Include="EventHubAttributeTests.cs" />
     <Compile Include="GeneralWebJobsAttributesTests.cs" />
     <Compile Include="HasUnsupportedAttributesTests.cs" />
     <Compile Include="HttpTriggerTests.cs" />

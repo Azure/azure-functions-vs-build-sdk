@@ -211,6 +211,7 @@ namespace MakeFunctionJson
                     return "schedule";
                 }
             }
+#if NET46
             else if (attributeName == "EventHubTriggerAttribute")
             {
                 if (propertyName == "EventHubName")
@@ -218,6 +219,7 @@ namespace MakeFunctionJson
                     return "path";
                 }
             }
+#endif
             else if (attributeName == "ApiHubFileTrigger")
             {
                 if (propertyName == "ConnectionStringSetting")
