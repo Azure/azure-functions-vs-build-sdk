@@ -113,7 +113,7 @@ Target "WaitForSigning" (fun _ ->
         if blob.Exists () then
             blob.DownloadToFile ("signed-" + fileName, FileMode.OpenOrCreate)
             return Success ("signed-" + fileName)
-        elif startTime.AddMinutes 10.0 < DateTime.UtcNow then
+        elif startTime.AddMinutes 20.0 < DateTime.UtcNow then
             return Failure "Timeout"
         else
             do! Async.Sleep 5000
