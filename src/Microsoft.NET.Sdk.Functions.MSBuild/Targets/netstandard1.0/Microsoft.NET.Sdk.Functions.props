@@ -24,5 +24,9 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
  -->
   <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.props" Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.props')" />
 
+  <ItemGroup>
+    <None Update="host.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Update="local.settings.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" />
+  </ItemGroup>
 
 </Project>
