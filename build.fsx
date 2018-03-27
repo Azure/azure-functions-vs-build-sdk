@@ -82,7 +82,7 @@ let blobClient = lazy storageAccount.Value.CreateCloudBlobClient ()
 let queueClient = lazy storageAccount.Value.CreateCloudQueueClient ()
 
 Target "UploadZipToSign" (fun _ ->
-    let container = blobClient.Value.GetContainerReference "azure-functions-cli"
+    let container = blobClient.Value.GetContainerReference "azure-functions-build-sdk"
     container.CreateIfNotExists () |> ignore
     let uploadZip fileName =
         let blobRef = container.GetBlockBlobReference fileName
@@ -107,7 +107,7 @@ Target  "EnqueueSignMessage" (fun _ ->
 
 Target "WaitForSigning" (fun _ ->
     let rec downloadFile fileName (startTime: DateTime) = async {
-        let container = blobClient.Value.GetContainerReference "azure-functions-cli-signed"
+        let container = blobClient.Value.GetContainerReference "azure-functions-build-sdk-signed"
         container.CreateIfNotExists () |> ignore
         let blob = container.GetBlockBlobReference fileName
         if blob.Exists () then
