@@ -99,10 +99,10 @@ Target  "EnqueueSignMessage" (fun _ ->
     let enqueueMessage (msg: string) =
         let message = CloudQueueMessage msg
         queue.AddMessage message
-    enqueueMessage ("Sign;azure-functions-cli;" + (version + "net46.zip"))
-    enqueueMessage ("Sign3rdParty;azure-functions-cli;" + (version + "net46thirdparty.zip"))
-    enqueueMessage ("Sign;azure-functions-cli;" + (version + "netstandard2.zip"))
-    enqueueMessage ("Sign3rdParty;azure-functions-cli;" + (version + "netstandard2thidparty.zip"))
+    enqueueMessage ("Sign;azure-functions-build-sdk;" + (version + "net46.zip"))
+    enqueueMessage ("Sign3rdParty;azure-functions-build-sdk;" + (version + "net46thirdparty.zip"))
+    enqueueMessage ("Sign;azure-functions-build-sdk;" + (version + "netstandard2.zip"))
+    enqueueMessage ("Sign3rdParty;azure-functions-build-sdk;" + (version + "netstandard2thidparty.zip"))
 )
 
 Target "WaitForSigning" (fun _ ->
