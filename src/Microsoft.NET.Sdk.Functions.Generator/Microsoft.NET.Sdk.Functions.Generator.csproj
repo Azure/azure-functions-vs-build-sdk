@@ -25,6 +25,7 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\..\pack\Microsoft.NET.Sdk.Functions\Microsoft.NET.Sdk.Functions.csproj" />
     <ProjectReference Include="..\Microsoft.NET.Sdk.Functions.NETStandard\Microsoft.NET.Sdk.Functions.NETStandard.csproj" />
   </ItemGroup>
 

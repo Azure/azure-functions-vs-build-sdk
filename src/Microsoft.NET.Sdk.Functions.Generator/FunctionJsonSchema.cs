@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using Microsoft.NET.Sdk.Functions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Reflection;
 
 namespace MakeFunctionJson
 {
@@ -23,6 +23,6 @@ namespace MakeFunctionJson
         public const string ConfigurationSource = "attributes";
 
         [JsonProperty("generatedBy")]
-        public readonly string GeneratedBy = $"{typeof(FunctionJsonSchema).GetTypeInfo().Assembly.GetName().Name}-{typeof(FunctionJsonSchema).GetTypeInfo().Assembly.GetName().Version}";
+        public readonly string GeneratedBy = $"{PackageVersionHelper.Name}-{PackageVersionHelper.Version}";
     }
 }
