@@ -211,15 +211,14 @@ namespace MakeFunctionJson
                     return "schedule";
                 }
             }
-#if NET46
-            else if (attributeName == "EventHubTriggerAttribute")
+            else if (attributeName == "EventHubTriggerAttribute" &&
+                attribute.GetType().Assembly.GetName().Version.Major == 2)
             {
                 if (propertyName == "EventHubName")
                 {
                     return "path";
                 }
             }
-#endif
             else if (attributeName == "ApiHubFileTrigger")
             {
                 if (propertyName == "ConnectionStringSetting")
