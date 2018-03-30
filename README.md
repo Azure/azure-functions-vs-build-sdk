@@ -6,7 +6,7 @@
 
 # FAQ:
 
-##### Q: I need a different `Newtonsoft.Json` version?
+##### Q: I need a different `Newtonsoft.Json` version. What do I do?
 Add the version you need to your `csproj`. For example to use `11.0.2` add this to your `csproj`
 
 ```xml
