@@ -20,11 +20,11 @@ The version of `Newtonsoft.Json` is locked to match the version used by the func
 [FunctionName("hello")]
 public static async Task ProcessQueue([QueueTrigger] JObject jObject)
 {
-    jObject.DoStuff();
+    // do stuff;
 }
 ```
 
-That `jObject` instance will be fulfilled by the runtime version of `JObject`. If `DoStuff()` doesn't exist in the pinned version, you'll get a `MethodNotFoundException`. The solution is to use the `Newtonsoft.Json` version available to you from the runtime. 
+That `jObject` instance will be fulfilled by the runtime version of `JObject`. If there is a version mismatch, the runtime will not be able to give you the version of `JObject` you are using from your custom `Newtonsoft.Json` version.
 
 If you don't require `Newtonsoft.Json` objects to be fulfilled by the runtime, then you can specify the version you like to use in your own functions in your `csproj`
 
