@@ -14,6 +14,9 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   <Import Sdk="Microsoft.NET.Sdk.Publish"
           Project="Sdk.targets" />
 
+  <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.$(PublishProtocol).targets"  
+          Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.$(PublishProtocol).targets')"/>
+
   <!--
     ============================================================
                   _OverrideFunctionsPack
@@ -146,5 +149,5 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"
       UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)" />
   </Target>
-
+  
 </Project>
