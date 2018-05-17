@@ -71,10 +71,6 @@
       <PackagePath>tools\net46\</PackagePath>
     </None>
 
-    <None Include="$(FunctionsBuildTaskOutputPath)\net46\System.Net.Http.dll">
-      <Pack>true</Pack>
-      <PackagePath>tools\netstandard2.0\</PackagePath>
-    </None>
     <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.0\Newtonsoft.Json.dll">
       <Pack>true</Pack>
       <PackagePath>tools\netstandard2.0\</PackagePath>

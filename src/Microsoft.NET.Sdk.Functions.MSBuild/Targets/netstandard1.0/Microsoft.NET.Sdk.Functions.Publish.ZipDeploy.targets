@@ -24,7 +24,10 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
  -->
 
   <Target Name="CreateZipFile">
-    <CreateZipFileTask FolderToZip="$(PublishIntermediateOutputPath)">
+    <CreateZipFileTask 
+      FolderToZip="$(PublishIntermediateOutputPath)"
+      ProjectName="$(MSBuildProjectName)"
+      PublishIntermediateTempPath="$(PublishIntermediateTempPath)">
       <Output TaskParameter="CreatedZipPath" PropertyName="ZippedPublishContentsPath"/>
     </CreateZipFileTask>
   </Target>
@@ -41,17 +44,6 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       DeploymentUsername="$(UserName)" 
       DeploymentPassword="$(Password)" 
       SiteName="$(DeployIisAppPath)" />
-  </Target>
-
-
-<!--
-  ***********************************************************************************************
-  TARGET : DeleteZip
-  ***********************************************************************************************
- -->
-
-  <Target Name="DeleteZip" AfterTargets="ZipDeploy">
-    <DeleteFileTask FilePath="$(ZippedPublishContentsPath)"/>
   </Target>
 
 </Project>

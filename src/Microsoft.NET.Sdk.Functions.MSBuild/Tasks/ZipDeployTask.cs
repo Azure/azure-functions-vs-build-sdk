@@ -30,7 +30,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
             return t.Result;
         }
 
-        public async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string siteName, IHttpClient client)
+        private async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string siteName, IHttpClient client)
         {
             if (!File.Exists(ZipToPublishPath) || client == null)
             {
@@ -39,7 +39,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
             string url = $"https://{siteName}.scm.azurewebsites.net/api/zipdeploy";
 
-            Log.LogMessage(MessageImportance.High, String.Format(Resources.PublishingZipViaZipDeploy, ZipToPublishPath, url));
+            Log.LogMessage(MessageImportance.High, String.Format(Resources.PublishingZipViaZipDeploy, zipToPublishPath, url));
 
             Uri uri = new Uri(url, UriKind.Absolute);
             FileStream stream = File.OpenRead(ZipToPublishPath);
