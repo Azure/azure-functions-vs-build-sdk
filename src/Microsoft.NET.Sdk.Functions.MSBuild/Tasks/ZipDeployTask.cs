@@ -24,10 +24,13 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         public string SiteName { get; set; }
 
         public override bool Execute()
-        {
-            System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, SiteName, new DefaultHttpClient());
-            t.Wait();
-            return t.Result;
+        { 
+            using(DefaultHttpClient client = new DefaultHttpClient())
+            {
+                System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, SiteName, client);
+                t.Wait();
+                return t.Result;
+            }
         }
 
         private async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string siteName, IHttpClient client)
