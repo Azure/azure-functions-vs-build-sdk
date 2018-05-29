@@ -19,10 +19,17 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
     <DebugType Condition="'$(DebugType)' == ''">pdbonly</DebugType>
     <IsPackable>false</IsPackable>
+    <IsZipDeploySupported>true</IsZipDeploySupported>
   </PropertyGroup>
 
   <UsingTask TaskName="GenerateFunctions"
              AssemblyFile="$(_FunctionsTaskAssemblyFullPath)"/>
+
+  <UsingTask TaskName="CreateZipFileTask"
+           AssemblyFile="$(_FunctionsTaskAssemblyFullPath)"/>
+  
+  <UsingTask TaskName="ZipDeployTask"
+            AssemblyFile="$(_FunctionsTaskAssemblyFullPath)"/>
 
   <ItemGroup>
     <ProjectCapability Include="AzureFunctions"/>

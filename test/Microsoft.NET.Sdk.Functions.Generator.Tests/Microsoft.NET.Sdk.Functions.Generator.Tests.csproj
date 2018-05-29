@@ -252,10 +252,6 @@
       <Project>{6cede940-9f0a-4b2a-97d4-d1eeee42af35}</Project>
       <Name>Microsoft.NET.Sdk.Functions.Generator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Microsoft.NET.Sdk.Functions.MSBuild.csproj">
-      <Project>{d1a5eeb2-a8d0-4e7a-8fbf-cfc5d2c23b96}</Project>
-      <Name>Microsoft.NET.Sdk.Functions.MSBuild</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

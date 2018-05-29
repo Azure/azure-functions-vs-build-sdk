@@ -1,0 +1,49 @@
+﻿<!--
+***********************************************************************************************
+Microsoft.NET.Sdk.Functions.Publish.ZipDeploy.targets
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+***********************************************************************************************
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <_DotNetPublishFiles>
+      ZipDeploy;
+    </_DotNetPublishFiles>
+  </PropertyGroup>
+
+
+  <!--
+  ***********************************************************************************************
+  TARGET : CreateZipFile
+  ***********************************************************************************************
+ -->
+
+  <Target Name="CreateZipFile">
+    <CreateZipFileTask 
+      FolderToZip="$(PublishIntermediateOutputPath)"
+      ProjectName="$(MSBuildProjectName)"
+      PublishIntermediateTempPath="$(PublishIntermediateTempPath)">
+      <Output TaskParameter="CreatedZipPath" PropertyName="ZippedPublishContentsPath"/>
+    </CreateZipFileTask>
+  </Target>
+
+  <!--
+  ***********************************************************************************************
+  TARGET : ZipDeploy
+  ***********************************************************************************************
+ -->
+
+  <Target Name="ZipDeploy" DependsOnTargets="CreateZipFile">
+    <ZipDeployTask 
+      ZipToPublishPath="$(ZippedPublishContentsPath)" 
+      DeploymentUsername="$(UserName)" 
+      DeploymentPassword="$(Password)" 
+      SiteName="$(DeployIisAppPath)" />
+  </Target>
+
+</Project>
