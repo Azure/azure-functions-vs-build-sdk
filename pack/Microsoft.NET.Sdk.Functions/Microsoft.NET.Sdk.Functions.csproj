@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
-    <Version>1.0.13</Version>
+    <Version>1.0.14</Version>
     <Authors>Microsoft</Authors>
     <ProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</ProjectUrl>
     <PackageProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</PackageProjectUrl>
@@ -50,6 +50,10 @@
     </None>
 
     <!-- Generator and dependent assemblies-->
+    <None Include="$(FunctionsBuildTaskOutputPath)\net46\System.Net.Http.dll">
+      <Pack>true</Pack>
+      <PackagePath>tools\net46\</PackagePath>
+    </None>
     <None Include="$(FunctionsGeneratorOutputPath)\net461\Newtonsoft.Json.dll">
       <Pack>true</Pack>
       <PackagePath>tools\net46\</PackagePath>
