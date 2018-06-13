@@ -40,7 +40,12 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
                 return false;
             }
 
-            string zipDeployPublishUrl = scmSiteUrl  + "/api/zipdeploy";
+            if (!scmSiteUrl.EndsWith("/"))
+            {
+                scmSiteUrl += "/";
+            }
+
+            string zipDeployPublishUrl = scmSiteUrl  + "api/zipdeploy";
 
             Log.LogMessage(MessageImportance.High, String.Format(Resources.PublishingZipViaZipDeploy, zipToPublishPath, zipDeployPublishUrl));
 
