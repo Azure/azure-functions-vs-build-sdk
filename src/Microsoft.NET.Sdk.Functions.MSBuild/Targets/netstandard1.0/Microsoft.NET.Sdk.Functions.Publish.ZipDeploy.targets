@@ -42,8 +42,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <ZipDeployTask 
       ZipToPublishPath="$(ZippedPublishContentsPath)" 
       DeploymentUsername="$(UserName)" 
-      DeploymentPassword="$(Password)" 
-      SiteName="$(DeployIisAppPath)" />
+      DeploymentPassword="$(Password)"
+      ScmSiteUrl="$(ScmSiteUrl)" />
   </Target>
 
 </Project>
