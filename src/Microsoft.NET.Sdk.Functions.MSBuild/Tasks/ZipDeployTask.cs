@@ -21,31 +21,31 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         public string DeploymentPassword { get; set; }
 
         [Required]
-        public string ScmSiteUrl { get; set; }
+        public string PublishUrl { get; set; }
 
         public override bool Execute()
         { 
             using(DefaultHttpClient client = new DefaultHttpClient())
             {
-                System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, ScmSiteUrl, client);
+                System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, PublishUrl, client);
                 t.Wait();
                 return t.Result;
             }
         }
 
-        private async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string scmSiteUrl, IHttpClient client)
+        private async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string publishUrl, IHttpClient client)
         {
             if (!File.Exists(ZipToPublishPath) || client == null)
             {
                 return false;
             }
 
-            if (!scmSiteUrl.EndsWith("/"))
+            if (!publishUrl.EndsWith("/"))
             {
-                scmSiteUrl += "/";
+                publishUrl += "/";
             }
 
-            string zipDeployPublishUrl = scmSiteUrl  + "api/zipdeploy";
+            string zipDeployPublishUrl = publishUrl  + "api/zipdeploy";
 
             Log.LogMessage(MessageImportance.High, String.Format(Resources.PublishingZipViaZipDeploy, zipToPublishPath, zipDeployPublishUrl));
 
