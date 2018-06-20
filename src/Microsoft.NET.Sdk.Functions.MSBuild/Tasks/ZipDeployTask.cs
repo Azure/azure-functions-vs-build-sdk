@@ -33,7 +33,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
             }
         }
 
-        private async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string publishUrl, IHttpClient client)
+        public async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string publishUrl, IHttpClient client)
         {
             if (!File.Exists(ZipToPublishPath) || client == null)
             {
