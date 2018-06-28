@@ -32,13 +32,13 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         { 
             using(DefaultHttpClient client = new DefaultHttpClient())
             {
-                System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, PublishUrl, SiteName, client);
+                System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, PublishUrl, SiteName, client, true);
                 t.Wait();
                 return t.Result;
             }
         }
 
-        internal async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string publishUrl, string siteName, IHttpClient client)
+        internal async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string publishUrl, string siteName, IHttpClient client, bool logMessages)
         {
             if (!File.Exists(zipToPublishPath) || client == null)
             {
@@ -62,18 +62,29 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
             }
             else
             {
-                Log.LogError(Resources.NeitherSiteNameNorPublishUrlGivenError);
+                if(logMessages)
+                {
+                    Log.LogError(Resources.NeitherSiteNameNorPublishUrlGivenError);
+                }
+
                 return false;
             }
 
-            Log.LogMessage(MessageImportance.High, String.Format(Resources.PublishingZipViaZipDeploy, zipToPublishPath, zipDeployPublishUrl));
+            if (logMessages)
+            {
+                Log.LogMessage(MessageImportance.High, String.Format(Resources.PublishingZipViaZipDeploy, zipToPublishPath, zipDeployPublishUrl));
+            }
 
             Uri uri = new Uri(zipDeployPublishUrl, UriKind.Absolute);
-            FileStream stream = File.OpenRead(ZipToPublishPath);
+            FileStream stream = File.OpenRead(zipToPublishPath);
             IHttpResponse response = await client.PostWithBasicAuthAsync(uri, userName, password, "application/zip", Encoding.UTF8, stream);
             if(response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.Accepted)
             {
-                Log.LogError(String.Format(Resources.ZipDeployFailureErrorMessage, zipDeployPublishUrl, response.StatusCode));
+                if(logMessages)
+                {
+                    Log.LogError(String.Format(Resources.ZipDeployFailureErrorMessage, zipDeployPublishUrl, response.StatusCode));
+                }
+
                 return false;
             }
 

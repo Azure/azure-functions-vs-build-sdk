@@ -14,4 +14,10 @@
     <ProjectReference Include="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Microsoft.NET.Sdk.Functions.MSBuild.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources\TestPublishContents.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
