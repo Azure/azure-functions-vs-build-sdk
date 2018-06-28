@@ -39,7 +39,7 @@ namespace ZipDeployPublish.Test
             Mock<IHttpClient> client = new Mock<IHttpClient>();
             ZipDeployTask zipDeployer = new ZipDeployTask();
 
-            bool result = await zipDeployer.ZipDeployAsync(string.Empty, "username", "password", "siteName", client.Object);
+            bool result = await zipDeployer.ZipDeployAsync(string.Empty, "username", "password", "publishUrl", null, client.Object);
 
             client.Verify(c => c.PostAsync(It.IsAny<Uri>(), It.IsAny<StreamContent>()), Times.Never);
             Assert.False(result);
@@ -77,7 +77,7 @@ namespace ZipDeployPublish.Test
 
             ZipDeployTask zipDeployer = new ZipDeployTask();
 
-            bool result = await zipDeployer.ZipDeployAsync(TestZippedPublishContentsPath, "username", "password", "siteName", client.Object);
+            bool result = await zipDeployer.ZipDeployAsync(TestZippedPublishContentsPath, "username", "password", "https://sitename.scm.azurewebsites.net", null, client.Object);
 
             client.Verify(c => c.PostAsync(
                 It.Is<Uri>(uri => string.Equals(uri.AbsoluteUri, "https://sitename.scm.azurewebsites.net/api/zipdeploy", StringComparison.Ordinal)), 

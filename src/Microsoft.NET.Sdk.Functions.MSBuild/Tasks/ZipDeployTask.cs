@@ -20,32 +20,51 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         [Required]
         public string DeploymentPassword { get; set; }
 
-        [Required]
         public string PublishUrl { get; set; }
+
+        /// <summary>
+        /// Our fallback if PublishUrl is not given, which is the case for ZIP Deploy profiles created prior to 15.8 Preview 4.
+        /// Using this will fail if the site is a slot.
+        /// </summary>
+        public string SiteName { get; set; }
 
         public override bool Execute()
         { 
             using(DefaultHttpClient client = new DefaultHttpClient())
             {
-                System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, PublishUrl, client);
+                System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, PublishUrl, SiteName, client);
                 t.Wait();
                 return t.Result;
             }
         }
 
-        private async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string publishUrl, IHttpClient client)
+        internal async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string publishUrl, string siteName, IHttpClient client)
         {
-            if (!File.Exists(ZipToPublishPath) || client == null)
+            if (!File.Exists(zipToPublishPath) || client == null)
             {
                 return false;
             }
 
-            if (!publishUrl.EndsWith("/"))
-            {
-                publishUrl += "/";
-            }
+            string zipDeployPublishUrl = null;
 
-            string zipDeployPublishUrl = publishUrl  + "api/zipdeploy";
+            if(!string.IsNullOrEmpty(publishUrl))
+            {
+                if (!publishUrl.EndsWith("/"))
+                {
+                    publishUrl += "/";
+                }
+
+                zipDeployPublishUrl = publishUrl + "api/zipdeploy";
+            }
+            else if(!string.IsNullOrEmpty(siteName))
+            {
+                zipDeployPublishUrl = $"https://{siteName}.scm.azurewebsites.net/api/zipdeploy";
+            }
+            else
+            {
+                Log.LogError(Resources.NeitherSiteNameNorPublishUrlGivenError);
+                return false;
+            }
 
             Log.LogMessage(MessageImportance.High, String.Format(Resources.PublishingZipViaZipDeploy, zipToPublishPath, zipDeployPublishUrl));
 
