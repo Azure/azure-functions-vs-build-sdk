@@ -43,6 +43,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       ZipToPublishPath="$(ZippedPublishContentsPath)" 
       DeploymentUsername="$(UserName)" 
       DeploymentPassword="$(Password)"
+      SiteName="$(DeployIisAppPath)"
       PublishUrl="$(PublishUrl)" />
   </Target>
 

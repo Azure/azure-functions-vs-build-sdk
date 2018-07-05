@@ -62,6 +62,15 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Neither SiteName nor PublishUrl was given a value..
+        /// </summary>
+        internal static string NeitherSiteNameNorPublishUrlGivenError {
+            get {
+                return ResourceManager.GetString("NeitherSiteNameNorPublishUrlGivenError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Publishing {0} to {1}....
         /// </summary>
         internal static string PublishingZipViaZipDeploy {
