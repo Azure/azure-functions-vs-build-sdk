@@ -154,14 +154,51 @@ namespace MakeFunctionJson
         
         private bool TryGenerateFunctionJsons()
         {
-            var assembly = Assembly.LoadFrom(_assemblyPath);
-            var functions = GenerateFunctions(assembly.GetExportedTypes()).ToList();
-            foreach (var function in functions.Where(f => f.HasValue && !f.Value.outputFile.Exists).Select(f => f.Value))
+            var assemblyDirectory = Path.GetDirectoryName(_assemblyPath);
+            if (!Directory.Exists(assemblyDirectory))
+                return false;
+
+            List<(FunctionJsonSchema schema, FileInfo outputFile)?> functions = 
+                new List<(FunctionJsonSchema, FileInfo)?>();
+
+            var assemblyFiles = Directory.GetFiles(assemblyDirectory, "*.dll", SearchOption.TopDirectoryOnly);
+            foreach (var assemblyFile in assemblyFiles)
             {
+                /// --- output message that the file is going to be scanned.
+                var _assemblyPath = Path.Combine(assemblyDirectory, assemblyFile);
+                try
+                {
+                    var assembly = Assembly.LoadFrom(_assemblyPath);
+                    var _functions = GenerateFunctions(assembly.GetExportedTypes())
+                        .ToList();
+
+                    /// --- file contained x functions
+                    if(_functions.Count!=0)
+                        functions.AddRange(_functions);
+                 
+                    _functions.Clear();
+                    _functions = null;
+                }
+                catch (Exception ex)
+                {
+                    /// --- file may not be a .net dll that we've tried to load
+                }
+                finally
+                {
+                    /// --- output message that the dll file was scanned.
+                }
+            }
+         
+            foreach (var function in functions
+                .Where(f => f.HasValue && !f.Value.outputFile.Exists)
+                .Select(f => f.Value)) {
+
                 function.schema.Serialize(function.outputFile.FullName);
             }
+
             return functions.All(f => f.HasValue);
         }
+
 
         private bool CheckAppSettingsAndFunctionName(FunctionJsonSchema functionJson, MethodInfo method)
         {
