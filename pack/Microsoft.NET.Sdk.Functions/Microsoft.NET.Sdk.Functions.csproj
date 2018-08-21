@@ -9,6 +9,8 @@
     <PackageProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</PackageProjectUrl>
     <LicenseUrl>https://github.com/Azure/azure-functions-vs-build-sdk/blob/master/LICENSE</LicenseUrl>
     <PackageLicenseUrl>https://github.com/Azure/azure-functions-vs-build-sdk/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Azure/azure-functions-vs-build-sdk</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageTags>azurefunctions</PackageTags>
     <Company>Microsoft</Company>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
