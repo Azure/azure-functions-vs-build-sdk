@@ -1,9 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\netstandard1.0\ExtensionsMetadataGeneratorVersion.props" />
+
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
-    <Version>1.0.15</Version>
+    <Version>1.0.16</Version>
     <Authors>Microsoft</Authors>
     <ProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</ProjectUrl>
     <PackageProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</PackageProjectUrl>
@@ -92,7 +94,7 @@
     <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.0-beta5,3.1.0)" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[3.0.0-beta5,3.1.0)" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[3.0.0-beta5,3.1.0)" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="[1.0.0-beta2,1.1.0)" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="$(ExtensionsMetadataGeneratorVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
