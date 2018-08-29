@@ -1,5 +1,5 @@
 #r "packages/FAKE/tools/FakeLib.dll"
-#r "packages/WindowsAzure.Storage/lib/net40/Microsoft.WindowsAzure.Storage.dll"
+#r "packages/WindowsAzure.Storage/lib/net45/Microsoft.WindowsAzure.Storage.dll"
 
 open System
 open System.IO

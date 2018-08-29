@@ -29,4 +29,11 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <None Update="local.settings.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
+  <!--
+  ***********************************************************************************************
+  Import the ExtensionsMetadataGenerator Props
+  ***********************************************************************************************
+ -->
+  <Import Project="$(MSBuildThisFileDirectory)ExtensionsMetadataGeneratorVersion.props" Condition="Exists('$(MSBuildThisFileDirectory)ExtensionsMetadataGeneratorVersion.props')" />
+  <Import Project="$(NuGetPackageRoot)microsoft.azure.webjobs.script.extensionsmetadatagenerator\$(ExtensionsMetadataGeneratorVersion)\build\Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator.props" Condition="Exists('$(NuGetPackageRoot)microsoft.azure.webjobs.script.extensionsmetadatagenerator\$(ExtensionsMetadataGeneratorVersion)\build\Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator.props')" />
 </Project>
