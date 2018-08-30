@@ -42,8 +42,6 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
  -->
   <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Build.targets"
           Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Build.targets')" />
-  <Import Project="$(NuGetPackageRoot)microsoft.azure.webjobs.script.extensionsmetadatagenerator\$(ExtensionsMetadataGeneratorVersion)\build\Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator.targets" 
-          Condition="Exists('$(NuGetPackageRoot)microsoft.azure.webjobs.script.extensionsmetadatagenerator\$(ExtensionsMetadataGeneratorVersion)\build\Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator.targets')" />
   <!--
   ***********************************************************************************************
   Import the Publish target
