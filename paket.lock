@@ -734,8 +734,8 @@ NUGET
       NETStandard.Library (>= 1.6.1) - restriction: || (&& (< net45) (>= netstandard1.0) (< netstandard1.3) (< win8) (< wp8) (< wpa81)) (&& (< net45) (>= netstandard1.3) (< win8) (< wpa81))
       Newtonsoft.Json (>= 10.0.2) - restriction: || (>= net45) (&& (>= netstandard1.0) (< netstandard1.3) (< win8)) (&& (< netstandard1.0) (>= win8)) (&& (>= netstandard1.3) (< win8)) (>= wp8) (>= wpa81)
   remote: https://www.myget.org/F/azure-appservice-staging/api/v2
-    Microsoft.Azure.WebJobs (3.0.0-beta8)
-      Microsoft.Azure.WebJobs.Core (>= 3.0.0-beta8) - restriction: >= netstandard2.0
+    Microsoft.Azure.WebJobs (3.0.0-rc1)
+      Microsoft.Azure.WebJobs.Core (>= 3.0.0-rc1) - restriction: >= netstandard2.0
       Microsoft.Extensions.Configuration (>= 2.1) - restriction: >= netstandard2.0
       Microsoft.Extensions.Configuration.Abstractions (>= 2.1) - restriction: >= netstandard2.0
       Microsoft.Extensions.Configuration.EnvironmentVariables (>= 2.1) - restriction: >= netstandard2.0
@@ -746,23 +746,23 @@ NUGET
       Microsoft.Extensions.Logging.Configuration (>= 2.1) - restriction: >= netstandard2.0
       Newtonsoft.Json (>= 11.0.2) - restriction: >= netstandard2.0
       System.Threading.Tasks.Dataflow (>= 4.8) - restriction: >= netstandard2.0
-    Microsoft.Azure.WebJobs.Core (3.0.0-beta8) - restriction: >= netstandard2.0
+    Microsoft.Azure.WebJobs.Core (3.0.0-rc1) - restriction: >= netstandard2.0
       System.ComponentModel.Annotations (>= 4.4) - restriction: >= netstandard2.0
       System.Diagnostics.TraceSource (>= 4.3) - restriction: >= netstandard2.0
-    Microsoft.Azure.WebJobs.Extensions (3.0.0-beta8)
-      Microsoft.Azure.WebJobs (>= 3.0.0-beta8) - restriction: >= netstandard2.0
-      Microsoft.Azure.WebJobs.Host.Storage (>= 3.0.0-beta8) - restriction: >= netstandard2.0
+    Microsoft.Azure.WebJobs.Extensions (3.0.0-rc1)
+      Microsoft.Azure.WebJobs (>= 3.0.0-rc1) - restriction: >= netstandard2.0
+      Microsoft.Azure.WebJobs.Host.Storage (>= 3.0.0-rc1) - restriction: >= netstandard2.0
       ncrontab (>= 3.3) - restriction: >= netstandard2.0
-    Microsoft.Azure.WebJobs.Extensions.Http (3.0.0-beta8)
+    Microsoft.Azure.WebJobs.Extensions.Http (3.0.0-rc1)
       Microsoft.AspNet.WebApi.Client (>= 5.2.4) - restriction: >= netstandard2.0
       Microsoft.AspNetCore.Http (>= 2.1) - restriction: >= netstandard2.0
       Microsoft.AspNetCore.Mvc.Formatters.Json (>= 2.1) - restriction: >= netstandard2.0
       Microsoft.AspNetCore.Mvc.WebApiCompatShim (>= 2.1) - restriction: >= netstandard2.0
       Microsoft.AspNetCore.Routing (>= 2.1) - restriction: >= netstandard2.0
-      Microsoft.Azure.WebJobs (>= 3.0.0-beta8) - restriction: >= netstandard2.0
+      Microsoft.Azure.WebJobs (>= 3.0.0-rc1) - restriction: >= netstandard2.0
       ncrontab (>= 3.3) - restriction: >= netstandard2.0
-    Microsoft.Azure.WebJobs.Host.Storage (3.0.0-beta8)
-      Microsoft.Azure.WebJobs (>= 3.0.0-beta8) - restriction: >= netstandard2.0
+    Microsoft.Azure.WebJobs.Host.Storage (3.0.0-rc1)
+      Microsoft.Azure.WebJobs (>= 3.0.0-rc1) - restriction: >= netstandard2.0
       WindowsAzure.Storage (>= 9.3.1) - restriction: >= netstandard2.0
   remote: https://www.myget.org/F/azure-appservice/api/v2
     Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator (1.0.0)
