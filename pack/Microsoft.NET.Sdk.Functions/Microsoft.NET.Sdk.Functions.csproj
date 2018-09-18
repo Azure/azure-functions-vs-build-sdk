@@ -5,7 +5,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
-    <Version>1.0.21</Version>
+    <Version>1.0.22</Version>
     <Authors>Microsoft</Authors>
     <ProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</ProjectUrl>
     <PackageProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</PackageProjectUrl>
@@ -91,9 +91,9 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Newtonsoft.Json" Version="[11.0.2]" />
-    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.0-rc1,3.1.0)" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[3.0.0-rc1,3.1.0)" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[3.0.0-rc1,3.1.0)" />
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.0,3.1.0)" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[3.0.0,3.1.0)" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[3.0.0,3.1.0)" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="$(ExtensionsMetadataGeneratorVersion)" />
   </ItemGroup>
 
