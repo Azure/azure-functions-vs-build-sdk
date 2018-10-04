@@ -22,7 +22,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         public string OutputPath { get; set; }
 
         private const string NETFrameworkFolder = "net46";
-        private const string NETStandardFolder = "netstandard2.0";
+        private const string NETStandardFolder = "netcoreapp2.1";
 
         public bool UseNETCoreGenerator { get; set; }
 
@@ -58,6 +58,8 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
             }
 
 #endif
+            this.Log.LogMessage(MessageImportance.Low, $"Function generator path: '{processStartInfo.FileName}'");
+            this.Log.LogCommandLine(MessageImportance.Low, processStartInfo.Arguments);
             using (Process process = new Process { StartInfo = processStartInfo })
             {
                 process.Start();
