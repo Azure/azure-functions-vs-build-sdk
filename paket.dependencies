@@ -1,6 +1,7 @@
-source https://www.myget.org/F/azure-appservice/api/v2
-source https://www.myget.org/F/azure-appservice-staging/api/v2
 source https://nuget.org/api/v2
+source https://www.myget.org/F/azure-appservice-staging/api/v2
+source https://www.myget.org/F/azure-appservice/api/v2
+
 
 nuget FAKE
 nuget WindowsAzure.Storage = 9.3.1
