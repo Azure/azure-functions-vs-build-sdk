@@ -75,15 +75,15 @@
       <PackagePath>tools\net46\</PackagePath>
     </None>
 
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.0\Newtonsoft.Json.dll">
+    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.1\Newtonsoft.Json.dll">
       <Pack>true</Pack>
       <PackagePath>tools\netcoreapp2.1\</PackagePath>
     </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.0\Microsoft.NET.Sdk.Functions.Generator.dll">
+    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.1\Microsoft.NET.Sdk.Functions.Generator.dll">
       <Pack>true</Pack>
       <PackagePath>tools\netcoreapp2.1\</PackagePath>
     </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.0\Microsoft.NET.Sdk.Functions.Generator.runtimeconfig.json">
+    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.1\Microsoft.NET.Sdk.Functions.Generator.runtimeconfig.json">
       <Pack>true</Pack>
       <PackagePath>tools\netcoreapp2.1\</PackagePath>
     </None>
