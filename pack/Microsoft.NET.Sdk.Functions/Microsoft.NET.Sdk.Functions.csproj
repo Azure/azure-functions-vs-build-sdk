@@ -3,7 +3,7 @@
   <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\netstandard1.0\ExtensionsMetadataGeneratorVersion.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net46</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
     <Version>1.0.23</Version>
     <Authors>Microsoft</Authors>
