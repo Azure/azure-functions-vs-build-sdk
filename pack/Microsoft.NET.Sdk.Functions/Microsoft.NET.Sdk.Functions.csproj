@@ -3,7 +3,7 @@
   <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\netstandard1.0\ExtensionsMetadataGeneratorVersion.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.1;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
     <Version>1.0.23</Version>
     <Authors>Microsoft</Authors>
@@ -21,6 +21,7 @@
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
     <FunctionsBuildTaskOutputPath>..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\bin\Release</FunctionsBuildTaskOutputPath>
     <FunctionsGeneratorOutputPath>..\..\src\Microsoft.NET.Sdk.Functions.Generator\bin\Release</FunctionsGeneratorOutputPath>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
 
 
@@ -84,6 +85,10 @@
       <PackagePath>tools\netcoreapp2.1\</PackagePath>
     </None>
     <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.1\Microsoft.NET.Sdk.Functions.Generator.runtimeconfig.json">
+      <Pack>true</Pack>
+      <PackagePath>tools\netcoreapp2.1\</PackagePath>
+    </None>
+    <None Include="$(OutputPath)\netstandard2.0\Microsoft.NET.Sdk.Functions.dll">
       <Pack>true</Pack>
       <PackagePath>tools\netcoreapp2.1\</PackagePath>
     </None>
