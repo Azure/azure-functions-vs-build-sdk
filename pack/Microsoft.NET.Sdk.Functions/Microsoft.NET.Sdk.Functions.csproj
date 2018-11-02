@@ -75,6 +75,10 @@
       <Pack>true</Pack>
       <PackagePath>tools\net46\</PackagePath>
     </None>
+    <None Include="$(OutputPath)\net461\Microsoft.NET.Sdk.Functions.dll">
+      <Pack>true</Pack>
+      <PackagePath>tools\net46\</PackagePath>
+    </None>
 
     <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.1\Newtonsoft.Json.dll">
       <Pack>true</Pack>
