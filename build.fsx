@@ -25,7 +25,6 @@ let MoveFileTo (source, destination) =
         File.Delete destination
     File.Move (source, destination)
 
-
 let env = Environment.GetEnvironmentVariable
 let connectionString =
     "DefaultEndpointsProtocol=https;AccountName=" + (env "FILES_ACCOUNT_NAME") + ";AccountKey=" + (env "FILES_ACCOUNT_KEY")
@@ -64,7 +63,6 @@ Target "GenerateZipToSign" (fun _ ->
     ++ (generatorOutputPath @@ "net461\\Microsoft.NET.Sdk.Functions.Generator.exe")
     |> CreateZip "." (version + "net46.zip") "" 7 true
 
-
     !! (generatorOutputPath @@ "net461\\Newtonsoft.Json.dll")
     |> CreateZip "." (version + "net46thirdparty.zip") "" 7 true
 
@@ -80,47 +78,48 @@ Target "GenerateZipToSign" (fun _ ->
 let storageAccount = lazy CloudStorageAccount.Parse connectionString
 let blobClient = lazy storageAccount.Value.CreateCloudBlobClient ()
 let queueClient = lazy storageAccount.Value.CreateCloudQueueClient ()
-
-Target "UploadZipToSign" (fun _ ->
+    
+let UploadZip fileName =
     let container = blobClient.Value.GetContainerReference "azure-functions-build-sdk"
     container.CreateIfNotExists () |> ignore
-    let uploadZip fileName =
-        let blobRef = container.GetBlockBlobReference fileName
-        blobRef.UploadFromStream <| File.OpenRead fileName
+    let blobRef = container.GetBlockBlobReference fileName
+    blobRef.UploadFromStream <| File.OpenRead fileName
+    
+let EnqueueMessage (msg: string) =
+    let queue = queueClient.Value.GetQueueReference "signing-jobs"
+    let message = CloudQueueMessage msg
+    queue.AddMessage message
 
-    uploadZip (version + "net46.zip")
-    uploadZip (version + "net46thirdparty.zip")
-    uploadZip (version + "netstandard2.zip")
-    uploadZip (version + "netstandard2thidparty.zip")
+let rec DownloadFile fileName (startTime: DateTime) = async {
+    let container = blobClient.Value.GetContainerReference "azure-functions-build-sdk-signed"
+    container.CreateIfNotExists () |> ignore
+    let blob = container.GetBlockBlobReference fileName
+    if blob.Exists () then
+        blob.DownloadToFile ("signed-" + fileName, FileMode.OpenOrCreate)
+        return Success ("signed-" + fileName)
+    elif startTime.AddMinutes 20.0 < DateTime.UtcNow then
+        return Failure "Timeout"
+    else
+        do! Async.Sleep 5000
+        return! DownloadFile fileName startTime
+}
+
+Target "UploadZipToSign" (fun _ ->
+    UploadZip (version + "net46.zip")
+    UploadZip (version + "net46thirdparty.zip")
+    UploadZip (version + "netstandard2.zip")
+    UploadZip (version + "netstandard2thidparty.zip")
 )
 
 Target  "EnqueueSignMessage" (fun _ ->
-    let queue = queueClient.Value.GetQueueReference "signing-jobs"
-    let enqueueMessage (msg: string) =
-        let message = CloudQueueMessage msg
-        queue.AddMessage message
-    enqueueMessage ("Sign;azure-functions-build-sdk;" + (version + "net46.zip"))
-    enqueueMessage ("Sign3rdParty;azure-functions-build-sdk;" + (version + "net46thirdparty.zip"))
-    enqueueMessage ("Sign;azure-functions-build-sdk;" + (version + "netstandard2.zip"))
-    enqueueMessage ("Sign3rdParty;azure-functions-build-sdk;" + (version + "netstandard2thidparty.zip"))
+    EnqueueMessage ("Sign;azure-functions-build-sdk;" + (version + "net46.zip"))
+    EnqueueMessage ("Sign3rdParty;azure-functions-build-sdk;" + (version + "net46thirdparty.zip"))
+    EnqueueMessage ("Sign;azure-functions-build-sdk;" + (version + "netstandard2.zip"))
+    EnqueueMessage ("Sign3rdParty;azure-functions-build-sdk;" + (version + "netstandard2thidparty.zip"))
 )
 
 Target "WaitForSigning" (fun _ ->
-    let rec downloadFile fileName (startTime: DateTime) = async {
-        let container = blobClient.Value.GetContainerReference "azure-functions-build-sdk-signed"
-        container.CreateIfNotExists () |> ignore
-        let blob = container.GetBlockBlobReference fileName
-        if blob.Exists () then
-            blob.DownloadToFile ("signed-" + fileName, FileMode.OpenOrCreate)
-            return Success ("signed-" + fileName)
-        elif startTime.AddMinutes 20.0 < DateTime.UtcNow then
-            return Failure "Timeout"
-        else
-            do! Async.Sleep 5000
-            return! downloadFile fileName startTime
-    }
-
-    let signed = downloadFile (version + "net46.zip") DateTime.UtcNow |> Async.RunSynchronously
+    let signed = DownloadFile (version + "net46.zip") DateTime.UtcNow |> Async.RunSynchronously
     match signed with
     | Success file ->
         Unzip "tmpBuild" file
@@ -131,7 +130,7 @@ Target "WaitForSigning" (fun _ ->
 
     CleanDir "tmpBuild"
 
-    let signed = downloadFile (version + "netstandard2.zip") DateTime.UtcNow |> Async.RunSynchronously
+    let signed = DownloadFile (version + "netstandard2.zip") DateTime.UtcNow |> Async.RunSynchronously
     match signed with
     | Success file ->
         Unzip "tmpBuild" file
@@ -142,7 +141,7 @@ Target "WaitForSigning" (fun _ ->
 
     CleanDir "tmpBuild"
 
-    let signed = downloadFile (version + "net46thirdparty.zip") DateTime.UtcNow |> Async.RunSynchronously
+    let signed = DownloadFile (version + "net46thirdparty.zip") DateTime.UtcNow |> Async.RunSynchronously
     match signed with
     | Success file ->
         Unzip "tmpBuild" file
@@ -151,13 +150,12 @@ Target "WaitForSigning" (fun _ ->
 
     CleanDir "tmpBuild"
 
-    let signed = downloadFile (version + "netstandard2thidparty.zip") DateTime.UtcNow |> Async.RunSynchronously
+    let signed = DownloadFile (version + "netstandard2thidparty.zip") DateTime.UtcNow |> Async.RunSynchronously
     match signed with
     | Success file ->
         Unzip "tmpBuild" file
         MoveFileTo ("tmpBuild" @@ "Newtonsoft.Json.dll", generatorOutputPath @@ "netcoreapp2.1\\Newtonsoft.Json.dll")
     | Failure e -> targetError e null |> ignore
-
 )
 
 Target "Pack" (fun _ ->
@@ -168,8 +166,23 @@ Target "Pack" (fun _ ->
             AdditionalArgs = [ "--no-build" ]})
 )
 
+Target "SignNupkg" (fun _ ->
+    !! (packOutputPath @@ "/**/Microsoft.NET.Sdk.Functions.nupkg")
+    |> CreateZip "." (version + "nupkg.zip") "" 7 true
+
+    UploadZip (version + "nupkg.zip")
+    EnqueueMessage ("SignNuget;azure-functions-build-sdk;" + (version + "nupkg.zip"))
+
+    let signed = DownloadFile (version + "nupkg.zip") DateTime.UtcNow |> Async.RunSynchronously
+    match signed with
+    | Success file ->
+        Unzip "tmpBuild" file
+        MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.nupkg", packOutputPath @@ "signed\\Microsoft.NET.Sdk.Functions.nupkg")
+    | Failure e -> targetError e null |> ignore
+)
+
 Target "Publish" (fun _ ->
-    !! (packOutputPath @@ "/**/*.nupkg")
+    !! (packOutputPath @@ "signed\\Microsoft.NET.Sdk.Functions.nupkg")
     |> Seq.iter (MoveFile "deploy")
 )
 
@@ -181,6 +194,7 @@ Dependencies
     ==> "EnqueueSignMessage"
     ==> "WaitForSigning"
     ==> "Pack"
+    ==> "SignNupkg"
     ==> "Publish"
 
 RunTargetOrDefault "Publish"
