@@ -11,6 +11,8 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 {
     public class ZipDeployTask : Task
     {
+        private const string UserAgentName = "functions-core-tools";
+
         [Required]
         public string ZipToPublishPath { get; set; }
 
@@ -20,7 +22,11 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         [Required]
         public string DeploymentPassword { get; set; }
 
+        [Required]
+        public string UserAgentVersion { get; set; }
+
         public string PublishUrl { get; set; }
+
 
         /// <summary>
         /// Our fallback if PublishUrl is not given, which is the case for ZIP Deploy profiles created prior to 15.8 Preview 4.
@@ -32,13 +38,13 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         { 
             using(DefaultHttpClient client = new DefaultHttpClient())
             {
-                System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, PublishUrl, SiteName, client, true);
+                System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, PublishUrl, SiteName, UserAgentVersion, client, true);
                 t.Wait();
                 return t.Result;
             }
         }
 
-        internal async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string publishUrl, string siteName, IHttpClient client, bool logMessages)
+        internal async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string publishUrl, string siteName, string userAgentVersion, IHttpClient client, bool logMessages)
         {
             if (!File.Exists(zipToPublishPath) || client == null)
             {
@@ -77,10 +83,10 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
             Uri uri = new Uri(zipDeployPublishUrl, UriKind.Absolute);
             FileStream stream = File.OpenRead(zipToPublishPath);
-            IHttpResponse response = await client.PostWithBasicAuthAsync(uri, userName, password, "application/zip", Encoding.UTF8, stream);
-            if(response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.Accepted)
+            IHttpResponse response = await client.PostWithBasicAuthAsync(uri, userName, password, "application/zip", $"{UserAgentName}/{userAgentVersion}", Encoding.UTF8, stream);
+            if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.Accepted)
             {
-                if(logMessages)
+                if (logMessages)
                 {
                     Log.LogError(String.Format(Resources.ZipDeployFailureErrorMessage, zipDeployPublishUrl, response.StatusCode));
                 }

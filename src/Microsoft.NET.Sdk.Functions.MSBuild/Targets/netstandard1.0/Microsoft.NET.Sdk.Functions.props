@@ -12,6 +12,13 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
   <!--
   ***********************************************************************************************
+  Import the Version Props
+  ***********************************************************************************************
+  -->
+  <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Version.props" Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Version.props')" />
+
+  <!--
+  ***********************************************************************************************
   Import the Build Props
   ***********************************************************************************************
  -->
