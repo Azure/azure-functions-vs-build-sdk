@@ -30,6 +30,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     -->
   <Target Name="_OverrideFunctionsPack"
           AfterTargets="Pack"
+          Condition="'$(DisablePublishDuringPack)' != 'true'"
           DependsOnTargets="Publish" />
 
   <!--
