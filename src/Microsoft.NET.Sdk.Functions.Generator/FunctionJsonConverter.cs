@@ -21,6 +21,12 @@ namespace MakeFunctionJson
             "host.json"
         };
 
+        private static readonly IEnumerable<string> _triggersWithoutStorage = new[]
+        {
+            "httptrigger",
+            "kafkatrigger"
+        };
+
         internal FunctionJsonConverter(ILogger logger, string assemblyPath, string outputPath, IEnumerable<string> excludedFunctionNames = null)
         {
             if (logger == null)
@@ -194,16 +200,17 @@ namespace MakeFunctionJson
                 {
                     // FirstOrDefault returns a KeyValuePair<string, string> which is a struct so it can't be null.
                     var azureWebJobsStorage = values.FirstOrDefault(pair => pair.Key.Equals("AzureWebJobsStorage", StringComparison.OrdinalIgnoreCase)).Value;
-                    var isHttpTrigger = functionJson
+                    var allWithoutStorageTriggers = functionJson
                         .Bindings
                         .Where(b => b["type"] != null)
                         .Select(b => b["type"].ToString())
-                        .Where(b => b.IndexOf("Trigger") != -1)
-                        .Any(t => t == "httpTrigger");
+                        .Where(b => b.IndexOf("Trigger", StringComparison.OrdinalIgnoreCase) != -1)
+                        .All(t => _triggersWithoutStorage.Any(tws => tws.Equals(t, StringComparison.OrdinalIgnoreCase)));
 
-                    if (string.IsNullOrWhiteSpace(azureWebJobsStorage) && !isHttpTrigger)
+                    if (string.IsNullOrWhiteSpace(azureWebJobsStorage) && !allWithoutStorageTriggers)
                     {
-                        _logger.LogWarning($"Function [{functionName}]: Missing value for AzureWebJobsStorage in {settingsFileName}. This is required for all triggers other than HTTP.");
+                        _logger.LogWarning($"Function [{functionName}]: Missing value for AzureWebJobsStorage in {settingsFileName}. " +
+                            $"This is required for all triggers other than {string.Join(", ", _triggersWithoutStorage)}.");
                     }
 
                     foreach (var binding in functionJson.Bindings)
