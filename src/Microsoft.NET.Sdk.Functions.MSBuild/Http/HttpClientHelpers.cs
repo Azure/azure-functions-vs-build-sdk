@@ -10,9 +10,10 @@ namespace Microsoft.NET.Sdk.Functions.Http
 {
     internal static class HttpClientHelpers
     {
-        public static async Task<IHttpResponse> PostWithBasicAuthAsync(this IHttpClient client, Uri uri, string username, string password, string contentType, Encoding encoding, Stream messageBody)
+        public static async Task<IHttpResponse> PostWithBasicAuthAsync(this IHttpClient client, Uri uri, string username, string password, string contentType, string userAgent, Encoding encoding, Stream messageBody)
         {
             AddBasicAuthToClient(username, password, client);
+            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
 
             StreamContent content = new StreamContent(messageBody ?? new MemoryStream())
             {

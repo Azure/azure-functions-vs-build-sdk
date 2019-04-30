@@ -16,6 +16,8 @@ namespace ZipDeployPublish.Test
     {
         private static string _testZippedPublishContentsPath;
         private static string TestAssemblyToTestZipPath = @"Resources\TestPublishContents.zip";
+        private static string UserAgentName = "functions-core-tools";
+        private static string UserAgentVersion = "1.0";
 
         public static string TestZippedPublishContentsPath
         {
@@ -39,7 +41,7 @@ namespace ZipDeployPublish.Test
             Mock<IHttpClient> client = new Mock<IHttpClient>();
             ZipDeployTask zipDeployer = new ZipDeployTask();
 
-            bool result = await zipDeployer.ZipDeployAsync(string.Empty, "username", "password", "publishUrl", null, client.Object, false);
+            bool result = await zipDeployer.ZipDeployAsync(string.Empty, "username", "password", "publishUrl", null, "Foo", client.Object, false);
 
             client.Verify(c => c.PostAsync(It.IsAny<Uri>(), It.IsAny<StreamContent>()), Times.Never);
             Assert.False(result);
@@ -62,10 +64,11 @@ namespace ZipDeployPublish.Test
                 It.Is<Uri>(uri => string.Equals(uri.AbsoluteUri, expectedZipDeployEndpoint, StringComparison.Ordinal)),
                 It.Is<StreamContent>(streamContent => IsStreamContentEqualToFileContent(streamContent, TestZippedPublishContentsPath))),
                 Times.Once);
+                Assert.Equal($"{UserAgentName}/{UserAgentVersion}", client.Object.DefaultRequestHeaders.GetValues("User-Agent").FirstOrDefault());
                 Assert.True(result);
             };
 
-            await RunZipDeployAsyncTest(publishUrl, siteName, HttpStatusCode.OK, verifyStep);
+            await RunZipDeployAsyncTest(publishUrl, siteName, UserAgentVersion, HttpStatusCode.OK, verifyStep);
         }
 
         [Theory]
@@ -81,10 +84,11 @@ namespace ZipDeployPublish.Test
                 It.IsAny<Uri>(),
                 It.IsAny<StreamContent>()),
                 Times.Never);
+                Assert.False(client.Object.DefaultRequestHeaders.TryGetValues("User-Agent", out _));
                 Assert.False(result);
             };
 
-            await RunZipDeployAsyncTest(publishUrl, siteName, HttpStatusCode.OK, verifyStep);
+            await RunZipDeployAsyncTest(publishUrl, siteName, UserAgentVersion, HttpStatusCode.OK, verifyStep);
         }
 
         [Theory]
@@ -96,19 +100,21 @@ namespace ZipDeployPublish.Test
         [InlineData(HttpStatusCode.InternalServerError, false)]
         public async Task ExecuteZipDeploy_VaryingHttpResponseStatuses(HttpStatusCode responseStatusCode, bool expectedResult)
         {
+            ;
             Action<Mock<IHttpClient>, bool> verifyStep = (client, result) =>
             {
                 client.Verify(c => c.PostAsync(
                 It.Is<Uri>(uri => string.Equals(uri.AbsoluteUri, "https://sitename.scm.azurewebsites.net/api/zipdeploy", StringComparison.Ordinal)),
                 It.Is<StreamContent>(streamContent => IsStreamContentEqualToFileContent(streamContent, TestZippedPublishContentsPath))),
                 Times.Once);
+                Assert.Equal($"{UserAgentName}/{UserAgentVersion}", client.Object.DefaultRequestHeaders.GetValues("User-Agent").FirstOrDefault());
                 Assert.Equal(expectedResult, result);
             };
 
-            await RunZipDeployAsyncTest("https://sitename.scm.azurewebsites.net", null, responseStatusCode, verifyStep);
+            await RunZipDeployAsyncTest("https://sitename.scm.azurewebsites.net", null, UserAgentVersion, responseStatusCode, verifyStep);
         }
 
-        private async Task RunZipDeployAsyncTest(string publishUrl, string siteName, HttpStatusCode responseStatusCode, Action<Mock<IHttpClient>, bool> verifyStep)
+        private async Task RunZipDeployAsyncTest(string publishUrl, string siteName, string userAgentVersion, HttpStatusCode responseStatusCode, Action<Mock<IHttpClient>, bool> verifyStep)
         {
             Mock<IHttpClient> client = new Mock<IHttpClient>();
 
@@ -133,7 +139,7 @@ namespace ZipDeployPublish.Test
 
             ZipDeployTask zipDeployer = new ZipDeployTask();
 
-            bool result = await zipDeployer.ZipDeployAsync(TestZippedPublishContentsPath, "username", "password", publishUrl, siteName, client.Object, false);
+            bool result = await zipDeployer.ZipDeployAsync(TestZippedPublishContentsPath, "username", "password", publishUrl, siteName, userAgentVersion, client.Object, false);
 
             verifyStep(client, result);
         }
