@@ -10,6 +10,10 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 -->
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <PropertyGroup>
+    <_NuGetPackageRoot>$([MSBuild]::EnsureTrailingSlash('$(NuGetPackageRoot)'))</_NuGetPackageRoot>
+  </PropertyGroup>
+  
   <!--
   ***********************************************************************************************
   Import the Version Props
@@ -38,9 +42,16 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
   <!--
   ***********************************************************************************************
-  Import the ExtensionsMetadataGenerator Props
+  Import the ExtensionsMetadataGenerator Props, but only if it has not already been imported.  
   ***********************************************************************************************
  -->
-  <Import Project="$(MSBuildThisFileDirectory)ExtensionsMetadataGeneratorVersion.props" Condition="Exists('$(MSBuildThisFileDirectory)ExtensionsMetadataGeneratorVersion.props')" />
-  <Import Project="$(NuGetPackageRoot)microsoft.azure.webjobs.script.extensionsmetadatagenerator\$(ExtensionsMetadataGeneratorVersion)\build\Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator.props" Condition="Exists('$(NuGetPackageRoot)microsoft.azure.webjobs.script.extensionsmetadatagenerator\$(ExtensionsMetadataGeneratorVersion)\build\Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator.props')" />
+  <Import Project="$(MSBuildThisFileDirectory)ExtensionsMetadataGeneratorVersion.props"
+          Condition="Exists('$(MSBuildThisFileDirectory)ExtensionsMetadataGeneratorVersion.props')" />
+
+  <PropertyGroup>
+    <_ExtensionsMetadataGeneratorPropsPath>$(_NuGetPackageRoot)microsoft.azure.webjobs.script.extensionsmetadatagenerator\$(ExtensionsMetadataGeneratorVersion)\build\Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator.props</_ExtensionsMetadataGeneratorPropsPath>
+  </PropertyGroup>
+
+  <Import Project="$(_ExtensionsMetadataGeneratorPropsPath)"
+          Condition="'$(_ExtensionsMetadataGeneratorPropsImported)' == '' And Exists('$(_ExtensionsMetadataGeneratorPropsPath)')" />
 </Project>

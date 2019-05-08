@@ -8,7 +8,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
 ***********************************************************************************************
 -->
-<Project ToolsVersion="14.0"
+<Project ToolsVersion="14.0" InitialTargets="_InitializeFunctionsSdk"
          xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
@@ -53,11 +53,26 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
   <!--
   ***********************************************************************************************
-  Import the ExtensionsMetadataGenerator targets.
+  Import the ExtensionsMetadataGenerator targets, but only if it has not already been imported.
   This must be imported after the Functions Build and Publish targets.
   ***********************************************************************************************
  -->
-  <Import Project="$(NuGetPackageRoot)microsoft.azure.webjobs.script.extensionsmetadatagenerator\$(ExtensionsMetadataGeneratorVersion)\build\Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator.targets"
-          Condition="Exists('$(NuGetPackageRoot)microsoft.azure.webjobs.script.extensionsmetadatagenerator\$(ExtensionsMetadataGeneratorVersion)\build\Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator.targets')" />
+  <PropertyGroup>
+    <_ExtensionsMetadataGeneratorTargetsPath>$(_NuGetPackageRoot)microsoft.azure.webjobs.script.extensionsmetadatagenerator\$(ExtensionsMetadataGeneratorVersion)\build\Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator.targets</_ExtensionsMetadataGeneratorTargetsPath>
+  </PropertyGroup>
+  
+  <Import Project="$(_ExtensionsMetadataGeneratorTargetsPath)"
+          Condition="'$(_ExtensionsMetadataGeneratorTargetsImported)' == '' And Exists('$(_ExtensionsMetadataGeneratorTargetsPath)')" />
+
+  <!--
+  ***********************************************************************************************
+  Ensure that ExtensionsMetadataGenerator is imported. The ExtensionsMetadataGenerator package
+  runs its initialization after this target, so do not change the name.
+  ***********************************************************************************************
+ -->
+  <Target Name="_InitializeFunctionsSdk">
+    <Error Text="The ExtensionsMetadataGenerator package was not imported correctly. Are you missing '$(_ExtensionsMetadataGeneratorTargetsPath)' or '$(_ExtensionsMetadataGeneratorPropsPath)'?"
+           Condition="'$(_ExtensionsMetadataGeneratorTargetsImported)' == '' Or '$(_ExtensionsMetadataGeneratorPropsImported)' == ''" />
+  </Target>
 
 </Project>
