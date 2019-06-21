@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
 namespace FunctionAppNETStandard
@@ -10,7 +11,7 @@ namespace FunctionAppNETStandard
     public static class HttpTriggerNETStandard
     {
         [FunctionName("HttpTriggerNETStandard")]
-        public static IActionResult Run([HttpTrigger]HttpRequest req, TraceWriter log)
+        public static IActionResult Run([HttpTrigger]HttpRequest req, ILogger log)
         {
             //log.Info("C# HTTP trigger function processed a request.");
 
