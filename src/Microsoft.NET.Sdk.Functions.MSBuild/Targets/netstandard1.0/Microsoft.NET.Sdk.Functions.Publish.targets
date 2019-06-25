@@ -148,7 +148,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       OutputPath="$(FunctionsOutputPath)"
       UseNETCoreGenerator="$(UseNETCoreGenerator)"
       UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"
-      UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)" />
+      UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)"
+      FunctionsInDependencies="$(FunctionsInDependencies)" />
   </Target>
   
 </Project>

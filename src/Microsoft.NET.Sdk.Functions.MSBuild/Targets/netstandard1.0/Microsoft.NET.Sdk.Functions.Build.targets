@@ -43,7 +43,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       OutputPath="$(TargetDir)"
       UseNETCoreGenerator="$(UseNETCoreGenerator)"
       UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"
-      UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)" />
+      UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)" 
+      FunctionsInDependencies="$(FunctionsInDependencies)"/>
   </Target>
   
     <!--
