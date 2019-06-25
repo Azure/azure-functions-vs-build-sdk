@@ -11,6 +11,7 @@ namespace MakeFunctionJson
     {
         private string _assemblyPath;
         private string _outputPath;
+        private bool _functionsInDependencies;
         private readonly HashSet<string> _excludedFunctionNames;
         private readonly ILogger _logger;
         private readonly IDictionary<string, MethodInfo> _functionNamesSet;
@@ -27,7 +28,7 @@ namespace MakeFunctionJson
             "kafkatrigger"
         };
 
-        internal FunctionJsonConverter(ILogger logger, string assemblyPath, string outputPath, IEnumerable<string> excludedFunctionNames = null)
+        internal FunctionJsonConverter(ILogger logger, string assemblyPath, string outputPath, bool functionsInDependencies, IEnumerable<string> excludedFunctionNames = null)
         {
             if (logger == null)
             {
@@ -47,6 +48,7 @@ namespace MakeFunctionJson
             _logger = logger;
             _assemblyPath = assemblyPath;
             _outputPath = outputPath.Trim('"');
+            _functionsInDependencies = functionsInDependencies;
             _excludedFunctionNames = new HashSet<string>(excludedFunctionNames ?? Enumerable.Empty<string>(), StringComparer.OrdinalIgnoreCase);
             if (!Path.IsPathRooted(_outputPath))
             {
@@ -161,7 +163,28 @@ namespace MakeFunctionJson
         private bool TryGenerateFunctionJsons()
         {
             var assembly = Assembly.LoadFrom(_assemblyPath);
-            var functions = GenerateFunctions(assembly.GetExportedTypes()).ToList();
+            var assemblyRoot = Path.GetDirectoryName(_assemblyPath);
+
+            var exportedTypes = assembly.ExportedTypes;
+
+            if (_functionsInDependencies)
+            {
+                foreach (var referencedAssembly in assembly.GetReferencedAssemblies())
+                {
+                    var tryPath = Path.Combine(assemblyRoot, $"{referencedAssembly.Name}.dll");
+                    try
+                    {
+                        var loadedAssembly = Assembly.LoadFrom(tryPath);
+                        exportedTypes = exportedTypes.Concat(loadedAssembly.ExportedTypes);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning($"Could not evaluate '{referencedAssembly.Name}' for function types. Exception message: {ex.Message}");
+                    }
+                }
+            }
+
+            var functions = GenerateFunctions(exportedTypes).ToList();
             foreach (var function in functions.Where(f => f.HasValue && !f.Value.outputFile.Exists).Select(f => f.Value))
             {
                 function.schema.Serialize(function.outputFile.FullName);

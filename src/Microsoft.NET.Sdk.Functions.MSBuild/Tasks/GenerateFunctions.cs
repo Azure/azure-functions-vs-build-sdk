@@ -31,6 +31,8 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         public bool GenerateHostJson { get; set; }
 
         public ITaskItem[] UserProvidedFunctionJsonFiles { get; set; }
+        
+        public bool FunctionsInDependencies { get; set; }
 
         public override bool Execute()
         {
@@ -89,7 +91,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         {
             string workingDirectory = isCore ? Path.Combine(baseLocation, NETStandardFolder) : Path.Combine(baseLocation, NETFrameworkFolder);
             string exePath = isCore ? DotNetMuxer.MuxerPathOrDefault() : Path.Combine(workingDirectory, "Microsoft.NET.Sdk.Functions.Generator.exe");
-            string arguments = isCore ? $"Microsoft.NET.Sdk.Functions.Generator.dll \"{TargetPath} \" \"{OutputPath} \"" : $"\"{TargetPath} \" \"{OutputPath} \"";
+            string arguments = isCore ? $"Microsoft.NET.Sdk.Functions.Generator.dll \"{TargetPath} \" \"{OutputPath} \" \"{FunctionsInDependencies} \"" : $"\"{TargetPath} \" \"{OutputPath} \" \"{FunctionsInDependencies} \"";
 
             string excludedFunctionNamesArg = UserProvidedFunctionJsonFiles?
                     .Select(f => f.ItemSpec.Replace("/", @"\").Replace(@"\function.json", string.Empty))
