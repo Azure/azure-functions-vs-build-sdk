@@ -1,16 +1,16 @@
-REM Restor the solution
+REM Restore the solution.
 dotnet restore
 if errorlevel 1 GOTO ERROR
 
-REM build the functions sdk.
+REM Build the functions sdk.
 dotnet build src\Microsoft.NET.Sdk.Functions.MSBuild --configuration=Release
 if errorlevel 1 GOTO ERROR
 
-REM build the functions generator
+REM Build the functions generator.
 dotnet build src\Microsoft.NET.Sdk.Functions.Generator --configuration=Release
 if errorlevel 1 GOTO ERROR
 
-REM Pack the functions sdk
+REM Pack the functions sdk.
 dotnet pack pack\Microsoft.NET.Sdk.Functions --configuration=Release
 if errorlevel 1 GOTO ERROR
 
