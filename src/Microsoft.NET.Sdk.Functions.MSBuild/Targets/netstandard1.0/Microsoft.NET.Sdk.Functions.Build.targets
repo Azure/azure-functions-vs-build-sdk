@@ -21,7 +21,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   <Target Name="_GenerateFunctionsPostBuild"
           AfterTargets="Build">
     <PropertyGroup>
-      <UseNETCoreGenerator Condition="$(UseNETCoreGenerator)=='' AND ($(AzureFunctionsVersion) == 'v2' OR $(AzureFunctionsVersion) == 'v2-prerelease' )">true</UseNETCoreGenerator>
+      <UseNETCoreGenerator Condition="$(UseNETCoreGenerator)=='' AND $(AzureFunctionsVersion.StartsWith('v2'))">true</UseNETCoreGenerator>
     </PropertyGroup>
     <!-- TODO: CopyFilesToOutputDirectory does not look at the outdir to copy the pdbs. hence copying it manually. -->
     <!-- Copy the application pdb to the bin folder-->
