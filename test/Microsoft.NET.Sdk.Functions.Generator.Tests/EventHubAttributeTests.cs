@@ -19,8 +19,11 @@ namespace Microsoft.NET.Sdk.Functions.Test
             jObject.Should().HaveElement("path");
             jObject["path"].Should().Be("eventHub");
 #else
-            jObject.Should().HaveElement("eventHubName");
-            jObject["eventHubName"].Should().Be("eventHub");
+            jObject.Should().HaveElement("type");
+            jObject["type"].Should().Be("eventHubTrigger");
+
+            jObject.Should().HaveElement("path");
+            jObject["path"].Should().Be("eventHub");
 #endif
         }
     }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\netstandard1.0\ExtensionsMetadataGeneratorVersion.props" />
-  <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\netstandard1.0\Microsoft.NET.Sdk.Functions.Version.props" />
+  <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\ExtensionsMetadataGeneratorVersion.props" />
+  <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\Microsoft.NET.Sdk.Functions.Version.props" />
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
@@ -34,13 +34,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\netstandard1.0\**\*">
+    <Content Include="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\**\*">
       <Pack>true</Pack>
-      <PackagePath>build\netstandard1.0\</PackagePath>
-    </Content>
-    <Content Include="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\Sdk\**\*">
-      <Pack>true</Pack>
-      <PackagePath>Sdk\</PackagePath>
+      <PackagePath>build\</PackagePath>
     </Content>
   </ItemGroup>
 

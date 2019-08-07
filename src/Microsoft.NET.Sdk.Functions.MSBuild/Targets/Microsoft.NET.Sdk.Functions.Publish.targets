@@ -42,8 +42,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     -->
   <Target Name="_InitializeDotNetPublishProperties"
           BeforeTargets="PrepareForPublish"
-          Condition="'$(DeployOnBuild)' != 'true'
-          ">
+          Condition="'$(DeployOnBuild)' != 'true'">
 
     <ConvertToAbsolutePath Paths="$(PublishDir)">
       <Output TaskParameter="AbsolutePaths"
@@ -69,6 +68,11 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
   <Target Name="_InitializeDeployOnBuildProperties" >
 
+    <ConvertToAbsolutePath Paths="$(PublishIntermediateOutputPath)">
+      <Output TaskParameter="AbsolutePaths"
+              PropertyName="PublishIntermediateOutputPath"/>
+    </ConvertToAbsolutePath>
+    
     <PropertyGroup>
       <PublishDir>$(PublishIntermediateOutputPath)</PublishDir>
       <PublishDir Condition="!HasTrailingSlash('$(PublishDir)')">$(PublishDir)\</PublishDir>
