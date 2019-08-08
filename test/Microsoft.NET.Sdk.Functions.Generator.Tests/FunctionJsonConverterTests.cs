@@ -53,7 +53,7 @@ namespace Microsoft.NET.Sdk.Functions.Test
         public void FunctionMethodsAreExported(string functionName, string type, string parameterName)
         {
             var logger = new RecorderLogger();
-            var converter = new FunctionJsonConverter(logger, ".", ".");
+            var converter = new FunctionJsonConverter(logger, ".", ".", functionsInDependencies:false);
             var functions = converter.GenerateFunctions(new [] {typeof(FunctionsClass)});
             var schema = functions.Single(e => Path.GetFileName(e.Value.outputFile.DirectoryName) == functionName).Value.schema;
             var binding = schema.Bindings.Single(); 
@@ -87,7 +87,7 @@ namespace Microsoft.NET.Sdk.Functions.Test
         public void InvalidFunctionMethodProducesWarning(Type type, string warningMessage)
         {
             var logger = new RecorderLogger();
-            var converter = new FunctionJsonConverter(logger, ".", ".");
+            var converter = new FunctionJsonConverter(logger, ".", ".", functionsInDependencies:false);
             var functions = converter.GenerateFunctions(new [] {type});
             functions.Should().BeEmpty();
             logger.Errors.Should().BeEmpty();
