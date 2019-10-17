@@ -72,7 +72,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
  -->
   <Target Name="_InitializeFunctionsSdk">
     <Warning Text="The ExtensionsMetadataGenerator package was not imported correctly. Are you missing '$(_ExtensionsMetadataGeneratorTargetsPath)' or '$(_ExtensionsMetadataGeneratorPropsPath)'?"
-             Condition="$(AzureFunctionsVersion.StartsWith('v2')) And ('$(_ExtensionsMetadataGeneratorTargetsImported)' == '' Or '$(_ExtensionsMetadataGeneratorPropsImported)' == '')" />
+             Condition="!$(AzureFunctionsVersion.StartsWith('v1')) And ('$(_ExtensionsMetadataGeneratorTargetsImported)' == '' Or '$(_ExtensionsMetadataGeneratorPropsImported)' == '')" />
   </Target>
 
 </Project>
