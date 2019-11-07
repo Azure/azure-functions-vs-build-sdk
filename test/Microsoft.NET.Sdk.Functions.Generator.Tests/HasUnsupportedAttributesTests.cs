@@ -1,12 +1,8 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Reflection;
+using FluentAssertions;
 using MakeFunctionJson;
 using Microsoft.Azure.WebJobs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Microsoft.NET.Sdk.Functions.Test
@@ -43,7 +39,7 @@ namespace Microsoft.NET.Sdk.Functions.Test
         [InlineData(typeof(FunctionsClass1), "Run6", true)]
         public void HasUnsupportedAttributesWorksCorrectly(Type type, string methodName, bool expected)
         {
-            var method = type.GetMethod(methodName);
+            var method = TestUtility.GetMethodDefinition(type, methodName);
             var hasUnsuportedAttribute = method.HasUnsuportedAttributes(out string _);
             hasUnsuportedAttribute.Should().Be(expected);
         }

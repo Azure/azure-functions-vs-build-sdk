@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.NET.Sdk.Functions.MakeFunction;
+using Mono.Cecil;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 
 namespace MakeFunctionJson
 {
@@ -18,6 +19,14 @@ namespace MakeFunctionJson
         {
             const string suffix = nameof(Attribute);
             var name = attribute.GetType().Name;
+            name = name.Substring(0, name.Length - suffix.Length);
+            return name.ToLowerFirstCharacter();
+        }
+
+        public static string ToAttributeFriendlyName(this CustomAttribute attribute)
+        {
+            const string suffix = nameof(Attribute);
+            var name = attribute.AttributeType.Name;
             name = name.Substring(0, name.Length - suffix.Length);
             return name.ToLowerFirstCharacter();
         }
@@ -37,15 +46,10 @@ namespace MakeFunctionJson
         /// </summary>
         /// <param name="attribute"></param>
         /// <returns></returns>
-        public static bool IsWebJobsAttribute(this Attribute attribute)
+        public static bool IsWebJobsAttribute(this CustomAttribute attribute)
         {
-#if NET46
-            return attribute.GetType().GetCustomAttributes().Any(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.Description.BindingAttribute")
-                || _supportedAttributes.Contains(attribute.GetType().Name);
-#else
-            return attribute.GetType().GetTypeInfo().GetCustomAttributesData().Any(a => a.AttributeType.FullName == "Microsoft.Azure.WebJobs.Description.BindingAttribute")
-                || _supportedAttributes.Contains(attribute.GetType().Name);
-#endif
+            return attribute.AttributeType.Resolve().CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.Azure.WebJobs.Description.BindingAttribute")
+                || _supportedAttributes.Contains(attribute.AttributeType.FullName);
         }
 
         /// <summary>
@@ -209,14 +213,6 @@ namespace MakeFunctionJson
                 if (propertyName == "ScheduleExpression")
                 {
                     return "schedule";
-                }
-            }
-            else if (attributeName == "EventHubTriggerAttribute" &&
-                attribute.GetType().Assembly.GetName().Version.Major == 2)
-            {
-                if (propertyName == "EventHubName")
-                {
-                    return "path";
                 }
             }
             else if (attributeName == "ApiHubFileTrigger")

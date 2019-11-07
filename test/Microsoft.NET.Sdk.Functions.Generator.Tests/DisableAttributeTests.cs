@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Reflection;
 using FluentAssertions;
 using MakeFunctionJson;
 using Microsoft.Azure.WebJobs;
 using Xunit;
-using System.Reflection;
 
 namespace Microsoft.NET.Sdk.Functions.Test
 {
@@ -53,8 +53,8 @@ namespace Microsoft.NET.Sdk.Functions.Test
         [InlineData(typeof(FunctionsClass3), "Run", false)]
         public void MethodsWithDisabledParametersShouldBeDisabled(Type type, string methodName, object expectedIsDisabled)
         {
-            var method = type.GetMethod(methodName);
-            var funcJson = method.ToFunctionJson(string.Empty);
+            var methodDef = TestUtility.GetMethodDefinition(type, methodName);
+            var funcJson = methodDef.ToFunctionJson(string.Empty);
             funcJson.Disabled.Should().Be(expectedIsDisabled);
         }
     }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Loader;
 using MakeFunctionJson;
 
 namespace Microsoft.NET.Sdk.Functions.Console
@@ -17,8 +19,14 @@ namespace Microsoft.NET.Sdk.Functions.Console
             else
             {
                 var assemblyPath = args[0].Trim();
+                var assemblyDir = Path.GetDirectoryName(assemblyPath);
                 var outputPath = args[1].Trim();
                 var functionsInDependencies = bool.Parse(args[2].Trim());
+
+                AssemblyLoadContext.Default.Resolving += (context, assemblyName) =>
+                {
+                    return context.LoadFromAssemblyPath(Path.Combine(assemblyDir, assemblyName.Name + ".dll"));
+                };
 
                 IEnumerable<string> excludedFunctionNames = Enumerable.Empty<string>();
 

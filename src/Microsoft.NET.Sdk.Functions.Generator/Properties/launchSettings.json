@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Microsoft.NET.Sdk.Functions.Generator": {
+      "commandName": "Project",
+      "commandLineArgs": "E:\\projects\\FunctionApp55\\bin\\Debug\\netcoreapp3.0\\bin\\FunctionApp55.dll E:\\projects\\FunctionApp55\\bin\\Debug\\netcoreapp3.0 True"
+    }
+  }
+}
