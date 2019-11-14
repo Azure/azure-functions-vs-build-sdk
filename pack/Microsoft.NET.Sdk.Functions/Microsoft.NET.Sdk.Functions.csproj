@@ -4,7 +4,7 @@
   <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\Microsoft.NET.Sdk.Functions.Version.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
     <Version>$(FunctionsSdkVersion)</Version>
     <Authors>Microsoft</Authors>
@@ -41,74 +41,41 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- MSBuild task assemblies -->
-    <None Include="$(FunctionsBuildTaskOutputPath)\net46\Microsoft.NET.Sdk.Functions.MSBuild.dll">
+    <!-- MSBuild task assemblies -->    
+    <None Include="$(FunctionsBuildTaskOutputPath)\netstandard2.0\Microsoft.NET.Sdk.Functions.MSBuild.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\net46\</PackagePath>
-    </None>
-    <None Include="$(FunctionsBuildTaskOutputPath)\netstandard1.5\Microsoft.NET.Sdk.Functions.MSBuild.dll">
-      <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp2.1\</PackagePath>
+      <PackagePath>tools\netcoreapp3.0\</PackagePath>
     </None>
 
     <!-- Generator and dependent assemblies-->
-    <None Include="$(FunctionsBuildTaskOutputPath)\net46\System.Net.Http.dll">
+    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.0\Newtonsoft.Json.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\net46\</PackagePath>
+      <PackagePath>tools\netcoreapp3.0\</PackagePath>
     </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\net461\Newtonsoft.Json.dll">
+    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.0\Mono.Cecil.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\net46\</PackagePath>
+      <PackagePath>tools\netcoreapp3.0\</PackagePath>
     </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\net461\System.ValueTuple.dll">
+    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.0\Microsoft.NET.Sdk.Functions.Generator.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\net46\</PackagePath>
+      <PackagePath>tools\netcoreapp3.0\</PackagePath>
     </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\net461\Microsoft.NET.Sdk.Functions.Generator.exe">
+    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.0\Microsoft.NET.Sdk.Functions.Generator.runtimeconfig.json">
       <Pack>true</Pack>
-      <PackagePath>tools\net46\</PackagePath>
-    </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\net461\netstandard.dll">
-      <Pack>true</Pack>
-      <PackagePath>tools\net46\</PackagePath>
-    </None>
-    <None Include="$(OutputPath)\net46\Microsoft.NET.Sdk.Functions.dll">
-      <Pack>true</Pack>
-      <PackagePath>tools\net46\</PackagePath>
-    </None>
-
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.1\Newtonsoft.Json.dll">
-      <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp2.1\</PackagePath>
-    </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.1\Microsoft.NET.Sdk.Functions.Generator.dll">
-      <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp2.1\</PackagePath>
-    </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp2.1\Microsoft.NET.Sdk.Functions.Generator.runtimeconfig.json">
-      <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp2.1\</PackagePath>
+      <PackagePath>tools\netcoreapp3.0\</PackagePath>
     </None>
     <None Include="$(OutputPath)\netstandard2.0\Microsoft.NET.Sdk.Functions.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp2.1\</PackagePath>
+      <PackagePath>tools\netcoreapp3.0\</PackagePath>
     </None>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.0,3.1.0)" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[3.0.0,3.1.0)" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[3.0.0,3.1.0)" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="$(ExtensionsMetadataGeneratorVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-    <PackageReference Include="Newtonsoft.Json" Version="[9.0.1]" />
-    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[2.3.0,2.4.0)" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[2.3.0,2.4.0)" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[1.2.0,1.3.0)" />
-    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
-  </ItemGroup>
+  </ItemGroup>  
 
 </Project>

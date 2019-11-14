@@ -12,8 +12,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
          xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <_FunctionsTaskFramework Condition=" '$(MSBuildRuntimeType)' == 'Core'">netcoreapp2.1</_FunctionsTaskFramework>
-    <_FunctionsTaskFramework Condition=" '$(_FunctionsTaskFramework)' == ''">net46</_FunctionsTaskFramework>
+    <_FunctionsTaskFramework>netcoreapp3.0</_FunctionsTaskFramework>    
     <_FunctionsTasksDir Condition=" '$(_FunctionsTasksDir)'=='' ">$(MSBuildThisFileDirectory)..\tools\$(_FunctionsTaskFramework)\</_FunctionsTasksDir>
     <_FunctionsTaskAssemblyFullPath Condition=" '$(_FunctionsTaskAssemblyFullPath)'=='' ">$(_FunctionsTasksDir)\Microsoft.NET.Sdk.Functions.MSBuild.dll</_FunctionsTaskAssemblyFullPath>
     <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
