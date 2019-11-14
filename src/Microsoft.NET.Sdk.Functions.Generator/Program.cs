@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+#if NETCOREAPP2_1
+using System.Runtime.Loader;
+#endif
 using MakeFunctionJson;
 
 namespace Microsoft.NET.Sdk.Functions.Console
@@ -19,7 +24,19 @@ namespace Microsoft.NET.Sdk.Functions.Console
                 var assemblyPath = args[0].Trim();
                 var outputPath = args[1].Trim();
                 var functionsInDependencies = bool.Parse(args[2].Trim());
+                var assemblyDir = Path.GetDirectoryName(assemblyPath);
 
+#if NETCOREAPP2_1
+                AssemblyLoadContext.Default.Resolving += (context, assemblyName) =>
+                {
+                    return context.LoadFromAssemblyPath(Path.Combine(assemblyDir, assemblyName.Name + ".dll"));
+                };
+#else
+                AppDomain.CurrentDomain.AssemblyResolve += (sender, e) =>
+                {
+                    return Assembly.LoadFrom(Path.Combine(assemblyDir, e.Name + ".dll"));
+                };
+#endif
                 IEnumerable<string> excludedFunctionNames = Enumerable.Empty<string>();
 
                 if (args.Length > 2)

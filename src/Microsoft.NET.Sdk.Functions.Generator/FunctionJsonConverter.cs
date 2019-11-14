@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Mono.Cecil;
 using Newtonsoft.Json;
 
 namespace MakeFunctionJson
@@ -14,7 +15,7 @@ namespace MakeFunctionJson
         private bool _functionsInDependencies;
         private readonly HashSet<string> _excludedFunctionNames;
         private readonly ILogger _logger;
-        private readonly IDictionary<string, MethodInfo> _functionNamesSet;
+        private readonly IDictionary<string, MethodDefinition> _functionNamesSet;
 
         private static readonly IEnumerable<string> _functionsArtifacts = new[]
         {
@@ -34,7 +35,7 @@ namespace MakeFunctionJson
             {
                 throw new ArgumentNullException(nameof(logger));
             }
-            
+
             if (string.IsNullOrEmpty(assemblyPath))
             {
                 throw new ArgumentNullException(nameof(assemblyPath));
@@ -54,7 +55,7 @@ namespace MakeFunctionJson
             {
                 _outputPath = Path.Combine(Directory.GetCurrentDirectory(), _outputPath);
             }
-            _functionNamesSet = new Dictionary<string, MethodInfo>(StringComparer.OrdinalIgnoreCase);
+            _functionNamesSet = new Dictionary<string, MethodDefinition>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -111,11 +112,11 @@ namespace MakeFunctionJson
             }
         }
 
-        public IEnumerable<(FunctionJsonSchema schema, FileInfo outputFile)?> GenerateFunctions(IEnumerable<Type> types)
+        public IEnumerable<(FunctionJsonSchema schema, FileInfo outputFile)?> GenerateFunctions(IEnumerable<TypeDefinition> types)
         {
             foreach (var type in types)
             {
-                foreach (var method in type.GetMethods())
+                foreach (var method in type.Methods)
                 {
                     if (method.HasFunctionNameAttribute())
                     {
@@ -129,7 +130,7 @@ namespace MakeFunctionJson
                             var functionName = method.GetSdkFunctionName();
                             var artifactName = Path.Combine(functionName, "function.json");
                             var path = Path.Combine(_outputPath, artifactName);
-                            var relativeAssemblyPath = PathUtility.MakeRelativePath(Path.Combine(_outputPath, "dummyFunctionName"), type.Assembly.Location);
+                            var relativeAssemblyPath = PathUtility.MakeRelativePath(Path.Combine(_outputPath, "dummyFunctionName"), type.Module.FileName);
                             var functionJson = method.ToFunctionJson(relativeAssemblyPath);
                             if (CheckAppSettingsAndFunctionName(functionJson, method))
                             {
@@ -144,42 +145,54 @@ namespace MakeFunctionJson
                         {
                             if (method.HasNoAutomaticTriggerAttribute() && method.HasTriggerAttribute())
                             {
-                                _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} has both a 'NoAutomaticTrigger' attribute and a trigger attribute. Both can't be used together for an Azure function definition.");
+                                _logger.LogWarning($"Method {method.DeclaringType.GetReflectionFullName()}.{method.Name} has both a 'NoAutomaticTrigger' attribute and a trigger attribute. Both can't be used together for an Azure function definition.");
                             }
                             else
                             {
-                                _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.");
+                                _logger.LogWarning($"Method {method.DeclaringType.GetReflectionFullName()}.{method.Name} is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.");
                             }
                         }
                         else if (method.HasValidWebJobSdkTriggerAttribute())
                         {
-                            _logger.LogWarning($"Method {method.ReflectedType?.FullName}.{method.Name} is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.");
+                            _logger.LogWarning($"Method {method.DeclaringType.GetReflectionFullName()}.{method.Name} is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.");
                         }
                     }
                 }
             }
         }
-        
+
         private bool TryGenerateFunctionJsons()
         {
-            var assembly = Assembly.LoadFrom(_assemblyPath);
             var assemblyRoot = Path.GetDirectoryName(_assemblyPath);
 
-            var exportedTypes = assembly.ExportedTypes;
+            var resolver = new DefaultAssemblyResolver();
+            resolver.AddSearchDirectory(assemblyRoot);
+
+            var readerParams = new ReaderParameters
+            {
+                AssemblyResolver = resolver
+            };
+
+            var module = ModuleDefinition.ReadModule(_assemblyPath, readerParams);
+
+            IEnumerable<TypeDefinition> exportedTypes = module.Types;
 
             if (_functionsInDependencies)
             {
-                foreach (var referencedAssembly in assembly.GetReferencedAssemblies())
+                foreach (var referencedAssembly in module.AssemblyReferences)
                 {
                     var tryPath = Path.Combine(assemblyRoot, $"{referencedAssembly.Name}.dll");
-                    try
+                    if (File.Exists(tryPath))
                     {
-                        var loadedAssembly = Assembly.LoadFrom(tryPath);
-                        exportedTypes = exportedTypes.Concat(loadedAssembly.ExportedTypes);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning($"Could not evaluate '{referencedAssembly.Name}' for function types. Exception message: {ex.Message}");
+                        try
+                        {
+                            var loadedModule = ModuleDefinition.ReadModule(tryPath, readerParams);
+                            exportedTypes = exportedTypes.Concat(loadedModule.Types);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning($"Could not evaluate '{referencedAssembly.Name}' for function types. Exception message: {ex.Message}");
+                        }
                     }
                 }
             }
@@ -192,7 +205,7 @@ namespace MakeFunctionJson
             return functions.All(f => f.HasValue);
         }
 
-        private bool CheckAppSettingsAndFunctionName(FunctionJsonSchema functionJson, MethodInfo method)
+        private bool CheckAppSettingsAndFunctionName(FunctionJsonSchema functionJson, MethodDefinition method)
         {
             try
             {

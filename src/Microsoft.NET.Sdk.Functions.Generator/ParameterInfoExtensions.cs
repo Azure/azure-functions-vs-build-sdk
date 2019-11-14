@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using Mono.Cecil;
 using Newtonsoft.Json.Linq;
-using System;
 
 namespace MakeFunctionJson
 {
@@ -13,10 +12,10 @@ namespace MakeFunctionJson
         /// </summary>
         /// <param name="parameterInfo"></param>
         /// <returns></returns>
-        public static bool IsWebJobSdkTriggerParameter(this ParameterInfo parameterInfo)
+        public static bool IsWebJobSdkTriggerParameter(this ParameterDefinition parameterInfo)
         {
             return parameterInfo
-               .GetCustomAttributes()
+               .CustomAttributes
                .Any(a => a.IsWebJobsAttribute() && a.ToAttributeFriendlyName().IndexOf("Trigger") > -1);
         }
 
@@ -25,11 +24,10 @@ namespace MakeFunctionJson
         /// </summary>
         /// <param name="parameterInfo">Has to be a WebJobSdkParameter <see cref="IsWebJobsSdkParameter(ParameterInfo)"/></param>
         /// <returns></returns>
-        public static IEnumerable<JObject> ToFunctionJsonBindings(this ParameterInfo parameterInfo)
+        public static IEnumerable<JObject> ToFunctionJsonBindings(this ParameterDefinition parameterInfo)
         {
-
             return parameterInfo
-                .GetCustomAttributes()
+                .CustomAttributes
                 .Where(a => a.IsWebJobsAttribute()) // this has to return at least 1.
                 .Select(a => TypeUtility.GetResolvedAttribute(parameterInfo, a)) // For IConnectionProvider logic.
                 .Select(a => a.ToJObject()) // Convert the Attribute into a JObject.
@@ -47,9 +45,9 @@ namespace MakeFunctionJson
         /// </summary>
         /// <param name="parameterInfo"></param>
         /// <returns></returns>
-        public static Attribute GetDisabledAttribute(this ParameterInfo parameterInfo)
+        public static CustomAttribute GetDisabledAttribute(this ParameterDefinition parameterInfo)
         {
-            return parameterInfo.GetCustomAttributes().FirstOrDefault(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
+            return parameterInfo.CustomAttributes.FirstOrDefault(a => a.AttributeType.FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
         }
     }
 }

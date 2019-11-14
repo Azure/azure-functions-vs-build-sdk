@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Mono.Cecil;
 
 namespace MakeFunctionJson
 {
@@ -11,9 +12,9 @@ namespace MakeFunctionJson
             return typeInfo.ImplementedInterfaces.Any(i => i.Name.Equals(interfaceName, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static Attribute GetDisabledAttribute(this TypeInfo type)
+        public static CustomAttribute GetDisabledAttribute(this TypeDefinition type)
         {
-            return type.GetCustomAttributes().FirstOrDefault(a => a.GetType().FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
+            return type.CustomAttributes.FirstOrDefault(a => a.AttributeType.FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
         }
     }
 }
