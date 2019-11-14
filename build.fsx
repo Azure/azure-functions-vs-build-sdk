@@ -64,6 +64,7 @@ Target "GenerateZipToSign" (fun _ ->
     |> CreateZip "." (version + "net46.zip") "" 7 true
 
     !! (generatorOutputPath @@ "net461\\Newtonsoft.Json.dll")
+    ++ (generatorOutputPath @@ "net461\\Mono.Cecil.dll")
     |> CreateZip "." (version + "net46thirdparty.zip") "" 7 true
 
     !! (packOutputPath @@ "netstandard2.0\\Microsoft.NET.Sdk.Functions.dll")
@@ -72,6 +73,7 @@ Target "GenerateZipToSign" (fun _ ->
     |> CreateZip "." (version + "netstandard2.zip") "" 7 true
 
     !! (generatorOutputPath @@ "netcoreapp2.1\\Newtonsoft.Json.dll")
+    ++ (generatorOutputPath @@ "netcoreapp2.1\\Mono.Cecil.dll")
     |> CreateZip "." (version + "netstandard2thidparty.zip") "" 7 true
 )
 
@@ -146,6 +148,7 @@ Target "WaitForSigning" (fun _ ->
     | Success file ->
         Unzip "tmpBuild" file
         MoveFileTo ("tmpBuild" @@ "Newtonsoft.Json.dll", generatorOutputPath @@ "net461\\Newtonsoft.Json.dll")
+        MoveFileTo ("tmpBuild" @@ "Mono.Cecil.dll", generatorOutputPath @@ "net461\\Mono.Cecil.dll")
     | Failure e -> targetError e null |> ignore
 
     CleanDir "tmpBuild"
@@ -155,6 +158,7 @@ Target "WaitForSigning" (fun _ ->
     | Success file ->
         Unzip "tmpBuild" file
         MoveFileTo ("tmpBuild" @@ "Newtonsoft.Json.dll", generatorOutputPath @@ "netcoreapp2.1\\Newtonsoft.Json.dll")
+        MoveFileTo ("tmpBuild" @@ "Mono.Cecil.dll", generatorOutputPath @@ "netcoreapp2.1\\Mono.Cecil.dll")
     | Failure e -> targetError e null |> ignore
 )
 
