@@ -58,21 +58,14 @@ Target "Build" (fun _ ->
 )
 
 Target "GenerateZipToSign" (fun _ ->
-    !! (packOutputPath @@ "net46\\Microsoft.NET.Sdk.Functions.dll")
-    ++ (buildTaskOutputPath @@ "net46\\Microsoft.NET.Sdk.Functions.MSBuild.dll")
-    ++ (generatorOutputPath @@ "net461\\Microsoft.NET.Sdk.Functions.Generator.exe")
-    |> CreateZip "." (version + "net46.zip") "" 7 true
-
-    !! (generatorOutputPath @@ "net461\\Newtonsoft.Json.dll")
-    |> CreateZip "." (version + "net46thirdparty.zip") "" 7 true
-
     !! (packOutputPath @@ "netstandard2.0\\Microsoft.NET.Sdk.Functions.dll")
-    ++ (buildTaskOutputPath @@ "netstandard1.5\\Microsoft.NET.Sdk.Functions.MSBuild.dll")
-    ++ (generatorOutputPath @@ "netcoreapp2.1\\Microsoft.NET.Sdk.Functions.Generator.dll")
+    ++ (buildTaskOutputPath @@ "netstandard2.0\\Microsoft.NET.Sdk.Functions.MSBuild.dll")
+    ++ (generatorOutputPath @@ "netcoreapp3.0\\Microsoft.NET.Sdk.Functions.Generator.dll")
     |> CreateZip "." (version + "netstandard2.zip") "" 7 true
 
-    !! (generatorOutputPath @@ "netcoreapp2.1\\Newtonsoft.Json.dll")
-    |> CreateZip "." (version + "netstandard2thidparty.zip") "" 7 true
+    !! (generatorOutputPath @@ "netcoreapp3.0\\Newtonsoft.Json.dll")
+    ++ (generatorOutputPath @@ "netcoreapp3.0\\Mono.Cecil.dll")
+    |> CreateZip "." (version + "netstandard2thirdparty.zip") "" 7 true
 )
 
 let storageAccount = lazy CloudStorageAccount.Parse connectionString
@@ -104,30 +97,17 @@ let rec DownloadFile fileName (startTime: DateTime) = async {
         return! DownloadFile fileName startTime
 }
 
-Target "UploadZipToSign" (fun _ ->
-    UploadZip (version + "net46.zip")
-    UploadZip (version + "net46thirdparty.zip")
+Target "UploadZipToSign" (fun _ ->   
     UploadZip (version + "netstandard2.zip")
-    UploadZip (version + "netstandard2thidparty.zip")
+    UploadZip (version + "netstandard2thirdparty.zip")
 )
 
-Target  "EnqueueSignMessage" (fun _ ->
-    EnqueueMessage ("Sign;azure-functions-build-sdk;" + (version + "net46.zip"))
-    EnqueueMessage ("Sign3rdParty;azure-functions-build-sdk;" + (version + "net46thirdparty.zip"))
+Target  "EnqueueSignMessage" (fun _ ->    
     EnqueueMessage ("Sign;azure-functions-build-sdk;" + (version + "netstandard2.zip"))
-    EnqueueMessage ("Sign3rdParty;azure-functions-build-sdk;" + (version + "netstandard2thidparty.zip"))
+    EnqueueMessage ("Sign3rdParty;azure-functions-build-sdk;" + (version + "netstandard2thirdparty.zip"))
 )
 
 Target "WaitForSigning" (fun _ ->
-    let signed = DownloadFile (version + "net46.zip") DateTime.UtcNow |> Async.RunSynchronously
-    match signed with
-    | Success file ->
-        Unzip "tmpBuild" file
-        MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.dll", packOutputPath @@ "net46\\Microsoft.NET.Sdk.Functions.dll")
-        MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.MSBuild.dll", buildTaskOutputPath @@ "net46\\Microsoft.NET.Sdk.Functions.MSBuild.dll")
-        MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.Generator.exe", generatorOutputPath @@ "net461\\Microsoft.NET.Sdk.Functions.Generator.exe")
-    | Failure e -> targetError e null |> ignore
-
     CleanDir "tmpBuild"
 
     let signed = DownloadFile (version + "netstandard2.zip") DateTime.UtcNow |> Async.RunSynchronously
@@ -135,26 +115,18 @@ Target "WaitForSigning" (fun _ ->
     | Success file ->
         Unzip "tmpBuild" file
         MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.dll", packOutputPath @@ "netstandard2.0\\Microsoft.NET.Sdk.Functions.dll")
-        MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.MSBuild.dll", buildTaskOutputPath @@ "netstandard1.5\\Microsoft.NET.Sdk.Functions.MSBuild.dll")
-        MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.Generator.dll", generatorOutputPath @@ "netcoreapp2.1\\Microsoft.NET.Sdk.Functions.Generator.dll")
+        MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.MSBuild.dll", buildTaskOutputPath @@ "netstandard2.0\\Microsoft.NET.Sdk.Functions.MSBuild.dll")
+        MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.Generator.dll", generatorOutputPath @@ "netcoreapp3.0\\Microsoft.NET.Sdk.Functions.Generator.dll")
     | Failure e -> targetError e null |> ignore
 
-    CleanDir "tmpBuild"
+    CleanDir "tmpBuild"   
 
-    let signed = DownloadFile (version + "net46thirdparty.zip") DateTime.UtcNow |> Async.RunSynchronously
+    let signed = DownloadFile (version + "netstandard2thirdparty.zip") DateTime.UtcNow |> Async.RunSynchronously
     match signed with
     | Success file ->
         Unzip "tmpBuild" file
-        MoveFileTo ("tmpBuild" @@ "Newtonsoft.Json.dll", generatorOutputPath @@ "net461\\Newtonsoft.Json.dll")
-    | Failure e -> targetError e null |> ignore
-
-    CleanDir "tmpBuild"
-
-    let signed = DownloadFile (version + "netstandard2thidparty.zip") DateTime.UtcNow |> Async.RunSynchronously
-    match signed with
-    | Success file ->
-        Unzip "tmpBuild" file
-        MoveFileTo ("tmpBuild" @@ "Newtonsoft.Json.dll", generatorOutputPath @@ "netcoreapp2.1\\Newtonsoft.Json.dll")
+        MoveFileTo ("tmpBuild" @@ "Newtonsoft.Json.dll", generatorOutputPath @@ "netcoreapp3.0\\Newtonsoft.Json.dll")
+        MoveFileTo ("tmpBuild" @@ "Mono.Cecil.dll", generatorOutputPath @@ "netcoreapp3.0\\Mono.Cecil.dll")
     | Failure e -> targetError e null |> ignore
 )
 

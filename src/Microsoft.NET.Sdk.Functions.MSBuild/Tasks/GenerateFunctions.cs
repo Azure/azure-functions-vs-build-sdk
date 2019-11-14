@@ -22,7 +22,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         public string OutputPath { get; set; }
 
         private const string NETFrameworkFolder = "net46";
-        private const string NETStandardFolder = "netcoreapp2.1";
+        private const string NETStandardFolder = "netcoreapp3.0";
 
         public bool UseNETCoreGenerator { get; set; }
 
@@ -31,7 +31,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         public bool GenerateHostJson { get; set; }
 
         public ITaskItem[] UserProvidedFunctionJsonFiles { get; set; }
-        
+
         public bool FunctionsInDependencies { get; set; }
 
         public override bool Execute()
@@ -44,7 +44,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
             }
 
             string taskAssemblyDirectory = Path.GetDirectoryName(typeof(GenerateFunctions).GetTypeInfo().Assembly.Location);
-            string baseDirectory = Path.GetDirectoryName(taskAssemblyDirectory); 
+            string baseDirectory = Path.GetDirectoryName(taskAssemblyDirectory);
             ProcessStartInfo processStartInfo = null;
 #if NET46
             processStartInfo = GetProcessStartInfo(baseDirectory, isCore: false);
@@ -68,9 +68,9 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
                 var output = process.StandardOutput.ReadToEnd();
                 var error = process.StandardError.ReadToEnd();
                 process.WaitForExit();
-                
-                if (!string.IsNullOrEmpty(output)) 
-                { 
+
+                if (!string.IsNullOrEmpty(output))
+                {
                     Log.LogWarning(output);
                 }
 
@@ -111,7 +111,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
                 RedirectStandardOutput = true,
                 WorkingDirectory = workingDirectory,
                 FileName = exePath,
-                Arguments = arguments 
+                Arguments = arguments
             };
         }
     }

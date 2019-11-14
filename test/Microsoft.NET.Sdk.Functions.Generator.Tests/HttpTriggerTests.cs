@@ -3,8 +3,6 @@ using FluentAssertions.Json;
 using MakeFunctionJson;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using System;
-using System.Linq;
 using Xunit;
 
 namespace Microsoft.NET.Sdk.Functions.Test
@@ -21,19 +19,6 @@ namespace Microsoft.NET.Sdk.Functions.Test
 
             jObject.Should().HaveElement("authLevel");
             jObject["authLevel"].Should().Be("function");
-        }
-
-        [Fact]
-        public void HttpTriggerAttributeWithWebHookTypeShouldntHaveAnAuthLevel()
-        {
-            var attribute = new HttpTriggerAttribute()
-            {
-                WebHookType = "something"
-            };
-
-            var jObject = attribute.ToJObject();
-
-            jObject["authLevel"].Should().BeNull();
         }
     }
 }

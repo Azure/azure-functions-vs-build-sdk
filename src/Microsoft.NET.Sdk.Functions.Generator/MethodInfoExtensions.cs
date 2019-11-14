@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Microsoft.NET.Sdk.Functions.Generator;
+using Mono.Cecil;
 using Newtonsoft.Json.Linq;
 
 namespace MakeFunctionJson
@@ -13,37 +13,37 @@ namespace MakeFunctionJson
         /// </summary>
         /// <param name="method">method to check if an SDK method or not.</param>
         /// <returns>true if <paramref name="method"/> is a WebJobs SDK method. False otherwise.</returns>
-        public static bool IsWebJobsSdkMethod(this MethodInfo method)
+        public static bool IsWebJobsSdkMethod(this MethodDefinition method)
         {
             return method.HasFunctionNameAttribute() && method.HasValidWebJobSdkTriggerAttribute();
         }
 
-        public static bool HasValidWebJobSdkTriggerAttribute(this MethodInfo method)
+        public static bool HasValidWebJobSdkTriggerAttribute(this MethodDefinition method)
         {
             var hasNoAutomaticTrigger = method.HasNoAutomaticTriggerAttribute();
             var hasTrigger = method.HasTriggerAttribute();
             return (hasNoAutomaticTrigger || hasTrigger) && !(hasNoAutomaticTrigger && hasTrigger);
         }
 
-        public static bool HasFunctionNameAttribute(this MethodInfo method)
+        public static bool HasFunctionNameAttribute(this MethodDefinition method)
         {
-            return method.GetCustomAttributesData().FirstOrDefault(d => d.AttributeType.FullName == "Microsoft.Azure.WebJobs.FunctionNameAttribute") != null;
+            return method.CustomAttributes.FirstOrDefault(d => d.AttributeType.FullName == "Microsoft.Azure.WebJobs.FunctionNameAttribute") != null;
         }
 
-        public static bool HasNoAutomaticTriggerAttribute(this MethodInfo method)
+        public static bool HasNoAutomaticTriggerAttribute(this MethodDefinition method)
         {
-            return method.GetCustomAttributesData().FirstOrDefault(a => a.AttributeType.FullName == "Microsoft.Azure.WebJobs.NoAutomaticTriggerAttribute") != null;
+            return method.CustomAttributes.FirstOrDefault(a => a.AttributeType.FullName == "Microsoft.Azure.WebJobs.NoAutomaticTriggerAttribute") != null;
         }
 
-        public static bool HasTriggerAttribute(this MethodInfo method)
+        public static bool HasTriggerAttribute(this MethodDefinition method)
         {
-            return method.GetParameters().Any(p => p.IsWebJobSdkTriggerParameter());
+            return method.Parameters.Any(p => p.IsWebJobSdkTriggerParameter());
         }
 
-        public static JObject ManualTriggerBinding(this MethodInfo method)
+        public static JObject ManualTriggerBinding(this MethodDefinition method)
         {
             var binding = new JObject { ["type"] = "manualTrigger", ["direction"] = "in" };
-            var stringParameter = method.GetParameters().FirstOrDefault(p => p.ParameterType == typeof(string));
+            var stringParameter = method.Parameters.FirstOrDefault(p => p.ParameterType.FullName == typeof(string).FullName);
             if (stringParameter != null)
             {
                 binding["name"] = stringParameter.Name;
@@ -57,13 +57,13 @@ namespace MakeFunctionJson
         /// <param name="method">method to convert to a <see cref="FunctionJsonSchema"/> object. The method has to be <see cref="IsWebJobsSdkMethod(MethodInfo)"/> </param>
         /// <param name="assemblyPath">This will be the value of <see cref="FunctionJsonSchema.ScriptFile"/> on the returned value.</param>
         /// <returns><see cref="FunctionJsonSchema"/> object that represents the passed in <paramref name="method"/>.</returns>
-        public static FunctionJsonSchema ToFunctionJson(this MethodInfo method, string assemblyPath)
+        public static FunctionJsonSchema ToFunctionJson(this MethodDefinition method, string assemblyPath)
         {
             return new FunctionJsonSchema
             {
                 // For every SDK parameter, convert it to a FunctionJson bindings.
                 // Every parameter can potentially contain more than 1 attribute that will be converted into a binding object.
-                Bindings = method.HasNoAutomaticTriggerAttribute() ? new[] { method.ManualTriggerBinding() } : method.GetParameters()
+                Bindings = method.HasNoAutomaticTriggerAttribute() ? new[] { method.ManualTriggerBinding() } : method.Parameters
                     .Where(p => p.IsWebJobSdkTriggerParameter())
                     .Select(p => p.ToFunctionJsonBindings())
                     .SelectMany(i => i)
@@ -82,17 +82,17 @@ namespace MakeFunctionJson
         /// </summary>
         /// <param name="method">method has to be a WebJobs SDK method. <see cref="IsWebJobsSdkMethod(MethodInfo)"/></param>
         /// <returns>Function name.</returns>
-        public static string GetSdkFunctionName(this MethodInfo method)
+        public static string GetSdkFunctionName(this MethodDefinition method)
         {
             if (!method.IsWebJobsSdkMethod())
             {
                 throw new ArgumentException($"{nameof(method)} has to be a WebJob SDK function");
             }
 
-            var functionNameAttribute = method.GetCustomAttributesData().FirstOrDefault(a => a.AttributeType.Name == "FunctionNameAttribute")?.ConvertToAttribute();
-            if (functionNameAttribute != null)
+            string functionName = method.CustomAttributes.FirstOrDefault(a => a.AttributeType.Name == "FunctionNameAttribute")?.ConstructorArguments[0].Value.ToString();
+            if (functionName != null)
             {
-                return functionNameAttribute.GetType().GetProperty("Name").GetValue(functionNameAttribute).ToString();
+                return functionName;
             }
             else
             {
@@ -107,13 +107,16 @@ namespace MakeFunctionJson
         /// </summary>
         /// <param name="method"></param>
         /// <returns>a boolean true or false if the outcome is fixed, a string if the ScriptHost should interpret it</returns>
-        public static object GetDisabled(this MethodInfo method)
+        public static object GetDisabled(this MethodDefinition method)
         {
-            var attribute = method.GetParameters().Select(p => p.GetDisabledAttribute()).Where(a => a != null).FirstOrDefault() ??
+            var customAttribute = method.Parameters.Select(p => p.GetDisabledAttribute()).Where(a => a != null).FirstOrDefault() ??
                 method.GetDisabledAttribute() ??
-                method.DeclaringType.GetTypeInfo().GetDisabledAttribute();
-            if (attribute != null)
+                method.DeclaringType.GetDisabledAttribute();
+
+            if (customAttribute != null)
             {
+                var attribute = customAttribute.ToReflection();
+
                 // With a SettingName defined, just put that as string. The ScriptHost will evaluate it.
                 var settingName = attribute.GetValue<string>("SettingName");
                 if (!string.IsNullOrEmpty(settingName))
@@ -141,9 +144,9 @@ namespace MakeFunctionJson
         /// </summary>
         /// <param name="method"></param>
         /// <returns></returns>
-        public static Attribute GetDisabledAttribute(this MethodInfo method)
+        public static CustomAttribute GetDisabledAttribute(this MethodDefinition method)
         {
-            return method.GetCustomAttributesData().FirstOrDefault(a => a.AttributeType.FullName == "Microsoft.Azure.WebJobs.DisableAttribute")?.ConvertToAttribute();
+            return method.CustomAttributes.FirstOrDefault(a => a.AttributeType.FullName == "Microsoft.Azure.WebJobs.DisableAttribute");
         }
 
         /// <summary>
@@ -155,7 +158,7 @@ namespace MakeFunctionJson
         /// <param name="method"></param>
         /// <param name="error"></param>
         /// <returns></returns>
-        public static bool HasUnsuportedAttributes(this MethodInfo method, out string error)
+        public static bool HasUnsuportedAttributes(this MethodDefinition method, out string error)
         {
             error = string.Empty;
             var disabled = method.GetDisabled();

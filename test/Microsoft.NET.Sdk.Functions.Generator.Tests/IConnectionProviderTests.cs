@@ -55,8 +55,10 @@ namespace Microsoft.NET.Sdk.Functions.Test
         [InlineData(typeof(FunctionsClass4), "foobarfoobar")]
         public void TestIConnectionProviderHierarchicalLogic(Type type, string expected)
         {
-            var parameterInfo = type.GetMethod("Run").GetParameters().First();
-            var attribute = (Attribute) parameterInfo.GetCustomAttributes(typeof(QueueTriggerAttribute), false).First();
+            var method = TestUtility.GetMethodDefinition(type, "Run");
+
+            var parameterInfo = method.Parameters.First();
+            var attribute = parameterInfo.GetCustomAttribute(typeof(QueueTriggerAttribute));
 
             var resolvedAttribute = TypeUtility.GetResolvedAttribute(parameterInfo, attribute);
 
