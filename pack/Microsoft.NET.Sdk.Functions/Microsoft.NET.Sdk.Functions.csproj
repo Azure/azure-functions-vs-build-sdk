@@ -97,8 +97,8 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.0,3.1.0)" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[3.0.0,3.1.0)" />
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.14,3.1.0)" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="[3.0.5,3.1.0)" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[3.0.0,3.1.0)" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="$(ExtensionsMetadataGeneratorVersion)" />
   </ItemGroup>
