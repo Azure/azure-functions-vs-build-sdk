@@ -76,6 +76,17 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       </PropertyGroup>
   </Target>
 
+ <!--
+    ============================================================
+        _FunctionsPostBuildDepsCopy
+
+    Copies the deps file to the Functions bin folder
+    ============================================================
+    -->
+  <Target Name="_FunctionsPostBuildDepsCopy" AfterTargets="PostBuildEvent" Condition="'$(SkipFunctionsDepsCopy)' != 'true'">
+    <Copy SourceFiles="$(OutDir)$(ProjectName).deps.json" DestinationFiles="$(OutDir)bin\function.deps.json" Condition="Exists('$(OutDir)$(ProjectName).deps.json')"/>
+  </Target>
+
   <!--
     ============================================================
         _ResolveAdditionalReferenceCopyLocalPathsForFunctions
