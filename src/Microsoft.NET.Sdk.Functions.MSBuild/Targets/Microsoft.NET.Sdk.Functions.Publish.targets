@@ -167,5 +167,24 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)"
       FunctionsInDependencies="$(FunctionsInDependencies)" />
   </Target>
-  
+
+  <!--
+    ============================================================
+                  _ResolveCopyLocalAssetsForPublishFunctions
+
+    Moves all CopyLocal assemblies to bin folder.
+    ============================================================
+    -->
+  <Target
+   Name="_ResolveCopyLocalAssetsForPublishFunctions"
+   AfterTargets="_ResolveCopyLocalAssetsForPublish">
+
+    <ItemGroup>
+      <_ResolvedCopyLocalPublishAssets>
+        <DestinationSubDirectory>bin\%(_ResolvedCopyLocalPublishAssets.DestinationSubDirectory)</DestinationSubDirectory>
+      </_ResolvedCopyLocalPublishAssets>
+    </ItemGroup>
+
+  </Target>
+
 </Project>
