@@ -104,13 +104,22 @@ namespace MakeFunctionJson
         public static Attribute ToReflection(this CustomAttribute customAttribute)
         {
             var attributeType = customAttribute.AttributeType.ToReflectionType();
+            if (attributeType == null)
+            {
+                throw new InvalidOperationException($"Could not load type '{customAttribute.AttributeType}'.");
+            }
 
             Type[] constructorParams = customAttribute.Constructor.Parameters
                  .Select(p => p.ParameterType.ToReflectionType())
                  .ToArray();
 
-            Attribute attribute = attributeType.GetConstructor(constructorParams)
-                .Invoke(customAttribute.ConstructorArguments.Select(p => NormalizeArg(p)).ToArray()) as Attribute;
+            ConstructorInfo ctor = attributeType.GetConstructor(constructorParams);
+            if (ctor == null)
+            {
+                throw new InvalidOperationException($"Could not find constructor for type {attributeType} matching params [{string.Join(",", constructorParams.Select(t => t.ToString()))}].");
+            }
+
+            Attribute attribute = ctor.Invoke(customAttribute.ConstructorArguments.Select(p => NormalizeArg(p)).ToArray()) as Attribute;
 
             foreach (var namedArgument in customAttribute.Properties)
             {
@@ -123,12 +132,26 @@ namespace MakeFunctionJson
 
         public static Type ToReflectionType(this TypeReference typeDef)
         {
-            Type t = Type.GetType(typeDef.GetReflectionFullName());
+            var loadContext = AssemblyLoadContext.CurrentContextualReflectionContext;
+            if (loadContext == null)
+            {
+                throw new InvalidOperationException("CurrentContextualReflectionContext was null.");
+            }
+
+            var fullName = typeDef.GetReflectionFullName();
+            Type t = Type.GetType(fullName);
 
             if (t == null)
             {
-                Assembly a = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.GetFullPath(typeDef.Resolve().Module.FileName));
-                t = a.GetType(typeDef.GetReflectionFullName());
+                var assemblyName = new AssemblyName(typeDef.Resolve().Module.Assembly.FullName);
+
+                Assembly a = loadContext.LoadFromAssemblyName(assemblyName);
+                t = a.GetType(fullName);
+            }
+
+            if (t == null)
+            {
+                throw new InvalidOperationException($"Could not load type '{fullName}'.");
             }
 
             return t;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 using Mono.Cecil;
 using Newtonsoft.Json;
 
@@ -163,6 +164,7 @@ namespace MakeFunctionJson
 
         private bool TryGenerateFunctionJsons()
         {
+            var loadContext = new AssemblyLoadContext(Path.GetFileName(_assemblyPath), isCollectible: true);
             var assemblyRoot = Path.GetDirectoryName(_assemblyPath);
 
             var resolver = new DefaultAssemblyResolver();
@@ -173,36 +175,80 @@ namespace MakeFunctionJson
                 AssemblyResolver = resolver
             };
 
-            var module = ModuleDefinition.ReadModule(_assemblyPath, readerParams);
+            loadContext.Resolving += ResolveAssembly;
 
-            IEnumerable<TypeDefinition> exportedTypes = module.Types;
-
-            if (_functionsInDependencies)
+            bool ret;
+            using (var scope = loadContext.EnterContextualReflection())
             {
-                foreach (var referencedAssembly in module.AssemblyReferences)
+                var module = ModuleDefinition.ReadModule(_assemblyPath, readerParams);
+
+                IEnumerable<TypeDefinition> exportedTypes = module.Types;
+
+                if (_functionsInDependencies)
                 {
-                    var tryPath = Path.Combine(assemblyRoot, $"{referencedAssembly.Name}.dll");
-                    if (File.Exists(tryPath))
+                    foreach (var referencedAssembly in module.AssemblyReferences)
                     {
-                        try
+                        var tryPath = Path.Combine(assemblyRoot, $"{referencedAssembly.Name}.dll");
+                        if (File.Exists(tryPath))
                         {
-                            var loadedModule = ModuleDefinition.ReadModule(tryPath, readerParams);
-                            exportedTypes = exportedTypes.Concat(loadedModule.Types);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogWarning($"Could not evaluate '{referencedAssembly.Name}' for function types. Exception message: {ex.Message}");
+                            try
+                            {
+                                var loadedModule = ModuleDefinition.ReadModule(tryPath, readerParams);
+                                exportedTypes = exportedTypes.Concat(loadedModule.Types);
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogWarning($"Could not evaluate '{referencedAssembly.Name}' for function types. Exception message: {ex.Message}");
+                            }
                         }
                     }
                 }
+
+                var functions = GenerateFunctions(exportedTypes).ToList();
+                foreach (var function in functions.Where(f => f.HasValue && !f.Value.outputFile.Exists).Select(f => f.Value))
+                {
+                    function.schema.Serialize(function.outputFile.FullName);
+                }
+                ret = functions.All(f => f.HasValue);
             }
 
-            var functions = GenerateFunctions(exportedTypes).ToList();
-            foreach (var function in functions.Where(f => f.HasValue && !f.Value.outputFile.Exists).Select(f => f.Value))
+            loadContext.Unload();
+            return ret;
+
+            Assembly ResolveAssembly(AssemblyLoadContext context, AssemblyName assemblyName)
             {
-                function.schema.Serialize(function.outputFile.FullName);
+                Assembly result = null;
+
+                // First, check the assembly root dir. Assemblies copied with the app always wins.
+                var path = Path.Combine(assemblyRoot, assemblyName.Name + ".dll");
+                if (File.Exists(path))
+                {
+                    result = context.LoadFromAssemblyPath(path);
+
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                }
+
+                // Then, check if the assembly is already loaded into the default context.
+                // This is typically the case for framework assemblies like System.Private.Corelib.dll.
+                if (AssemblyLoadContext.Default.Assemblies.FirstOrDefault(a => a.GetName().Equals(assemblyName)) is Assembly existing)
+                {
+                    return existing;
+                }
+
+                // Lastly, try the resolution logic used by cecil. This can produce assemblies with
+                // different versions, which may cause issues. But not doing this fails in more cases.
+                var resolved = resolver.Resolve(AssemblyNameReference.Parse(assemblyName.FullName));
+                path = resolved?.MainModule.FileName;
+                if (path != null)
+                {
+                    result = context.LoadFromAssemblyPath(path);
+                }
+
+                return result;
             }
-            return functions.All(f => f.HasValue);
         }
 
         private bool CheckAppSettingsAndFunctionName(FunctionJsonSchema functionJson, MethodDefinition method)
