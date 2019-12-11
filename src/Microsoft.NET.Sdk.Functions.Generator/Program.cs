@@ -23,11 +23,6 @@ namespace Microsoft.NET.Sdk.Functions.Console
                 var outputPath = args[1].Trim();
                 var functionsInDependencies = bool.Parse(args[2].Trim());
 
-                AssemblyLoadContext.Default.Resolving += (context, assemblyName) =>
-                {
-                    return context.LoadFromAssemblyPath(Path.Combine(assemblyDir, assemblyName.Name + ".dll"));
-                };
-
                 IEnumerable<string> excludedFunctionNames = Enumerable.Empty<string>();
 
                 if (args.Length > 2)
