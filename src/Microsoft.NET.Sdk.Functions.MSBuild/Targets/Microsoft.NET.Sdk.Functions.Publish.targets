@@ -118,7 +118,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     ============================================================
     -->
   <Target Name="_FunctionsPublishDepsCopy" BeforeTargets="Publish" Condition="'$(SkipFunctionsDepsCopy)' != 'true'">
-    <Copy SourceFiles="$(PublishDir)$(AssemblyName).deps.json" DestinationFiles="$(PublishDir)bin\function.deps.json" Condition="Exists('$(PublishDir)$(AssemblyName).deps.json')"/>
+    <Move SourceFiles="$(PublishDir)$(AssemblyName).deps.json" DestinationFiles="$(PublishDir)bin\function.deps.json" Condition="Exists('$(PublishDir)$(AssemblyName).deps.json')"/>
   </Target>
 
 
