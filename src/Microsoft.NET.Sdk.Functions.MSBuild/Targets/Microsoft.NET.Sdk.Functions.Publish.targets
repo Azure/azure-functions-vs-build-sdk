@@ -114,7 +114,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     ============================================================
         _FunctionsPublishDepsCopy
 
-    Copies the deps file to the Functions bin folder
+    Moves the deps file to the Functions bin folder
     ============================================================
     -->
   <Target Name="_FunctionsPublishDepsCopy" BeforeTargets="Publish" Condition="'$(SkipFunctionsDepsCopy)' != 'true'">

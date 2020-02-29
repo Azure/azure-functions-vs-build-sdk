@@ -84,7 +84,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     ============================================================
     -->
   <Target Name="_FunctionsPostBuildDepsCopy" AfterTargets="PostBuildEvent" Condition="'$(SkipFunctionsDepsCopy)' != 'true'">
-    <Move SourceFiles="$(OutDir)$(AssemblyName).deps.json" DestinationFiles="$(OutDir)bin\function.deps.json" Condition="Exists('$(OutDir)$(AssemblyName).deps.json')"/>
+    <Copy SourceFiles="$(OutDir)$(AssemblyName).deps.json" DestinationFiles="$(OutDir)bin\function.deps.json" Condition="Exists('$(OutDir)$(AssemblyName).deps.json')"/>
   </Target>
 
   <!--
