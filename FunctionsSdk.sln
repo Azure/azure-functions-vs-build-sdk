@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NET.Sdk.Functions
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NET.Sdk.Functions.MSBuild", "src\Microsoft.NET.Sdk.Functions.MSBuild\Microsoft.NET.Sdk.Functions.MSBuild.csproj", "{1DB38EB5-DBA9-4678-BB99-2BCD1255DDBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.NET.Sdk.Functions.Generator.V2.Tests", "test\Microsoft.NET.Sdk.Functions.Generator.V2.Tests\Microsoft.NET.Sdk.Functions.Generator.V2.Tests.csproj", "{E5803B1D-169B-49C6-AE4C-110A235912E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NET.Sdk.Functions.Generator.V1.Tests", "test\Microsoft.NET.Sdk.Functions.Generator.V2.Tests\Microsoft.NET.Sdk.Functions.Generator.V1.Tests.csproj", "{E5803B1D-169B-49C6-AE4C-110A235912E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

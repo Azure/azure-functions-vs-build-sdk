@@ -10,7 +10,7 @@ using Microsoft.ServiceBus.Messaging;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Xunit;
 
-namespace Microsoft.NET.Sdk.Functions.Test.V2
+namespace Microsoft.NET.Sdk.Functions.Test.V1
 {
     public class FunctionJsonConverterTests
     {

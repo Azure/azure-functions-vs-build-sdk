@@ -16,8 +16,8 @@
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
-    <RootNamespace>Microsoft.NET.Sdk.Functions.Test.V2</RootNamespace>
-    <AssemblyName>Microsoft.NET.Sdk.Functions.Test.V2</AssemblyName>
+    <RootNamespace>Microsoft.NET.Sdk.Functions.Test.V1</RootNamespace>
+    <AssemblyName>Microsoft.NET.Sdk.Functions.Test.V1</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
