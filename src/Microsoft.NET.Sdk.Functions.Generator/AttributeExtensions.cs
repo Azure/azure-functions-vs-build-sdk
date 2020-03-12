@@ -202,6 +202,14 @@ namespace MakeFunctionJson
                     return "path";
                 }
             }
+            else if (attributeName == "EventHubTriggerAttribute" &&
+                attribute.GetType().Assembly.GetName().Version.Major == 2)
+            {
+                if (propertyName == "EventHubName")
+                {
+                    return "path";
+                }
+            }
             else if (attributeName == "ServiceBusTriggerAttribute")
             {
                 if (propertyName == "Access")
