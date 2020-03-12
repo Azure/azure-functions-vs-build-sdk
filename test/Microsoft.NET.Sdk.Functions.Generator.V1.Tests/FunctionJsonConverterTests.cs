@@ -4,12 +4,13 @@ using System.Linq;
 using System.Net.Http;
 using FluentAssertions;
 using MakeFunctionJson;
-using Microsoft.Azure.EventHubs;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.ServiceBus;
+using Microsoft.ServiceBus.Messaging;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Xunit;
 
-namespace Microsoft.NET.Sdk.Functions.Test
+namespace Microsoft.NET.Sdk.Functions.Test.V1
 {
     public class FunctionJsonConverterTests
     {
@@ -45,10 +46,10 @@ namespace Microsoft.NET.Sdk.Functions.Test
         [InlineData("MyBlobTrigger", "blobTrigger", "blobContent", "path", "blob.txt")]
         [InlineData("MyQueueTrigger", "queueTrigger", "queue", "queueName", "queue")]
         [InlineData("MyTimerTrigger", "timerTrigger", "timer", "schedule", "00:30:00")]
-        [InlineData("MyServiceBusTrigger", "serviceBusTrigger", "message", "queueName", "queue")]
+        [InlineData("MyServiceBusTrigger", "serviceBusTrigger", "message", "accessRights", "manage")]
         [InlineData("MyManualTrigger", "manualTrigger", "input", null, null)]
         [InlineData("MyManualTriggerWithoutParameters", "manualTrigger", null, null, null)]
-        [InlineData("MyEventHubTrigger", "eventHubTrigger", "message", "eventHubName", "hub")]
+        [InlineData("MyEventHubTrigger", "eventHubTrigger", "message", "path", "hub")]
         public void FunctionMethodsAreExported(string functionName, string type, string parameterName, string bindingName, string bindingValue)
         {
             var logger = new RecorderLogger();
@@ -58,44 +59,12 @@ namespace Microsoft.NET.Sdk.Functions.Test
             var binding = schema.Bindings.Single();
             binding.Value<string>("type").Should().Be(type);
             binding.Value<string>("name").Should().Be(parameterName);
-            if (bindingName != null)
+            if(bindingName != null)
             {
                 binding.Value<string>(bindingName).Should().Be(bindingValue);
             }
             logger.Errors.Should().BeEmpty();
             logger.Warnings.Should().BeEmpty();
-        }
-
-        public class InvalidFunctionBecauseOfMissingTrigger
-        {
-            [FunctionName("MyServiceBusTrigger")]
-            public static void Run(string message) { }
-        }
-
-        public class InvalidFunctionBecauseOfMissingFunctionName
-        {
-            public static void Run([ServiceBusTrigger("queue")] string message) { }
-        }
-
-        public class InvalidFunctionBecauseOfBothNoAutomaticTriggerAndServiceBusTrigger
-        {
-            [FunctionName("MyServiceBusTrigger"), NoAutomaticTrigger]
-            public static void Run([ServiceBusTrigger("queue")] string message) { }
-        }
-
-        [Theory]
-        [InlineData(typeof(InvalidFunctionBecauseOfMissingTrigger), "Method Microsoft.NET.Sdk.Functions.Test.FunctionJsonConverterTests+InvalidFunctionBecauseOfMissingTrigger.Run is missing a trigger attribute. Both a trigger attribute and FunctionName attribute are required for an Azure function definition.")]
-        // [InlineData(typeof(InvalidFunctionBecauseOfMissingFunctionName), "Method Microsoft.NET.Sdk.Functions.Test.FunctionJsonConverterTests+InvalidFunctionBecauseOfMissingFunctionName.Run is missing the 'FunctionName' attribute. Both a trigger attribute and 'FunctionName' are required for an Azure function definition.")]
-        [InlineData(typeof(InvalidFunctionBecauseOfBothNoAutomaticTriggerAndServiceBusTrigger), "Method Microsoft.NET.Sdk.Functions.Test.FunctionJsonConverterTests+InvalidFunctionBecauseOfBothNoAutomaticTriggerAndServiceBusTrigger.Run has both a 'NoAutomaticTrigger' attribute and a trigger attribute. Both can't be used together for an Azure function definition.")]
-        public void InvalidFunctionMethodProducesWarning(Type type, string warningMessage)
-        {
-            var logger = new RecorderLogger();
-            var converter = new FunctionJsonConverter(logger, ".", ".", functionsInDependencies: false);
-            var functions = converter.GenerateFunctions(new[] { TestUtility.GetTypeDefinition(type) });
-            functions.Should().BeEmpty();
-            logger.Errors.Should().BeEmpty();
-            logger.Warnings.Should().ContainSingle();
-            logger.Warnings.Single().Should().Be(warningMessage);
         }
     }
 }
