@@ -12,6 +12,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
   <PropertyGroup>
     <_NuGetPackageRoot>$([MSBuild]::EnsureTrailingSlash('$(NuGetPackageRoot)'))</_NuGetPackageRoot>
+    <_IsFunctionsSdkBuild>true</_IsFunctionsSdkBuild>
   </PropertyGroup>
   
   <!--
