@@ -23,13 +23,16 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <PropertyGroup>
       <UseNETCoreGenerator Condition="$(UseNETCoreGenerator)=='' AND !$(AzureFunctionsVersion.StartsWith('v1'))">true</UseNETCoreGenerator>
     </PropertyGroup>
-    <!-- TODO: CopyFilesToOutputDirectory does not look at the outdir to copy the pdbs. hence copying it manually. -->
-    <!-- Copy the application pdb to the bin folder-->
-    <Move SourceFiles="$(TargetDir)$(TargetName).pdb"
-      DestinationFiles="$(TargetDir)bin\$(TargetName).pdb"
-      OverwriteReadOnlyFiles="true" 
-      Condition="Exists('$(TargetDir)$(TargetName).pdb')"
-      ContinueOnError="true"/>
+
+    <ItemGroup>
+      <FunctionsBuildAssemblies Include="$(TargetDir)*.dll;
+                                         $(TargetDir)*.pdb" />
+    </ItemGroup>
+
+    <!-- Copy the additional assemblies to the bin folder-->
+    <Move SourceFiles="@(FunctionsBuildAssemblies)"
+          DestinationFiles="$(TargetDir)bin\%(Filename)%(Extension)"
+          OverwriteReadOnlyFiles="true" />
 
     <ItemGroup>
       <UserProvidedFunctionJsonFiles Include="@(None);@(Content)" Condition="Exists(%(Identity))
