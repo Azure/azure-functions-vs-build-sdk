@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.Loader;
 using FluentAssertions;
 using MakeFunctionJson;
 using Microsoft.Azure.EventHubs;
@@ -13,6 +14,11 @@ namespace Microsoft.NET.Sdk.Functions.Test
 {
     public class FunctionJsonConverterTests
     {
+        public FunctionJsonConverterTests()
+        {
+            AssemblyLoadContext.Default.EnterContextualReflection();
+        }
+
         public class FunctionsClass
         {
             [FunctionName("MyHttpTrigger")]

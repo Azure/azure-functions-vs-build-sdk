@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.Loader;
 using FluentAssertions;
 using MakeFunctionJson;
 using Microsoft.Azure.WebJobs;
@@ -48,6 +49,11 @@ namespace Microsoft.NET.Sdk.Functions.Test
 
     public class IConnectionProviderTests
     {
+        public IConnectionProviderTests()
+        {
+            AssemblyLoadContext.Default.EnterContextualReflection();
+        }
+
         [Theory]
         [InlineData(typeof(FunctionsClass1), "bar")]
         [InlineData(typeof(FunctionsClass2), "foo")]
