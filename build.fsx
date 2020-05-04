@@ -57,6 +57,18 @@ Target "Build" (fun _ ->
             Configuration = "Release"})
 )
 
+Target "UnitTest" (fun _ ->
+    DotNetCli.Test (fun p ->
+        {p with
+            Project = "test\\Microsoft.NET.Sdk.Functions.Generator.Tests"
+            Configuration = "Debug"})
+
+    DotNetCli.Test (fun p ->
+        {p with
+            Project = "test\\Microsoft.NET.Sdk.Functions.MSBuild.Tests"
+            Configuration = "Debug"})
+)
+
 Target "GenerateZipToSign" (fun _ ->
     !! (packOutputPath @@ "net46\\Microsoft.NET.Sdk.Functions.dll")
     ++ (buildTaskOutputPath @@ "net46\\Microsoft.NET.Sdk.Functions.MSBuild.dll")
@@ -197,6 +209,7 @@ Target "Publish" (fun _ ->
 Dependencies
 "Clean"
     ==> "Build"
+    ==> "UnitTest"
     ==> "GenerateZipToSign"
     ==> "UploadZipToSign"
     ==> "EnqueueSignMessage"
