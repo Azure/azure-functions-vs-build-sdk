@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.Loader;
 using FluentAssertions;
 using MakeFunctionJson;
 using Microsoft.Azure.WebJobs;
@@ -9,6 +10,11 @@ namespace Microsoft.NET.Sdk.Functions.Test
 {
     public class HasUnsupportedAttributesTests
     {
+        public HasUnsupportedAttributesTests()
+        {
+            AssemblyLoadContext.Default.EnterContextualReflection();
+        }
+
         public class FunctionsClass1
         {
             public static void Run1([Disable] [QueueTrigger("")] string message) { }
