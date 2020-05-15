@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -21,8 +20,8 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         [Required]
         public string OutputPath { get; set; }
 
-        private const string NETFrameworkFolder = "net46";
-        private const string NETStandardFolder = "netcoreapp3.0";
+        [Required]
+        public string TaskAssemblyDirectory { get; set; }
 
         public bool UseNETCoreGenerator { get; set; }
 
@@ -34,6 +33,9 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
         public bool FunctionsInDependencies { get; set; }
 
+        private const string NETFrameworkFolder = "net46";
+        private const string NETStandardFolder = "netcoreapp2.1";
+
         public override bool Execute()
         {
             string hostJsonPath = Path.Combine(OutputPath, "host.json");
@@ -43,8 +45,8 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
                 File.WriteAllText(hostJsonPath, hostJsonString);
             }
 
-            string taskAssemblyDirectory = Path.GetDirectoryName(typeof(GenerateFunctions).GetTypeInfo().Assembly.Location);
-            string baseDirectory = Path.GetDirectoryName(taskAssemblyDirectory);
+            string taskDirectoryFullPath = Path.GetFullPath(TaskAssemblyDirectory).TrimEnd(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
+            string baseDirectory = Path.GetDirectoryName(taskDirectoryFullPath);
             ProcessStartInfo processStartInfo = null;
 #if NET46
             processStartInfo = GetProcessStartInfo(baseDirectory, isCore: false);
