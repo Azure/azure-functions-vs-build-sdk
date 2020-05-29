@@ -30,7 +30,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     </ItemGroup>
 
     <!-- Copy the additional assemblies to the bin folder-->
-    <Move SourceFiles="@(FunctionsBuildAssemblies)"
+    <Copy SourceFiles="@(FunctionsBuildAssemblies)"
           DestinationFiles="$(TargetDir)bin\%(Filename)%(Extension)"
           OverwriteReadOnlyFiles="true" />
 
@@ -42,7 +42,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     </ItemGroup>
 
     <GenerateFunctions
-      TargetPath="$(TargetPath)"
+      TargetPath="$(TargetDir)bin\$(TargetFileName)"
       OutputPath="$(TargetDir)"
       UseNETCoreGenerator="$(UseNETCoreGenerator)"
       UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"
@@ -51,35 +51,6 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       TaskAssemblyDirectory="$(_FunctionsTasksDir)"/>
   </Target>
   
-    <!--
-    ============================================================
-                  _FunctionsBeforeCopyFilesToOutputDirectory
-
-    Sets the correct runtime folder for functions
-    ============================================================
-    -->
-  <Target Name="_FunctionsBeforeCopyFilesToOutputDirectory"
-          BeforeTargets="CopyFilesToOutputDirectory">
-      <PropertyGroup>
-        <BackUpOutDirPropertyValue>$(OutDir)</BackUpOutDirPropertyValue>
-        <OutDir>$(OutDir)bin\</OutDir>
-      </PropertyGroup>
-  </Target>
-  
-      <!--
-    ============================================================
-                  _FunctionsAfterCopyFilesToOutputDirectory
-
-    Resets the correct runtime folder for functions
-    ============================================================
-    -->
-  <Target Name="_FunctionsAfterCopyFilesToOutputDirectory"
-          AfterTargets="CopyFilesToOutputDirectory">
-      <PropertyGroup>
-        <OutDir>$(BackUpOutDirPropertyValue)</OutDir>
-      </PropertyGroup>
-  </Target>
-
  <!--
     ============================================================
         _FunctionsPostBuildDepsCopy
@@ -90,64 +61,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   <Target Name="_FunctionsPostBuildDepsCopy" AfterTargets="PostBuildEvent" Condition="'$(SkipFunctionsDepsCopy)' != 'true'">
     <Copy SourceFiles="$(OutDir)$(AssemblyName).deps.json" DestinationFiles="$(OutDir)bin\function.deps.json" Condition="Exists('$(OutDir)$(AssemblyName).deps.json')"/>
   </Target>
-
-  <!--
-    ============================================================
-        _ResolveAdditionalReferenceCopyLocalPathsForFunctions
-
-    CopyLocalLockFileAssemblies does not copy all the required assemblies 
-    to the TargetDir folder. This target will copy all the required files
-    to the TargetDir folder.
-    ============================================================
-    -->
-  <Target
-   Name="_ResolveAdditionalReferenceCopyLocalPathsForFunctions"
-   AfterTargets="ResolveReferences"
-     >
-
-    <!-- Force the binaries to be copied to the bin folder.-->
-    <ItemGroup>
-      <ReferenceCopyLocalPaths>
-        <DestinationSubDirectory>bin\%(ReferenceCopyLocalPaths.DestinationSubDirectory)</DestinationSubDirectory>
-      </ReferenceCopyLocalPaths>
-
-      <ResolvedAssembliesToPublish>
-        <DestinationSubPath>bin\%(ResolvedAssembliesToPublish.DestinationSubPath)</DestinationSubPath>
-      </ResolvedAssembliesToPublish>
-    </ItemGroup>
-  
-    <!-- Target path needs to point to the correct dll so that P2P references work. -->
-    <PropertyGroup>
-        <TargetPath>$(TargetDir)bin\$(TargetFileName)</TargetPath>
-    </PropertyGroup>
-  
-  </Target>
  
-    <!--
-    ============================================================
-                     _FunctionsGetTargetPathWithTargetPlatformMoniker
-
-     When building a referenced class library from the IDE, it just gathers the build outputs.
-    since IDE has already built the project.
-
-    In this case a seperate msbuild call to GetTargetPath is done from ResolveProjectReferences
-    in Microsoft.Common.CurrentVersion.targets. 
-    
-    Updating the TargetPath before this call will make sure that the right path will be returned.
-    
-    This fixed the p2p reference issues from non-Rosyln project system based class library.
-    ============================================================
-    -->
-  
-    <Target Name="_FunctionsGetTargetPathWithTargetPlatformMoniker" 
-            BeforeTargets="GetTargetPathWithTargetPlatformMoniker" >
-      
-      <PropertyGroup>
-          <TargetPath>$(TargetDir)bin\$(TargetFileName)</TargetPath>
-      </PropertyGroup>
-    
-  </Target>
-  
 
   <!--
     ============================================================
