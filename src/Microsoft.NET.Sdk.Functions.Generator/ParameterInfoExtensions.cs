@@ -35,6 +35,8 @@ namespace MakeFunctionJson
                 {
                     // Add a name property on the JObject that refers to the parameter name.
                     obj["name"] = parameterInfo.Name;
+                    // Add direction property - always "in" for a trigger
+                    obj["direction"] = "in";
                     return obj;
                 })
                 .ToList();

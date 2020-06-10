@@ -64,6 +64,7 @@ namespace Microsoft.NET.Sdk.Functions.Test
             var binding = schema.Bindings.Single();
             binding.Value<string>("type").Should().Be(type);
             binding.Value<string>("name").Should().Be(parameterName);
+            binding.Value<string>("direction").Should().Be("in");
             logger.Errors.Should().BeEmpty();
             logger.Warnings.Should().BeEmpty();
         }
