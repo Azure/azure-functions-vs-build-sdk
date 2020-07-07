@@ -139,7 +139,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
                                   Exclude="$(PublishDir)bin\**"/>
     </ItemGroup>
     
-    <!-- Copy the additional assemblies to the bin folder-->
+    <!-- Move the additional assemblies to the bin folder. 
+    we move the assemblies rather than copy because we want to reduce the publish payload -->
     <Move SourceFiles="@(FunctionsPublishAssemblies)"
       DestinationFiles="$(PublishDir)bin\%(RecursiveDir)%(Filename)%(Extension)"
       OverwriteReadOnlyFiles="true" />

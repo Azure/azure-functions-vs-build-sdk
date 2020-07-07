@@ -19,21 +19,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     ============================================================
     -->
   <Target Name="_GenerateFunctionsPostBuild"
-          AfterTargets="Build">
-    <PropertyGroup>
-      <UseNETCoreGenerator Condition="$(UseNETCoreGenerator)=='' AND !$(AzureFunctionsVersion.StartsWith('v1'))">true</UseNETCoreGenerator>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <FunctionsBuildAssemblies Include="$(TargetDir)**\*.dll;
-                                         $(TargetDir)**\*.pdb"
-                                Exclude="$(TargetDir)bin\**"/>
-    </ItemGroup>
-
-    <!-- Copy the additional assemblies to the bin folder-->
-    <Copy SourceFiles="@(FunctionsBuildAssemblies)"
-          DestinationFiles="$(TargetDir)bin\%(RecursiveDir)%(Filename)%(Extension)"
-          OverwriteReadOnlyFiles="true" />
+          AfterTargets="Build"
+          DependsOnTargets="_FunctionsPostBuildCollectFiles;_FunctionsPostBuildCopyFiles">
 
     <ItemGroup>
       <UserProvidedFunctionJsonFiles Include="@(None);@(Content)" Condition="Exists(%(Identity))
@@ -51,16 +38,56 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       FunctionsInDependencies="$(FunctionsInDependencies)"
       TaskAssemblyDirectory="$(_FunctionsTasksDir)"/>
   </Target>
+
+
+  <!--
+    ============================================================
+        _FunctionsPostBuildCollectFiles
+
+    Initializes the Files to copy.
+    ============================================================
+    -->
+  <Target Name="_FunctionsPostBuildCollectFiles">
+
+    <ItemGroup>
+      <FunctionsBuildAssemblies Include="$(TargetDir)**\*.dll;
+                                         $(TargetDir)**\*.pdb"
+                                Exclude="$(TargetDir)bin\**"/>
+    </ItemGroup>
+
+  </Target>
   
- <!--
+  <!--
+    ============================================================
+        _FunctionsPostBuildCopyFiles
+
+    Copies the dlls from build output to the bin folder.
+    ============================================================
+    -->
+  <Target Name="_FunctionsPostBuildCopyFiles" 
+          Inputs="@(FunctionsBuildAssemblies)"
+          Outputs="$(TargetDir)bin\%(RecursiveDir)%(Filename)%(Extension)">
+
+    <!-- Copy the assemblies to the bin folder-->
+    <Copy SourceFiles="@(FunctionsBuildAssemblies)"
+          DestinationFiles="$(TargetDir)bin\%(RecursiveDir)%(Filename)%(Extension)"
+          OverwriteReadOnlyFiles="true" />
+    
+  </Target>
+
+  <!--
     ============================================================
         _FunctionsPostBuildDepsCopy
 
     Copies the deps file to the Functions bin folder
     ============================================================
     -->
-  <Target Name="_FunctionsPostBuildDepsCopy" AfterTargets="PostBuildEvent" Condition="'$(SkipFunctionsDepsCopy)' != 'true'">
-    <Copy SourceFiles="$(OutDir)$(AssemblyName).deps.json" DestinationFiles="$(OutDir)bin\function.deps.json" Condition="Exists('$(OutDir)$(AssemblyName).deps.json')"/>
+  <Target Name="_FunctionsPostBuildDepsCopy" 
+          AfterTargets="PostBuildEvent" 
+          Condition="'$(SkipFunctionsDepsCopy)' != 'true'">
+    <Copy SourceFiles="$(OutDir)$(AssemblyName).deps.json" 
+          DestinationFiles="$(OutDir)bin\function.deps.json" 
+          Condition="Exists('$(OutDir)$(AssemblyName).deps.json')"/>
   </Target>
  
 

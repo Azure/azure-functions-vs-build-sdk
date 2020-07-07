@@ -17,8 +17,10 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <_FunctionsTaskAssemblyFullPath Condition=" '$(_FunctionsTaskAssemblyFullPath)'=='' ">$(_FunctionsTasksDir)\Microsoft.NET.Sdk.Functions.MSBuild.dll</_FunctionsTaskAssemblyFullPath>
     <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
     <DebugType Condition="'$(DebugType)' == ''">pdbonly</DebugType>
-    <IsPackable>false</IsPackable>
+    <IsPackable Condition="'$(IsPackable)' == ''">false</IsPackable>
+    <WarnOnPackingNonPackableProject Condition="'$(WarnOnPackingNonPackableProject)' == '' and '$(IsPackable)' == 'false'">true</WarnOnPackingNonPackableProject>
     <IsZipDeploySupported>true</IsZipDeploySupported>
+    <UseNETCoreGenerator Condition="$(UseNETCoreGenerator)=='' AND !$(AzureFunctionsVersion.StartsWith('v1'))">true</UseNETCoreGenerator>
   </PropertyGroup>
 
   <UsingTask TaskName="GenerateFunctions"
