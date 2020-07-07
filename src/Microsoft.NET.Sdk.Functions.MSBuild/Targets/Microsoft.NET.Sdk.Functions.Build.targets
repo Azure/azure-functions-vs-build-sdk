@@ -25,13 +25,14 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     </PropertyGroup>
 
     <ItemGroup>
-      <FunctionsBuildAssemblies Include="$(TargetDir)*.dll;
-                                         $(TargetDir)*.pdb" />
+      <FunctionsBuildAssemblies Include="$(TargetDir)**\*.dll;
+                                         $(TargetDir)**\*.pdb"
+                                Exclude="$(TargetDir)bin\**"/>
     </ItemGroup>
 
     <!-- Copy the additional assemblies to the bin folder-->
     <Copy SourceFiles="@(FunctionsBuildAssemblies)"
-          DestinationFiles="$(TargetDir)bin\%(Filename)%(Extension)"
+          DestinationFiles="$(TargetDir)bin\%(RecursiveDir)%(Filename)%(Extension)"
           OverwriteReadOnlyFiles="true" />
 
     <ItemGroup>
