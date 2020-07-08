@@ -148,8 +148,6 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <GenerateFunctions
       TargetPath="$(FunctionsTargetPath)"
       OutputPath="$(FunctionsOutputPath)"
-      UseNETCoreGenerator="$(UseNETCoreGenerator)"
-      UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"
       UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)"
       FunctionsInDependencies="$(FunctionsInDependencies)" 
       TaskAssemblyDirectory="$(_FunctionsTasksDir)"/>

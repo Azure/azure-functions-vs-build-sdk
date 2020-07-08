@@ -32,8 +32,6 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <GenerateFunctions
       TargetPath="$(TargetDir)bin\$(TargetFileName)"
       OutputPath="$(TargetDir)"
-      UseNETCoreGenerator="$(UseNETCoreGenerator)"
-      UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"
       UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)" 
       FunctionsInDependencies="$(FunctionsInDependencies)"
       TaskAssemblyDirectory="$(_FunctionsTasksDir)"/>

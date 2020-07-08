@@ -4,14 +4,13 @@
   <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\Microsoft.NET.Sdk.Functions.Version.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
     <Version>$(FunctionsSdkVersion)</Version>
     <Authors>Microsoft</Authors>
     <ProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</ProjectUrl>
     <PackageProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</PackageProjectUrl>
-    <LicenseUrl>https://github.com/Azure/azure-functions-vs-build-sdk/blob/master/LICENSE</LicenseUrl>
-    <PackageLicenseUrl>https://github.com/Azure/azure-functions-vs-build-sdk/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Azure/azure-functions-vs-build-sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>azurefunctions</PackageTags>
@@ -44,29 +43,29 @@
     <!-- MSBuild task assemblies -->    
     <None Include="$(FunctionsBuildTaskOutputPath)\netstandard2.0\Microsoft.NET.Sdk.Functions.MSBuild.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp3.0\</PackagePath>
+      <PackagePath>tools\netcoreapp3.1\</PackagePath>
     </None>
 
     <!-- Generator and dependent assemblies-->
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.0\Newtonsoft.Json.dll">
+    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.1\Newtonsoft.Json.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp3.0\</PackagePath>
+      <PackagePath>tools\netcoreapp3.1\</PackagePath>
     </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.0\Mono.Cecil.dll">
+    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.1\Mono.Cecil.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp3.0\</PackagePath>
+      <PackagePath>tools\netcoreapp3.1\</PackagePath>
     </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.0\Microsoft.NET.Sdk.Functions.Generator.dll">
+    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.1\Microsoft.NET.Sdk.Functions.Generator.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp3.0\</PackagePath>
+      <PackagePath>tools\netcoreapp3.1\</PackagePath>
     </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.0\Microsoft.NET.Sdk.Functions.Generator.runtimeconfig.json">
+    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.1\Microsoft.NET.Sdk.Functions.Generator.runtimeconfig.json">
       <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp3.0\</PackagePath>
+      <PackagePath>tools\netcoreapp3.1\</PackagePath>
     </None>
-    <None Include="$(OutputPath)\netcoreapp3.0\Microsoft.NET.Sdk.Functions.dll">
+    <None Include="$(OutputPath)\netcoreapp3.1\Microsoft.NET.Sdk.Functions.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp3.0\</PackagePath>
+      <PackagePath>tools\netcoreapp3.1\</PackagePath>
     </None>
   </ItemGroup>
 
