@@ -19,8 +19,8 @@
     <PackageDescription>Build SDK for Azure Functions</PackageDescription>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
-    <FunctionsBuildTaskOutputPath>..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\bin\Release</FunctionsBuildTaskOutputPath>
-    <FunctionsGeneratorOutputPath>..\..\src\Microsoft.NET.Sdk.Functions.Generator\bin\Release</FunctionsGeneratorOutputPath>
+    <FunctionsBuildTaskOutputPath>..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\bin\$(Configuration)</FunctionsBuildTaskOutputPath>
+    <FunctionsGeneratorOutputPath>..\..\src\Microsoft.NET.Sdk.Functions.Generator\bin\$(Configuration)</FunctionsGeneratorOutputPath>
     <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
 
