@@ -28,34 +28,26 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
 
         public TestInitialize()
         {
-            ITestOutputHelper testOutputHelper = null;
-            // Delete the package cache
-            string packageCachepath = Environment.ExpandEnvironmentVariables(@"%userprofile%\.nuget\packages\microsoft.net.sdk.functions");
-            if (Directory.Exists(packageCachepath))
-            {
-                Directory.Delete(packageCachepath, true);
-            }
-
             // Run dotnet restore at solution root.
             string dotnetArgs = $"restore";
-            int? exitCode = new ProcessWrapper().RunProcess(DotNetExeName, dotnetArgs, PathToRepoRoot, out int? _, createDirectoryIfNotExists: false, testOutputHelper: testOutputHelper);
+            int? exitCode = new ProcessWrapper().RunProcess(DotNetExeName, dotnetArgs, PathToRepoRoot, out int? _, createDirectoryIfNotExists: false);
             Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
 
             // Build the functions msbuild project.
             string projectDir = Path.Combine(SrcRoot, FunctionsMsBuildProject);
             dotnetArgs = $"build --configuration {Configuration}";
-            exitCode = new ProcessWrapper().RunProcess(DotNetExeName, dotnetArgs, projectDir, out int? _, createDirectoryIfNotExists: false, testOutputHelper: testOutputHelper);
+            exitCode = new ProcessWrapper().RunProcess(DotNetExeName, dotnetArgs, projectDir, out int? _, createDirectoryIfNotExists: false);
             Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
 
             // Build the functions generator project.
             projectDir = Path.Combine(SrcRoot, FunctionsGeneratorProject);
-            exitCode = new ProcessWrapper().RunProcess(DotNetExeName, dotnetArgs, projectDir, out _, createDirectoryIfNotExists: false, testOutputHelper: testOutputHelper);
+            exitCode = new ProcessWrapper().RunProcess(DotNetExeName, dotnetArgs, projectDir, out _, createDirectoryIfNotExists: false);
             Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
 
             // Create the package
             projectDir = Path.Combine(PackRoot, FunctionsNetSdkProject);
             dotnetArgs = $"pack --configuration {Configuration}";
-            exitCode = new ProcessWrapper().RunProcess(DotNetExeName, dotnetArgs, projectDir, out _, createDirectoryIfNotExists: false, testOutputHelper: testOutputHelper);
+            exitCode = new ProcessWrapper().RunProcess(DotNetExeName, dotnetArgs, projectDir, out _, createDirectoryIfNotExists: false);
             Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
 
             // Setup the package source.
