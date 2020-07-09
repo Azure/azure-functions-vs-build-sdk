@@ -62,7 +62,7 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
             string projectFileDirectory = Path.Combine(_testsDirectory, projectFileToTest);
 
             // Restore
-            string dotnetArgs = $"restore {projectFileToTest}.csproj --source {_packageSource} --source {TestInitialize.NuGetPackageSource}";
+            string dotnetArgs = $"restore {projectFileToTest}.csproj --source {TestInitialize.NuGetPackageSource};{_packageSource} --verbosity n";
             int? exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
             Assert.True(exitCode.HasValue && exitCode.Value == 0);
 
