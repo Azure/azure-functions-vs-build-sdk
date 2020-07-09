@@ -67,8 +67,7 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
             }
 
             // Setup the package source.
-            var packageDir = Path.Combine(projectDir, "bin", Configuration);
-            PackageSource = Path.GetDirectoryName(packageDir);
+            PackageSource = Path.Combine(projectDir, "bin", Configuration) + Path.DirectorySeparatorChar;
 
             // Setup the test directory.
             string sourceDirectory = Path.Combine(AppContext.BaseDirectory, TestProjectsSourceDirectory);
