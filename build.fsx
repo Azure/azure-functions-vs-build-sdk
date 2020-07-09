@@ -73,7 +73,7 @@ Target "UnitTest" (fun _ ->
         {p with
             Project = "test\\Microsoft.NET.Sdk.Functions.EndToEnd.Tests"
             Configuration = "Debug"
-            AdditionalArgs=["--logger"; "console;verbosity=detailed"; "--blame"; "--diag"; "testlog.log"]})
+            AdditionalArgs=["--logger"; "console;verbosity=detailed"]})
 )
 
 Target "GenerateZipToSign" (fun _ ->
