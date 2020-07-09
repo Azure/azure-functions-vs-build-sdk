@@ -57,6 +57,7 @@ Target "Build" (fun _ ->
             Configuration = "Release"})
 )
 
+
 Target "UnitTest" (fun _ ->
     DotNetCli.Test (fun p ->
         {p with
@@ -71,7 +72,8 @@ Target "UnitTest" (fun _ ->
     DotNetCli.Test (fun p ->
         {p with
             Project = "test\\Microsoft.NET.Sdk.Functions.EndToEnd.Tests"
-            Configuration = "Debug"})
+            Configuration = "Debug"
+            AdditionalArgs=["--logger"; "console;verbosity=detailed"; "--blame"; "--diag"; "testlog.log"]})
 )
 
 Target "GenerateZipToSign" (fun _ ->

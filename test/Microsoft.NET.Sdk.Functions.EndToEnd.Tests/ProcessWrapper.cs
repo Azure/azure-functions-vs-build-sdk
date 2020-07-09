@@ -42,34 +42,5 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
 
             return -1;
         }
-
-        public static void KillProcessTree(int processId)
-        {
-            try
-            {
-                Process process = Process.GetProcessById(processId);
-                if (process != null && !process.HasExited)
-                {
-                    KillProcessTreeInternal(processId);
-                }
-            }
-            catch (Exception)
-            {
-            }
-
-        }
-
-        private static void KillProcessTreeInternal(int pid)
-        {
-            try
-            {
-                Process proc = Process.GetProcessById(pid);
-                proc.Kill();
-            }
-            catch (ArgumentException)
-            {
-                // vramak: Process might have already exited.
-            }
-        }
     }
 }

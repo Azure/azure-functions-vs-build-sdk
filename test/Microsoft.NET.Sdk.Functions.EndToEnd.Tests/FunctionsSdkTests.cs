@@ -5,16 +5,18 @@ using Xunit.Abstractions;
 
 namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
 {
-    public class FunctionsSdkTests: IClassFixture<TestInitialize>
+    public class FunctionsSdkTests
     {
         private string _packageSource;
         private string _testsDirectory;
+        private TestInitialize _testInitializer;
         private ITestOutputHelper _testOutputHelper;
-        public FunctionsSdkTests(ITestOutputHelper output, TestInitialize testInitialize)
+        public FunctionsSdkTests(ITestOutputHelper output)
         {
+            _testInitializer = new TestInitialize(output);
             _testOutputHelper = output;
-            _packageSource = testInitialize.PackageSource;
-            _testsDirectory = testInitialize.TestDirectory;
+            _packageSource = _testInitializer.PackageSource;
+            _testsDirectory = _testInitializer.TestDirectory;
         }
 
         [Fact]
@@ -26,12 +28,14 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
 
             // Restore
             string dotnetArgs = $"restore {projectFileToTest}.csproj --source {_packageSource}";
-            int? exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExeName, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            int? exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            Assert.True(exitCode.HasValue && exitCode.Value == 0);
 
             // Build
             dotnetArgs = $"build {projectFileToTest}.csproj --configuration {TestInitialize.Configuration}";
-            exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExeName, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
-            
+            exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            Assert.True(exitCode.HasValue && exitCode.Value == 0);
+
             string additionalBinDir = Path.Combine(projectFileDirectory, "bin", TestInitialize.Configuration, TestInitialize.Framework, "bin");
             Assert.True(Directory.Exists(additionalBinDir));
 
@@ -40,7 +44,8 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
 
             // Publish
             dotnetArgs = $"publish {projectFileToTest}.csproj --configuration {TestInitialize.Configuration}";
-            exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExeName, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            Assert.True(exitCode.HasValue && exitCode.Value == 0);
 
             string additionalPublishBinDir = Path.Combine(projectFileDirectory, "bin", TestInitialize.Configuration, TestInitialize.Framework, "publish", "bin");
             Assert.True(Directory.Exists(additionalPublishBinDir));
@@ -57,12 +62,14 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
             string projectFileDirectory = Path.Combine(_testsDirectory, projectFileToTest);
 
             // Restore
-            string dotnetArgs = $"restore {projectFileToTest}.csproj --source {_packageSource}";
-            int? exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExeName, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            string dotnetArgs = $"restore {projectFileToTest}.csproj --source {_packageSource} --source {TestInitialize.NuGetPackageSource}";
+            int? exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            Assert.True(exitCode.HasValue && exitCode.Value == 0);
 
             // Build
             dotnetArgs = $"build {projectFileToTest}.csproj --configuration {TestInitialize.Configuration}";
-            exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExeName, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            Assert.True(exitCode.HasValue && exitCode.Value == 0);
 
             string additionalBinDir = Path.Combine(projectFileDirectory, "bin", TestInitialize.Configuration, TestInitialize.Framework, "bin");
             Assert.True(Directory.Exists(additionalBinDir));
@@ -75,7 +82,8 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
 
             // Publish
             dotnetArgs = $"publish {projectFileToTest}.csproj --configuration {TestInitialize.Configuration}";
-            exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExeName, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            Assert.True(exitCode.HasValue && exitCode.Value == 0);
 
             string additionalPublishBinDir = Path.Combine(projectFileDirectory, "bin", TestInitialize.Configuration, TestInitialize.Framework, "publish", "bin");
             Assert.True(Directory.Exists(additionalPublishBinDir));
@@ -96,11 +104,13 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
 
             // Restore
             string dotnetArgs = $"restore {projectFileToTest}.csproj --source {_packageSource}";
-            int? exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExeName, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            int? exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            Assert.True(exitCode.HasValue && exitCode.Value == 0);
 
             // Build
             dotnetArgs = $"build {projectFileToTest}.csproj --configuration {TestInitialize.Configuration}";
-            exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExeName, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            Assert.True(exitCode.HasValue && exitCode.Value == 0);
 
             string binDir = Path.Combine(projectFileDirectory, "bin", TestInitialize.Configuration, TestInitialize.Framework);
             string additionalBinDir = Path.Combine(binDir, "bin");
@@ -114,7 +124,8 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
 
             // Publish
             dotnetArgs = $"publish {projectFileToTest}.csproj --configuration {TestInitialize.Configuration}";
-            exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExeName, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
+            Assert.True(exitCode.HasValue && exitCode.Value == 0);
 
             string publishDir = Path.Combine(projectFileDirectory, "bin", TestInitialize.Configuration, TestInitialize.Framework, "publish");
             string additionalPublishBinDir = Path.Combine(publishDir, "bin");

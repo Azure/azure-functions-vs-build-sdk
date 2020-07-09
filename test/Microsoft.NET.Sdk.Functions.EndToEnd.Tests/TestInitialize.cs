@@ -7,17 +7,18 @@ using Xunit.Abstractions;
 
 namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
 {
-    public class TestInitialize : IDisposable
+    public class TestInitialize
     {
         public const string TestProjectsSourceDirectory = "Resources";
         public const string TestProjectsTargetDirectory = "TestResults";
-        public const string DotNetExeName = "dotnet";
         public const string FunctionsNetSdkProject = "Microsoft.Net.Sdk.Functions";
         public const string FunctionsMsBuildProject = "Microsoft.NET.Sdk.Functions.MSBuild";
         public const string FunctionsGeneratorProject = "Microsoft.NET.Sdk.Functions.Generator";
         public const string Configuration = "Debug";
         public const string Framework = "netcoreapp3.1";
+        public const string NuGetPackageSource = @"https://api.nuget.org/";
 
+        public static readonly string DotNetExecutable = "dotnet";
         public static readonly string PathToRepoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\..\"));
         public static readonly string SrcRoot = Path.Combine(PathToRepoRoot, "src");
         public static readonly string PackRoot = Path.Combine(PathToRepoRoot, "pack");
@@ -26,41 +27,56 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
         public string PackageSource { get; private set; }
         public string TestDirectory { get; private set; }
 
-        public TestInitialize()
+        public TestInitialize(ITestOutputHelper testOutputHelper, bool runRestore = false, bool runBuild = false, bool runPack = true)
         {
-            // Run dotnet restore at solution root.
-            string dotnetArgs = $"restore";
-            int? exitCode = new ProcessWrapper().RunProcess(DotNetExeName, dotnetArgs, PathToRepoRoot, out int? _, createDirectoryIfNotExists: false);
-            Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
+            string dotnetArgs;
+            int? exitCode;
+            string projectDir = Path.Combine(PackRoot, FunctionsNetSdkProject);
 
-            // Build the functions msbuild project.
-            string projectDir = Path.Combine(SrcRoot, FunctionsMsBuildProject);
-            dotnetArgs = $"build --configuration {Configuration}";
-            exitCode = new ProcessWrapper().RunProcess(DotNetExeName, dotnetArgs, projectDir, out int? _, createDirectoryIfNotExists: false);
-            Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
+            if (runRestore)
+            {
+                // Run dotnet restore at solution root.
+                dotnetArgs = $"restore";
+                exitCode = new ProcessWrapper().RunProcess(DotNetExecutable, dotnetArgs, PathToRepoRoot, out int? _, createDirectoryIfNotExists: false, testOutputHelper: testOutputHelper);
+                Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
+            }
 
-            // Build the functions generator project.
-            projectDir = Path.Combine(SrcRoot, FunctionsGeneratorProject);
-            exitCode = new ProcessWrapper().RunProcess(DotNetExeName, dotnetArgs, projectDir, out _, createDirectoryIfNotExists: false);
-            Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
+            if (runBuild)
+            {
+                dotnetArgs = $"build --configuration {Configuration}";
 
-            // Create the package
-            projectDir = Path.Combine(PackRoot, FunctionsNetSdkProject);
-            dotnetArgs = $"pack --configuration {Configuration}";
-            exitCode = new ProcessWrapper().RunProcess(DotNetExeName, dotnetArgs, projectDir, out _, createDirectoryIfNotExists: false);
-            Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
+                // Build the functions msbuild project.
+                projectDir = Path.Combine(SrcRoot, FunctionsMsBuildProject);
+                exitCode = new ProcessWrapper().RunProcess(DotNetExecutable, dotnetArgs, projectDir, out int? _, createDirectoryIfNotExists: false, testOutputHelper: testOutputHelper);
+                Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
+
+                // Build the functions generator project.
+                projectDir = Path.Combine(SrcRoot, FunctionsGeneratorProject);
+                exitCode = new ProcessWrapper().RunProcess(DotNetExecutable, dotnetArgs, projectDir, out _, createDirectoryIfNotExists: false, testOutputHelper: testOutputHelper);
+                Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
+            }
+
+            if (runPack)
+            {
+                dotnetArgs = $"pack --configuration {Configuration}";
+
+                // Create the package
+                projectDir = Path.Combine(PackRoot, FunctionsNetSdkProject);
+                exitCode = new ProcessWrapper().RunProcess(DotNetExecutable, dotnetArgs, projectDir, out _, createDirectoryIfNotExists: false, testOutputHelper: testOutputHelper);
+                Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
+            }
 
             // Setup the package source.
             var packageDir = Path.Combine(projectDir, "bin", Configuration);
-            var nupkg = Directory.EnumerateFiles(packageDir, "*.nupkg", SearchOption.TopDirectoryOnly);
-            Debug.Assert(nupkg.Single() != null);
-            PackageSource = Path.GetDirectoryName(nupkg.Single());
+            PackageSource = Path.GetDirectoryName(packageDir);
 
             // Setup the test directory.
             string sourceDirectory = Path.Combine(AppContext.BaseDirectory, TestProjectsSourceDirectory);
             DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
+
             string targetDirectory = Path.Combine(PathToRepoRoot, TestProjectsTargetDirectory);
             DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
+
             CopyAll(diSource, diTarget);
             TestDirectory = targetDirectory;
         }
@@ -80,11 +96,6 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
                     target.CreateSubdirectory(diSourceSubDir.Name);
                 CopyAll(diSourceSubDir, nextTargetSubDir);
             }
-        }
-
-        public void Dispose()
-        {
-            // ... clean up
         }
     }
 }
