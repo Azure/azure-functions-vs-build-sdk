@@ -15,7 +15,7 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
         public const string FunctionsNetSdkProject = "Microsoft.Net.Sdk.Functions";
         public const string FunctionsMsBuildProject = "Microsoft.NET.Sdk.Functions.MSBuild";
         public const string FunctionsGeneratorProject = "Microsoft.NET.Sdk.Functions.Generator";
-        public const string Configuration = "Release";
+        public const string Configuration = "Debug";
         public const string Framework = "netcoreapp3.1";
 
         public static readonly string PathToRepoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\..\"));
