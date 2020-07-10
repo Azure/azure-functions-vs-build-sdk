@@ -6,13 +6,7 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.NET.Sdk.Functions.Tasks
 {
-#if NET46
-    [LoadInSeparateAppDomain]
-    public class GenerateFunctions : AppDomainIsolatedTask
-#else
-
     public class GenerateFunctions : Task
-#endif
     {
         [Required]
         public string TargetPath { get; set; }
@@ -23,18 +17,13 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         [Required]
         public string TaskAssemblyDirectory { get; set; }
 
-        public bool UseNETCoreGenerator { get; set; }
-
-        public bool UseNETFrameworkGenerator { get; set; }
-
         public bool GenerateHostJson { get; set; }
 
         public ITaskItem[] UserProvidedFunctionJsonFiles { get; set; }
 
         public bool FunctionsInDependencies { get; set; }
 
-        private const string NETFrameworkFolder = "net46";
-        private const string NETStandardFolder = "netcoreapp3.0";
+        private const string NETCoreAppFolder = "netcoreapp3.1";
 
         public override bool Execute()
         {
@@ -47,21 +36,8 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
             string taskDirectoryFullPath = Path.GetFullPath(TaskAssemblyDirectory).TrimEnd(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
             string baseDirectory = Path.GetDirectoryName(taskDirectoryFullPath);
-            ProcessStartInfo processStartInfo = null;
-#if NET46
-            processStartInfo = GetProcessStartInfo(baseDirectory, isCore: false);
-            if (UseNETCoreGenerator)
-            {
-                processStartInfo = GetProcessStartInfo(baseDirectory, isCore: true);
-            }
-#else
-            processStartInfo = GetProcessStartInfo(baseDirectory, isCore: true);
-            if (UseNETFrameworkGenerator)
-            {
-                processStartInfo = GetProcessStartInfo(baseDirectory, isCore: false);
-            }
+            ProcessStartInfo processStartInfo = GetProcessStartInfo(baseDirectory);
 
-#endif
             this.Log.LogMessage(MessageImportance.Low, $"Function generator path: '{processStartInfo.FileName}'");
             this.Log.LogCommandLine(MessageImportance.Low, processStartInfo.Arguments);
             using (Process process = new Process { StartInfo = processStartInfo })
@@ -89,11 +65,11 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
             }
         }
 
-        private ProcessStartInfo GetProcessStartInfo(string baseLocation, bool isCore)
+        private ProcessStartInfo GetProcessStartInfo(string baseLocation)
         {
-            string workingDirectory = isCore ? Path.Combine(baseLocation, NETStandardFolder) : Path.Combine(baseLocation, NETFrameworkFolder);
-            string exePath = isCore ? DotNetMuxer.MuxerPathOrDefault() : Path.Combine(workingDirectory, "Microsoft.NET.Sdk.Functions.Generator.exe");
-            string arguments = isCore ? $"Microsoft.NET.Sdk.Functions.Generator.dll \"{TargetPath} \" \"{OutputPath} \" \"{FunctionsInDependencies} \"" : $"\"{TargetPath} \" \"{OutputPath} \" \"{FunctionsInDependencies} \"";
+            string workingDirectory = Path.Combine(baseLocation, NETCoreAppFolder);
+            string exePath = DotNetMuxer.MuxerPathOrDefault();
+            string arguments = $"Microsoft.NET.Sdk.Functions.Generator.dll \"{TargetPath} \" \"{OutputPath} \" \"{FunctionsInDependencies} \"";
 
             string excludedFunctionNamesArg = UserProvidedFunctionJsonFiles?
                     .Select(f => f.ItemSpec.Replace("/", @"\").Replace(@"\function.json", string.Empty))

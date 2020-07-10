@@ -57,6 +57,7 @@ Target "Build" (fun _ ->
             Configuration = "Release"})
 )
 
+
 Target "UnitTest" (fun _ ->
     DotNetCli.Test (fun p ->
         {p with
@@ -67,16 +68,22 @@ Target "UnitTest" (fun _ ->
         {p with
             Project = "test\\Microsoft.NET.Sdk.Functions.MSBuild.Tests"
             Configuration = "Debug"})
+
+    DotNetCli.Test (fun p ->
+        {p with
+            Project = "test\\Microsoft.NET.Sdk.Functions.EndToEnd.Tests"
+            Configuration = "Debug"
+            AdditionalArgs=["--logger"; "console;verbosity=detailed"]})
 )
 
 Target "GenerateZipToSign" (fun _ ->
-    !! (packOutputPath @@ "netcoreapp3.0\\Microsoft.NET.Sdk.Functions.dll")
+    !! (packOutputPath @@ "netcoreapp3.1\\Microsoft.NET.Sdk.Functions.dll")
     ++ (buildTaskOutputPath @@ "netstandard2.0\\Microsoft.NET.Sdk.Functions.MSBuild.dll")
-    ++ (generatorOutputPath @@ "netcoreapp3.0\\Microsoft.NET.Sdk.Functions.Generator.dll")
+    ++ (generatorOutputPath @@ "netcoreapp3.1\\Microsoft.NET.Sdk.Functions.Generator.dll")
     |> CreateZip "." (version + "netstandard2.zip") "" 7 true
 
-    !! (generatorOutputPath @@ "netcoreapp3.0\\Newtonsoft.Json.dll")
-    ++ (generatorOutputPath @@ "netcoreapp3.0\\Mono.Cecil.dll")
+    !! (generatorOutputPath @@ "netcoreapp3.1\\Newtonsoft.Json.dll")
+    ++ (generatorOutputPath @@ "netcoreapp3.1\\Mono.Cecil.dll")
     |> CreateZip "." (version + "netstandard2thirdparty.zip") "" 7 true
 )
 
@@ -126,9 +133,9 @@ Target "WaitForSigning" (fun _ ->
     match signed with
     | Success file ->
         Unzip "tmpBuild" file
-        MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.dll", packOutputPath @@ "netcoreapp3.0\\Microsoft.NET.Sdk.Functions.dll")
+        MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.dll", packOutputPath @@ "netcoreapp3.1\\Microsoft.NET.Sdk.Functions.dll")
         MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.MSBuild.dll", buildTaskOutputPath @@ "netstandard2.0\\Microsoft.NET.Sdk.Functions.MSBuild.dll")
-        MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.Generator.dll", generatorOutputPath @@ "netcoreapp3.0\\Microsoft.NET.Sdk.Functions.Generator.dll")
+        MoveFileTo ("tmpBuild" @@ "Microsoft.NET.Sdk.Functions.Generator.dll", generatorOutputPath @@ "netcoreapp3.1\\Microsoft.NET.Sdk.Functions.Generator.dll")
     | Failure e -> targetError e null |> ignore
 
     CleanDir "tmpBuild"   
@@ -137,8 +144,8 @@ Target "WaitForSigning" (fun _ ->
     match signed with
     | Success file ->
         Unzip "tmpBuild" file
-        MoveFileTo ("tmpBuild" @@ "Newtonsoft.Json.dll", generatorOutputPath @@ "netcoreapp3.0\\Newtonsoft.Json.dll")
-        MoveFileTo ("tmpBuild" @@ "Mono.Cecil.dll", generatorOutputPath @@ "netcoreapp3.0\\Mono.Cecil.dll")
+        MoveFileTo ("tmpBuild" @@ "Newtonsoft.Json.dll", generatorOutputPath @@ "netcoreapp3.1\\Newtonsoft.Json.dll")
+        MoveFileTo ("tmpBuild" @@ "Mono.Cecil.dll", generatorOutputPath @@ "netcoreapp3.1\\Mono.Cecil.dll")
     | Failure e -> targetError e null |> ignore
 )
 

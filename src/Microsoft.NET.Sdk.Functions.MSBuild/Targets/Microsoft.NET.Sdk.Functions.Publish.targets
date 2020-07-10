@@ -19,22 +19,6 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
   <!--
     ============================================================
-                  _OverrideFunctionsPack
-
-    This target gets called during folder publish from VS since 
-    Function project is a class library project rather than
-    a console project. IsPackable property for the functions projects
-    is set to false, so, pack target wont pack the project. This target
-    invokes the publish target to do the actual publish.
-    ============================================================
-    -->
-  <Target Name="_OverrideFunctionsPack"
-          AfterTargets="Pack"
-          Condition="'$(DisablePublishDuringPack)' != 'true'"
-          DependsOnTargets="Publish" />
-
-  <!--
-    ============================================================
                   _InitializeDotNetPublishProperties
 
     Initializes the publish propeties for 'dotnet publish'
@@ -150,20 +134,20 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   <Target Name="_GenerateFunctionsAndCopyContentFiles">
 
     <ItemGroup>
-      <FunctionsPublishAssemblies Include="$(PublishDir)*.dll;
-                                           $(PublishDir)*.pdb" />
+      <FunctionsPublishAssemblies Include="$(PublishDir)**\*.dll;
+                                           $(PublishDir)**\*.pdb" 
+                                  Exclude="$(PublishDir)bin\**"/>
     </ItemGroup>
     
-    <!-- Copy the additional assemblies to the bin folder-->
+    <!-- Move the additional assemblies to the bin folder. 
+    we move the assemblies rather than copy because we want to reduce the publish payload -->
     <Move SourceFiles="@(FunctionsPublishAssemblies)"
-      DestinationFiles="$(PublishDir)bin\%(Filename)%(Extension)"
+      DestinationFiles="$(PublishDir)bin\%(RecursiveDir)%(Filename)%(Extension)"
       OverwriteReadOnlyFiles="true" />
     
     <GenerateFunctions
       TargetPath="$(FunctionsTargetPath)"
       OutputPath="$(FunctionsOutputPath)"
-      UseNETCoreGenerator="$(UseNETCoreGenerator)"
-      UseNETFrameworkGenerator="$(UseNETFrameworkGenerator)"
       UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)"
       FunctionsInDependencies="$(FunctionsInDependencies)" 
       TaskAssemblyDirectory="$(_FunctionsTasksDir)"/>
