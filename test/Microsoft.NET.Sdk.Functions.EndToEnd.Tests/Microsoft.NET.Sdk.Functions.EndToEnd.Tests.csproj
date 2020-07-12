@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Resources\FunctionAppWithHttpTrigger\HttpFunction.cs" />
+    <Compile Remove="Resources\**\*.cs" />
   </ItemGroup>
 
 </Project>

@@ -30,7 +30,7 @@ let connectionString =
     "DefaultEndpointsProtocol=https;AccountName=" + (env "FILES_ACCOUNT_NAME") + ";AccountKey=" + (env "FILES_ACCOUNT_KEY")
 let buildTaskOutputPath = "src\\Microsoft.NET.Sdk.Functions.MSBuild\\bin\\Release"
 let generatorOutputPath = "src\\Microsoft.NET.Sdk.Functions.Generator\\bin\\Release"
-let packOutputPath = "pack\\Microsoft.NET.Sdk.Functions\\bin\\Release"
+let packOutputPath = "src\\Microsoft.NET.Sdk.Functions\\bin\\Release"
 let version = if isNull appVeyorBuildVersion then "1.0.0.3" else appVeyorBuildVersion
 
 Target "Clean" (fun _ ->
@@ -53,7 +53,7 @@ Target "Build" (fun _ ->
 
     DotNetCli.Build (fun p ->
         {p with
-            Project = "pack\\Microsoft.NET.Sdk.Functions"
+            Project = "src\\Microsoft.NET.Sdk.Functions"
             Configuration = "Release"})
 )
 
@@ -152,7 +152,7 @@ Target "WaitForSigning" (fun _ ->
 Target "Pack" (fun _ ->
     DotNetCli.Pack (fun p ->
         {p with
-            Project = "pack\\Microsoft.NET.Sdk.Functions"
+            Project = "src\\Microsoft.NET.Sdk.Functions"
             Configuration = "Release"
             AdditionalArgs = [ "--no-build" ]})
 )
