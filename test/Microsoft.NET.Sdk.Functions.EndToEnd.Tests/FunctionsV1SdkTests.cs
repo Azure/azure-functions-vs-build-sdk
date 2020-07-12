@@ -33,6 +33,10 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
         private string GetMSBuildPath()
         {
             var vswherePath = Environment.ExpandEnvironmentVariables($@"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\{TestInitialize.VsWhere}");
+            if (!File.Exists(vswherePath))
+            {
+                return null;
+            }
             var args = $@"-latest -requires Microsoft.Component.MSBuild -find ""MSBuild\**\Bin\{TestInitialize.MSBuildExecutable}""";
             ProcessOutput readOutput = new ProcessOutput();
             int? exitCode = new ProcessWrapper().RunProcess(vswherePath, args, _testsDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: readOutput);
