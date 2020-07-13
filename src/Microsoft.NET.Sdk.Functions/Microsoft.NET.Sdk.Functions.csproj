@@ -3,6 +3,8 @@
   <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\ExtensionsMetadataGeneratorVersion.props" />
 
   <PropertyGroup>
+    <!-- Version of the package should not contain the build version -->
+    <Version>$(FunctionsSdkVersion)</Version>
     <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
     <Authors>Microsoft</Authors>
