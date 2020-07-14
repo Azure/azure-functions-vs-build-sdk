@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\Microsoft.NET.Sdk.Functions.Version.props" />
   
   <PropertyGroup>
-    <Version>$(FunctionsSdkVersion)</Version>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -24,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\pack\Microsoft.NET.Sdk.Functions\Microsoft.NET.Sdk.Functions.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.NET.Sdk.Functions\Microsoft.NET.Sdk.Functions.csproj" />
   </ItemGroup>
-
+  
 </Project>

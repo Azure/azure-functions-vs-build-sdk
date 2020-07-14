@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using Xunit.Abstractions;
 
@@ -7,7 +6,7 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
 {
     public class ProcessWrapper
     {
-        public int? RunProcess(string fileName, string arguments, string workingDirectory, out int? processId, bool createDirectoryIfNotExists = true, bool waitForExit = true, ITestOutputHelper testOutputHelper = null)
+        public int? RunProcess(string fileName, string arguments, string workingDirectory, out int? processId, bool createDirectoryIfNotExists = false, bool waitForExit = true, ITestOutputHelper testOutputHelper = null)
         {
             if (createDirectoryIfNotExists && !Directory.Exists(workingDirectory))
             {

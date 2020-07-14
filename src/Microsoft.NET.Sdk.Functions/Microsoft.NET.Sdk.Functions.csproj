@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\ExtensionsMetadataGeneratorVersion.props" />
-  <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\Microsoft.NET.Sdk.Functions.Version.props" />
 
   <PropertyGroup>
+    <!-- Version of the package should not contain the build version -->
+    <Version>$(FunctionsSdkVersion)</Version>
     <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
-    <Version>$(FunctionsSdkVersion)</Version>
     <Authors>Microsoft</Authors>
     <ProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</ProjectUrl>
     <PackageProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</PackageProjectUrl>

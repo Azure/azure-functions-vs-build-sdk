@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\Microsoft.NET.Sdk.Functions.Version.props" />
 
   <PropertyGroup>
-    <Version>$(FunctionsSdkVersion)</Version>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
