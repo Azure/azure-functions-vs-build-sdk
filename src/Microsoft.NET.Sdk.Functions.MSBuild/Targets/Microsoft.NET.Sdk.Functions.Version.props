@@ -11,7 +11,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <FunctionsSdkVersion>3.0.9</FunctionsSdkVersion>
+    <FunctionsSdkVersion>3.0.10</FunctionsSdkVersion>
   </PropertyGroup>
 
 </Project>
