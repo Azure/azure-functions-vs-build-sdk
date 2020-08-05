@@ -41,6 +41,22 @@ namespace Microsoft.NET.Sdk.Functions.Http
             }
         }
 
+        public static async Task<IHttpResponse> GetWithBasicAuthAsync(this IHttpClient client, Uri uri, string username, string password, string userAgent)
+        {
+            AddBasicAuthToClient(username, password, client);
+            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+
+            try
+            {
+                HttpResponseMessage responseMessage = await client.GetAsync(uri);
+                return new HttpResponseMessageWrapper(responseMessage);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessageForStatusCode(HttpStatusCode.RequestTimeout);
+            }
+        }
+
         private static void AddBasicAuthToClient(string username, string password, IHttpClient client)
         {
             client.DefaultRequestHeaders.Remove("Connection");

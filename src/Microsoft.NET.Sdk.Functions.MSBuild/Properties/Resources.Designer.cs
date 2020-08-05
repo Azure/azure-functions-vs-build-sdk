@@ -10,7 +10,6 @@
 
 namespace Microsoft.NET.Sdk.Functions.MSBuild.Properties {
     using System;
-    using System.Reflection;
     
     
     /// <summary>
@@ -20,7 +19,7 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -40,7 +39,7 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NET.Sdk.Functions.MSBuild.Properties.Resources", typeof(Resources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.NET.Sdk.Functions.MSBuild.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -58,6 +57,24 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deployment status is {0}..
+        /// </summary>
+        internal static string DeploymentStatus {
+            get {
+                return ResourceManager.GetString("DeploymentStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Polling for deployment status....
+        /// </summary>
+        internal static string DeploymentStatusPolling {
+            get {
+                return ResourceManager.GetString("DeploymentStatusPolling", resourceCulture);
             }
         }
         
@@ -80,11 +97,47 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Checking the deployment status....
+        /// </summary>
+        internal static string ZipDeployDeploymentStatus {
+            get {
+                return ResourceManager.GetString("ZipDeployDeploymentStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The attempt to publish the ZIP file through {0} failed with HTTP status code {1}..
         /// </summary>
         internal static string ZipDeployFailureErrorMessage {
             get {
                 return ResourceManager.GetString("ZipDeployFailureErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zip Deployment failed. .
+        /// </summary>
+        internal static string ZipDeploymentFailed {
+            get {
+                return ResourceManager.GetString("ZipDeploymentFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zip Deployment succeeded..
+        /// </summary>
+        internal static string ZipDeploymentSucceeded {
+            get {
+                return ResourceManager.GetString("ZipDeploymentSucceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploaded the Zip file to the target..
+        /// </summary>
+        internal static string ZipFileUploaded {
+            get {
+                return ResourceManager.GetString("ZipFileUploaded", resourceCulture);
             }
         }
     }

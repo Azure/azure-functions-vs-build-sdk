@@ -8,7 +8,7 @@ namespace Microsoft.NET.Sdk.Functions.Http
     public interface IHttpClient
     {
         HttpRequestHeaders DefaultRequestHeaders { get; }
-
         Task<HttpResponseMessage> PostAsync(Uri uri, StreamContent content);
+        Task<HttpResponseMessage> GetAsync(Uri uri);
     }
 }

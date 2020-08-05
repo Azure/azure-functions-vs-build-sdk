@@ -117,13 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DeploymentStatus" xml:space="preserve">
+    <value>Deployment status is {0}.</value>
+  </data>
+  <data name="DeploymentStatusPolling" xml:space="preserve">
+    <value>Polling for deployment status...</value>
+  </data>
   <data name="NeitherSiteNameNorPublishUrlGivenError" xml:space="preserve">
     <value>Neither SiteName nor PublishUrl was given a value.</value>
   </data>
   <data name="PublishingZipViaZipDeploy" xml:space="preserve">
     <value>Publishing {0} to {1}...</value>
   </data>
+  <data name="ZipDeployDeploymentStatus" xml:space="preserve">
+    <value>Checking the deployment status...</value>
+  </data>
   <data name="ZipDeployFailureErrorMessage" xml:space="preserve">
     <value>The attempt to publish the ZIP file through {0} failed with HTTP status code {1}.</value>
+  </data>
+  <data name="ZipDeploymentFailed" xml:space="preserve">
+    <value>Zip Deployment failed. </value>
+  </data>
+  <data name="ZipDeploymentSucceeded" xml:space="preserve">
+    <value>Zip Deployment succeeded.</value>
+  </data>
+  <data name="ZipFileUploaded" xml:space="preserve">
+    <value>Uploaded the Zip file to the target.</value>
   </data>
 </root>
