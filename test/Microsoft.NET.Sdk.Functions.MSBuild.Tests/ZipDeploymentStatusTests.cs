@@ -36,16 +36,13 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
                 Assert.True(result);
             };
 
-
             Mock<IHttpClient> client = new Mock<IHttpClient>();
-
             HttpRequestMessage requestMessage = new HttpRequestMessage();
             client.Setup(x => x.DefaultRequestHeaders).Returns(requestMessage.Headers);
             client.Setup(c => c.GetAsync(new Uri(deployUrl, UriKind.RelativeOrAbsolute))).Returns(() =>
             {
                 return Task.FromResult(new HttpResponseMessage(responseStatusCode));
             });
-
             ZipDeploymentStatus deploymentStatus = new ZipDeploymentStatus(client.Object, $"{UserAgentName}/{UserAgentVersion}", null, false);
 
             // Act
@@ -54,7 +51,6 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
             // Assert
             verifyStep(client, expectedDeployStatus == actualdeployStatus);
         }
-
 
         [Theory]
         [InlineData(HttpStatusCode.OK, DeployStatus.Success)]
@@ -75,9 +71,7 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
                 Assert.True(result);
             };
 
-
             Mock<IHttpClient> client = new Mock<IHttpClient>();
-
             HttpRequestMessage requestMessage = new HttpRequestMessage();
             client.Setup(x => x.DefaultRequestHeaders).Returns(requestMessage.Headers);
             client.Setup(c => c.GetAsync(new Uri(deployUrl, UriKind.RelativeOrAbsolute))).Returns(() =>
@@ -92,10 +86,8 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
                 {
                     Content = httpContent
                 };
-
                 return Task.FromResult(responseMessage);
             });
-
             ZipDeploymentStatus deploymentStatus = new ZipDeploymentStatus(client.Object, $"{UserAgentName}/{UserAgentVersion}", null, false);
 
             // Act
@@ -103,7 +95,6 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
 
             // Assert
             verifyStep(client, expectedDeployStatus == actualdeployStatus);
-
         }
     }
 }
