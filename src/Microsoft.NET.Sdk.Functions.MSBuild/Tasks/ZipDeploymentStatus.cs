@@ -34,7 +34,7 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tasks
             _logMessages = logMessages;
         }
 
-        public async Task<DeployStatus> PollDeploymentStatus(string deploymentUrl, string userName, string password)
+        public async Task<DeployStatus> PollDeploymentStatusAsync(string deploymentUrl, string userName, string password)
         {
             DeployStatus deployStatus = DeployStatus.Pending;
             var tokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(MaxMinutesToWait));
@@ -46,7 +46,7 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tasks
             {
                 try
                 {
-                    deployStatus = await GetDeploymentStatus(deploymentUrl, userName, password, RetryCount, TimeSpan.FromSeconds(RetryDelaySeconds));
+                    deployStatus = await GetDeploymentStatusAsync(deploymentUrl, userName, password, RetryCount, TimeSpan.FromSeconds(RetryDelaySeconds), tokenSource);
                     if (_logMessages)
                     {
                         _log.LogMessage(String.Format(Resources.DeploymentStatus, Enum.GetName(typeof(DeployStatus), deployStatus)));
@@ -63,9 +63,9 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tasks
             return deployStatus;
         }
 
-        private async Task<DeployStatus> GetDeploymentStatus(string deploymentUrl, string userName, string password, int retryCount, TimeSpan retryDelay)
+        private async Task<DeployStatus> GetDeploymentStatusAsync(string deploymentUrl, string userName, string password, int retryCount, TimeSpan retryDelay, CancellationTokenSource cts)
         {
-            Dictionary<string, string> json = await InvokeGetRequestWithRetry<Dictionary<string, string>>(deploymentUrl, userName, password, retryCount, retryDelay);
+            Dictionary<string, string> json = await InvokeGetRequestWithRetryAsync<Dictionary<string, string>>(deploymentUrl, userName, password, retryCount, retryDelay, cts);
             string statusString = null;
             if (json!= null && !json.TryGetValue("status", out statusString))
             {
@@ -80,12 +80,12 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tasks
             return DeployStatus.Unknown;
         }
 
-        private async Task<T> InvokeGetRequestWithRetry<T>(string url, string userName, string password, int retryCount, TimeSpan retryDelay)
+        private async Task<T> InvokeGetRequestWithRetryAsync<T>(string url, string userName, string password, int retryCount, TimeSpan retryDelay, CancellationTokenSource cts)
         {
             IHttpResponse response = null;
-            await Retry(async () =>
+            await RetryAsync(async () =>
             {
-                response = await _client.GetWithBasicAuthAsync(new Uri(url, UriKind.RelativeOrAbsolute), userName, password, _userAgent);
+                response = await _client.GetWithBasicAuthAsync(new Uri(url, UriKind.RelativeOrAbsolute), userName, password, _userAgent, cts.Token);
             }, retryCount, retryDelay);
 
             if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.Accepted)
@@ -102,7 +102,7 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tasks
             }
         }
 
-        private async Task Retry(Func<Task> func, int retryCount, TimeSpan retryDelay)
+        private async Task RetryAsync(Func<Task> func, int retryCount, TimeSpan retryDelay)
         {
             while (true)
             {

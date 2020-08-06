@@ -85,8 +85,9 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
             // use the async version of the api
             Uri uri = new Uri($"{zipDeployPublishUrl}?isAsync=true", UriKind.Absolute);
+            string userAgent = $"{UserAgentName}/{userAgentVersion}";
             FileStream stream = File.OpenRead(zipToPublishPath);
-            IHttpResponse response = await client.PostWithBasicAuthAsync(uri, userName, password, "application/zip", $"{UserAgentName}/{userAgentVersion}", Encoding.UTF8, stream);
+            IHttpResponse response = await client.PostWithBasicAuthAsync(uri, userName, password, "application/zip", userAgent, Encoding.UTF8, stream);
             if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.Accepted)
             {
                 if (logMessages)
@@ -106,11 +107,11 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
                 string deploymentUrl = response.GetHeader("Location").FirstOrDefault();
                 if (!string.IsNullOrEmpty(deploymentUrl))
                 {
-                    ZipDeploymentStatus deploymentStatus = new ZipDeploymentStatus(client, $"{UserAgentName}/{userAgentVersion}", Log, logMessages);
-                    DeployStatus status = await deploymentStatus.PollDeploymentStatus(deploymentUrl, userName, password);
+                    ZipDeploymentStatus deploymentStatus = new ZipDeploymentStatus(client, userAgent, Log, logMessages);
+                    DeployStatus status = await deploymentStatus.PollDeploymentStatusAsync(deploymentUrl, userName, password);
                     if (status == DeployStatus.Success)
                     {
-                        Log.LogMessage(Resources.ZipDeploymentSucceeded);
+                        Log.LogMessage(MessageImportance.High, Resources.ZipDeploymentSucceeded);
                         return true;
                     }
                     else if (status == DeployStatus.Failed || status == DeployStatus.Unknown)

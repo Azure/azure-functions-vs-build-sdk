@@ -25,9 +25,9 @@ namespace Microsoft.NET.Sdk.Functions.Http
             return _httpClient.PostAsync(uri, content);
         }
 
-        public Task<HttpResponseMessage> GetAsync(Uri uri)
+        public Task<HttpResponseMessage> GetAsync(Uri uri, CancellationToken cancellationToken)
         {
-            return _httpClient.GetAsync(uri);
+            return _httpClient.GetAsync(uri, cancellationToken);
         }
     }
 }

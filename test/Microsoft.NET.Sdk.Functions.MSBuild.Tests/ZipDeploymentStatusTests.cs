@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.NET.Sdk.Functions.Http;
 using Microsoft.NET.Sdk.Functions.MSBuild.Tasks;
@@ -31,7 +32,7 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
             Action<Mock<IHttpClient>, bool> verifyStep = (client, result) =>
             {
                 client.Verify(c => c.GetAsync(
-                It.Is<Uri>(uri => string.Equals(uri.AbsoluteUri, deployUrl, StringComparison.Ordinal))));
+                It.Is<Uri>(uri => string.Equals(uri.AbsoluteUri, deployUrl, StringComparison.Ordinal)), It.IsAny<CancellationToken>()));
                 Assert.Equal($"{UserAgentName}/{UserAgentVersion}", client.Object.DefaultRequestHeaders.GetValues("User-Agent").FirstOrDefault());
                 Assert.True(result);
             };
@@ -39,14 +40,14 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
             Mock<IHttpClient> client = new Mock<IHttpClient>();
             HttpRequestMessage requestMessage = new HttpRequestMessage();
             client.Setup(x => x.DefaultRequestHeaders).Returns(requestMessage.Headers);
-            client.Setup(c => c.GetAsync(new Uri(deployUrl, UriKind.RelativeOrAbsolute))).Returns(() =>
+            client.Setup(c => c.GetAsync(new Uri(deployUrl, UriKind.RelativeOrAbsolute), It.IsAny<CancellationToken>())).Returns(() =>
             {
                 return Task.FromResult(new HttpResponseMessage(responseStatusCode));
             });
             ZipDeploymentStatus deploymentStatus = new ZipDeploymentStatus(client.Object, $"{UserAgentName}/{UserAgentVersion}", null, false);
 
             // Act
-            var actualdeployStatus = await deploymentStatus.PollDeploymentStatus(deployUrl, userName, password);
+            var actualdeployStatus = await deploymentStatus.PollDeploymentStatusAsync(deployUrl, userName, password);
 
             // Assert
             verifyStep(client, expectedDeployStatus == actualdeployStatus);
@@ -66,7 +67,7 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
             Action<Mock<IHttpClient>, bool> verifyStep = (client, result) =>
             {
                 client.Verify(c => c.GetAsync(
-                It.Is<Uri>(uri => string.Equals(uri.AbsoluteUri, deployUrl, StringComparison.Ordinal))));
+                It.Is<Uri>(uri => string.Equals(uri.AbsoluteUri, deployUrl, StringComparison.Ordinal)), It.IsAny<CancellationToken>()));
                 Assert.Equal($"{UserAgentName}/{UserAgentVersion}", client.Object.DefaultRequestHeaders.GetValues("User-Agent").FirstOrDefault());
                 Assert.True(result);
             };
@@ -74,7 +75,7 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
             Mock<IHttpClient> client = new Mock<IHttpClient>();
             HttpRequestMessage requestMessage = new HttpRequestMessage();
             client.Setup(x => x.DefaultRequestHeaders).Returns(requestMessage.Headers);
-            client.Setup(c => c.GetAsync(new Uri(deployUrl, UriKind.RelativeOrAbsolute))).Returns(() =>
+            client.Setup(c => c.GetAsync(new Uri(deployUrl, UriKind.RelativeOrAbsolute), It.IsAny<CancellationToken>())).Returns(() =>
             {
                 string statusJson = JsonConvert.SerializeObject(new
                 {
@@ -91,7 +92,7 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
             ZipDeploymentStatus deploymentStatus = new ZipDeploymentStatus(client.Object, $"{UserAgentName}/{UserAgentVersion}", null, false);
 
             // Act
-            var actualdeployStatus = await deploymentStatus.PollDeploymentStatus(deployUrl, userName, password);
+            var actualdeployStatus = await deploymentStatus.PollDeploymentStatusAsync(deployUrl, userName, password);
 
             // Assert
             verifyStep(client, expectedDeployStatus == actualdeployStatus);
