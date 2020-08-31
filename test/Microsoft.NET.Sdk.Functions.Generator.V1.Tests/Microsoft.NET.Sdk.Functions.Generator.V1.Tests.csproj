@@ -11,7 +11,7 @@
     <DelaySign>true</DelaySign>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <IsPackable>false</IsPackable>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
@@ -19,12 +19,16 @@
     <RootNamespace>Microsoft.NET.Sdk.Functions.Test.V1</RootNamespace>
     <AssemblyName>Microsoft.NET.Sdk.Functions.Test.V1</AssemblyName>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Microsoft.NET.Sdk.Functions.Generator.Tests\RecorderLogger.cs" Link="RecorderLogger.cs" />
+    <Compile Include="..\Microsoft.NET.Sdk.Functions.Generator.Tests\TestUtility.cs" Link="TestUtility.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.2" />
     <PackageReference Include="Microsoft.Azure.WebJobs" Version="2.3.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ApiHub" Version="1.0.0-beta9" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="1.2.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.ServiceBus" Version="2.2.0" />
     <PackageReference Include="Mono.Cecil" Version="0.11.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -36,7 +40,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.NET.Sdk.Functions.Generator\Microsoft.NET.Sdk.Functions.Generator.csproj" />
-    <ProjectReference Include="..\Microsoft.NET.Sdk.Functions.Generator.Tests\Microsoft.NET.Sdk.Functions.Generator.Tests.csproj" />
   </ItemGroup>
 
 </Project>
