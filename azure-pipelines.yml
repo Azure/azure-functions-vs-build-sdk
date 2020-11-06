@@ -12,6 +12,7 @@ variables:
 
 steps:
 - task: UseDotNet@2
+  displayName: 'Install dotnet v3.x'
   inputs:
     packageType: 'sdk'
     version: '3.1.x'
@@ -25,7 +26,34 @@ steps:
     FILES_ACCOUNT_KEY: $(FILES_ACCOUNT_KEY)
     FILES_ACCOUNT_NAME: $(FILES_ACCOUNT_NAME)
     BUILD_VERSION: 1.1.$(devops_buildNumber)
-  displayName: 'Running a build Script'
+  displayName: 'Build'
+- task: PowerShell@2
+  displayName: 'Set dotnet path'
+  inputs:
+    targetType: 'inline'
+    script: |
+      $infoContent = dotnet --info
+      $sdkBasePath = $infoContent  |
+          Where-Object {$_ -match 'Base Path:'} |
+          ForEach-Object {
+              ($_ -replace '\s+Base Path:','').trim()
+          }    
+      Write-Host  "dotnet SDK path: $sdkBasePath"
+      $dotnetPath = (Get-Item $sdkBasePath).Parent.Parent.FullName
+      Write-Host "dotnet path: $dotnetPath"
+      Write-Host "##vso[task.setvariable variable=DotNetPath]$dotnetPath"
+- task: UseDotNet@2
+  displayName: 'Install dotnet v2.x'
+  inputs:
+    packageType: 'sdk'
+    version: '2.2.207'
+    installationPath: $(DotNetPath)
+- task: DotNetCoreCLI@2
+  displayName: 'Run End to End tests'
+  inputs:
+    command: 'test'
+    projects: '.\FunctionsSdkE2ETests\FunctionsSdkE2ETests.sln'
+    arguments: '-v n'
 - pwsh: |
     Move-Item -Path '$(Build.Repository.LocalPath)\artifacts\Microsoft.NET.Sdk.Functions.*' -Destination '$(Build.ArtifactStagingDirectory)'
   displayName: 'Move artifacts'

@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <!-- These are the latest SDK versions -->
+    <MicrosoftNetSdkFunctionsV1Version>1.0.37</MicrosoftNetSdkFunctionsV1Version>
+
+    <!-- Some tests only roll EMG forward, so keep these one behind the latest -->
+    <MicrosoftNetSdkFunctionsV1PreviousVersion>1.0.37</MicrosoftNetSdkFunctionsV1PreviousVersion>
+
+    <!-- Some tests directly reference EMG; this should be latest -->
+    <ExtensionsMetadataGeneratorDirectReferenceVersion>1.2.0</ExtensionsMetadataGeneratorDirectReferenceVersion>
+  </PropertyGroup>
+</Project>
