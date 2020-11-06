@@ -31,13 +31,14 @@ let connectionString =
 let buildTaskOutputPath = "src\\Microsoft.NET.Sdk.Functions.MSBuild\\bin\\Release"
 let generatorOutputPath = "src\\Microsoft.NET.Sdk.Functions.Generator\\bin\\Release"
 let packOutputPath = "pack\\Microsoft.NET.Sdk.Functions\\bin\\Release"
-let version = if isNull appVeyorBuildVersion then "1.0.0.3" else appVeyorBuildVersion
+let buildVersion = (env "BUILD_VERSION")
+let version = if isNull buildVersion then "1.0.0.3" else buildVersion
 
 Target "Clean" (fun _ ->
     if Directory.Exists "tmpBuild" |> not then Directory.CreateDirectory "tmpBuild" |> ignore
-    if Directory.Exists "deploy" |> not then Directory.CreateDirectory "deploy" |> ignore
+    if Directory.Exists "artifacts" |> not then Directory.CreateDirectory "artifacts" |> ignore
     CleanDir "tmpBuild"
-    CleanDir "deploy"
+    CleanDir "artifacts"
 )
 
 Target "Build" (fun _ ->
@@ -227,7 +228,7 @@ Target "SignNupkg" (fun _ ->
 
 Target "Publish" (fun _ ->
     !! (packOutputPath @@ "signed\\Microsoft.NET.Sdk.Functions.*.nupkg")
-    |> Seq.iter (MoveFile "deploy")
+    |> Seq.iter (MoveFile "artifacts")
 )
 
 Dependencies

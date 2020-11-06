@@ -1,0 +1,36 @@
+name: $(Build.SourceBranchName)_$(Build.Reason)_$(devops_buildNumber)
+
+trigger:
+- v3.x
+- main
+
+pool:
+  vmImage: 'vs2017-win2016'
+
+variables:
+  devops_buildNumber: $[counter(format(''), 289)]
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '3.1.x'
+    performMultiLevelLookup: true
+- task: CmdLine@2
+  inputs:
+    script: |
+      .paket\paket.exe install
+      packages\FAKE\tools\fake .\build.fsx
+  env:
+    FILES_ACCOUNT_KEY: $(FILES_ACCOUNT_KEY)
+    FILES_ACCOUNT_NAME: $(FILES_ACCOUNT_NAME)
+    BUILD_VERSION: 1.1.$(devops_buildNumber)
+  displayName: 'Running a build Script'
+- pwsh: |
+    Move-Item -Path '$(Build.Repository.LocalPath)\artifacts\Microsoft.NET.Sdk.Functions.*' -Destination '$(Build.ArtifactStagingDirectory)'
+  displayName: 'Move artifacts'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
