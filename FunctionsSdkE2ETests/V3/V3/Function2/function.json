@@ -1,0 +1,13 @@
+{
+  "bindings": [
+    {
+      "type": "queueTrigger",
+      "connection": "AzureWebJobsStorage",
+      "queueName": "myqueue-items",
+      "name": "myQueueItem"
+    }
+  ],
+  "disabled": false,
+  "scriptFile": "../bin/V3.dll",
+  "entryPoint": "V3.Function1.Run"
+}

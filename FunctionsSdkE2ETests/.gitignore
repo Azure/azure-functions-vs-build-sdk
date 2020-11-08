@@ -1,0 +1,13 @@
+bin
+obj
+csx
+.vs
+.DS_Store
+.vscode
+
+*.user
+*.suo
+*.cscfg
+*.Cache
+
+pub_razor
