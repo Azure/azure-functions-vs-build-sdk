@@ -8,6 +8,6 @@
     <MicrosoftNetSdkFunctionsV3PreviousVersion>3.0.10</MicrosoftNetSdkFunctionsV3PreviousVersion>
 
     <!-- Some tests directly reference EMG; this should be latest -->
-    <ExtensionsMetadataGeneratorDirectReferenceVersion>1.2.0</ExtensionsMetadataGeneratorDirectReferenceVersion>
+    <ExtensionsMetadataGeneratorDirectReferenceVersion>1.2.1</ExtensionsMetadataGeneratorDirectReferenceVersion>
   </PropertyGroup>
 </Project>

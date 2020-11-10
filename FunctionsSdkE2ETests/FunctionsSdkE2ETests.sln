@@ -22,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RefNotFound", "Razor\RefNot
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedStartup", "SharedStartup\SharedStartup.csproj", "{36AFB021-DBBD-447D-A6FA-78FB3023D191}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PreservedDependencies", "PreservedDependencies\PreservedDependencies.csproj", "{5FD501A6-B510-4CFE-BAEA-4F44220E1DCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{36AFB021-DBBD-447D-A6FA-78FB3023D191}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36AFB021-DBBD-447D-A6FA-78FB3023D191}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36AFB021-DBBD-447D-A6FA-78FB3023D191}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FD501A6-B510-4CFE-BAEA-4F44220E1DCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FD501A6-B510-4CFE-BAEA-4F44220E1DCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FD501A6-B510-4CFE-BAEA-4F44220E1DCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FD501A6-B510-4CFE-BAEA-4F44220E1DCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{BD963FE0-0F9E-4480-AA2D-A1F9C8089327} = {41E8547B-A497-4C51-B648-80DC7FE9A681}
 		{41E58322-B3F0-4B2D-8B7A-0626BCEBEDA3} = {41E8547B-A497-4C51-B648-80DC7FE9A681}
 		{36AFB021-DBBD-447D-A6FA-78FB3023D191} = {41E8547B-A497-4C51-B648-80DC7FE9A681}
+		{5FD501A6-B510-4CFE-BAEA-4F44220E1DCC} = {41E8547B-A497-4C51-B648-80DC7FE9A681}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E0021489-706A-4A64-98FA-2D1DFE28695E}
