@@ -91,6 +91,70 @@ namespace FunctionsSdkE2ETests
             RunBasicValidation("V3");
         }
 
+        [Fact]
+        public void Build_PreservedDependencies()
+        {
+            string solutionName = "PreservedDependencies";
+            string solutionFile = solutionName + ".sln";
+            string workingDir = FindContainingDirectory(solutionFile);
+            string projectDir = Path.Combine(workingDir, solutionName);
+
+            RunDotNet("restore", workingDir, solutionFile);
+            RunDotNet("clean", workingDir, solutionFile);
+            RunDotNet("build", workingDir, solutionFile);
+
+            ValidateExtensionsJsonRecursive(projectDir, 1, expectedFolder: _expectedBinFolder, ValidateSharedStartupExtension);
+
+            string[] expectedCleanedOutputPath = new string[] { projectDir, "bin", "Debug", "netcoreapp3.1", "bin" };
+            string cleanedOutputDir = Path.Combine(expectedCleanedOutputPath);
+            List<string> preservedFiles = new List<string>() { "Microsoft.Azure.WebJobs.dll", "Microsoft.Azure.WebJobs.Host.dll" };
+            List<string> cleanedFiles = new List<string>() { "Microsoft.Net.Http.Headers.dll", "Microsoft.Azure.WebJobs.Extensions.Http.dll" };
+
+            foreach (var preservedFile in preservedFiles)
+            {
+                Assert.True(File.Exists(Path.Combine(cleanedOutputDir, preservedFile)));
+            }
+
+            foreach (var cleanedFile in cleanedFiles)
+            {
+                Assert.False(File.Exists(Path.Combine(cleanedOutputDir, cleanedFile)));
+            }
+        }
+
+        [Fact]
+        public void Publish_PreservedDependencies()
+        {
+            string publishDir = Path.Combine(Path.GetTempPath(), "FunctionsSdkTests", "pub_preservedDeps");
+            if (Directory.Exists(publishDir))
+            {
+                Directory.Delete(publishDir, true);
+            }
+
+            string solutionName = "PreservedDependencies";
+            string solutionFile = solutionName + ".sln";
+            string workingDir = FindContainingDirectory(solutionFile);
+
+            RunDotNet("restore", workingDir, solutionFile);
+            RunDotNet("clean", workingDir, solutionFile);
+            RunDotNet("publish", workingDir, solutionFile, $"-o {publishDir}");
+
+            ValidateExtensionsJsonRecursive(publishDir, 1, expectedFolder: _expectedBinFolder, ValidateSharedStartupExtension);
+
+            string cleanedOutputDir = Path.Combine(publishDir, "bin");
+            List<string> preservedFiles = new List<string>() { "Microsoft.Azure.WebJobs.dll", "Microsoft.Azure.WebJobs.Host.dll" };
+            List<string> cleanedFiles = new List<string>() { "Microsoft.Net.Http.Headers.dll", "Microsoft.Azure.WebJobs.Extensions.Http.dll" };
+
+            foreach (var preservedFile in preservedFiles)
+            {
+                Assert.True(File.Exists(Path.Combine(cleanedOutputDir, preservedFile)));
+            }
+
+            foreach (var cleanedFile in cleanedFiles)
+            {
+                Assert.False(File.Exists(Path.Combine(cleanedOutputDir, cleanedFile)));
+            }
+        }
+
         private void RunBasicValidation(string solutionName)
         {
             string solutionFile = solutionName + ".sln";
