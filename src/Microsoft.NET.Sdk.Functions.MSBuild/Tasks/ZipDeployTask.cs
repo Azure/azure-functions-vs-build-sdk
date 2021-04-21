@@ -116,7 +116,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
                     }
                     else if (status == DeployStatus.Failed || status == DeployStatus.Unknown)
                     {
-                        Log.LogError(String.Format(Resources.ZipDeploymentFailed, zipDeployPublishUrl, status));
+                        Log.LogError(String.Format(Resources.ZipDeployFailureErrorMessage, zipDeployPublishUrl, status));
                         return false;
                     }
                 }
