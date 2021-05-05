@@ -27,7 +27,12 @@ namespace MakeFunctionJson
         private static readonly IEnumerable<string> _triggersWithoutStorage = new[]
         {
             "httptrigger",
-            "kafkatrigger"
+            "kafkatrigger",
+ 
+            // Durable Functions triggers can also support non-Azure Storage backends
+            "orchestrationTrigger",
+            "activityTrigger",
+            "entityTrigger",
         };
 
         internal FunctionJsonConverter(ILogger logger, string assemblyPath, string outputPath, bool functionsInDependencies, IEnumerable<string> excludedFunctionNames = null)
