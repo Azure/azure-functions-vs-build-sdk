@@ -42,7 +42,7 @@ namespace Microsoft.NET.Sdk.Functions.Test
         [InlineData(typeof(FunctionsClass1), "Run3", false)]
         [InlineData(typeof(FunctionsClass1), "Run4", false)]
         [InlineData(typeof(FunctionsClass1), "Run5", true)]
-        [InlineData(typeof(FunctionsClass1), "Run6", true)]
+        [InlineData(typeof(FunctionsClass1), "Run6", false)]
         public void HasUnsupportedAttributesWorksCorrectly(Type type, string methodName, bool expected)
         {
             var method = TestUtility.GetMethodDefinition(type, methodName);
