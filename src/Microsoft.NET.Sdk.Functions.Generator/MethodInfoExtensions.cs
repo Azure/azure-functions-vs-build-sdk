@@ -169,11 +169,6 @@ namespace MakeFunctionJson
                 error = "'%' expressions are not supported for 'Disable'. Use 'Disable(\"settingName\") instead of 'Disable(\"%settingName%\")'";
                 return true;
             }
-            else if (disabled is Type)
-            {
-                error = "the constructor 'DisableAttribute(Type)' is not supported.";
-                return true;
-            }
             else
             {
                 return false;
