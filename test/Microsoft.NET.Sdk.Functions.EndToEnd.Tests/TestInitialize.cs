@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 using Xunit.Abstractions;
 
 namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
@@ -15,7 +13,7 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
         public const string FunctionsGeneratorProject = "Microsoft.NET.Sdk.Functions.Generator";
         // Configurations
         public const string Configuration = "Debug";
-        public const string NetCoreFramework = "netcoreapp3.1";
+        public const string NetCoreFramework = "net6.0";
         public const string NetFramework = "net461";
         public const string NetStandard = "netstandard2.0";
 
@@ -63,19 +61,6 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
                 Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
             }
 
-            if (runPack)
-            {
-                dotnetArgs = $"pack --configuration {Configuration}";
-
-                // Create the package
-                projectDir = Path.Combine(SrcRoot, FunctionsNetSdkProject);
-                exitCode = new ProcessWrapper().RunProcess(DotNetExecutable, dotnetArgs, projectDir, out _, createDirectoryIfNotExists: false, testOutputHelper: testOutputHelper);
-                Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
-            }
-
-            // Setup the package source.
-            FunctionsSdkPackageSource = Path.Combine(projectDir, "bin", Configuration) + Path.DirectorySeparatorChar;
-
             // Setup the test directory.
             string sourceDirectory = Path.Combine(AppContext.BaseDirectory, TestProjectsSourceDirectory, testVersion);
             DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
@@ -83,12 +68,40 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
             string targetDirectory = Path.Combine(PathToRepoRoot, TestProjectsTargetDirectory, testVersion);
             DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
 
+            // Setup the package source.
+            FunctionsSdkPackageSource = Path.Combine(targetDirectory, "packages") + Path.DirectorySeparatorChar;
+
             CopyAll(diSource, diTarget);
             TestDirectory = targetDirectory;
+
+            if (runPack)
+            {
+                // Pack to the test directory with a unique name
+                string version = DateTime.UtcNow.ToString("yyMMddHHmmss");
+                dotnetArgs = $"pack --configuration {Configuration} -o {FunctionsSdkPackageSource} -p:BuildNumber={version}";
+
+                // Create the package
+                projectDir = Path.Combine(SrcRoot, FunctionsNetSdkProject);
+                exitCode = new ProcessWrapper().RunProcess(DotNetExecutable, dotnetArgs, projectDir, out _, createDirectoryIfNotExists: false, testOutputHelper: testOutputHelper);
+
+                Debug.Assert(exitCode.HasValue && exitCode.Value == 0);
+            }           
         }
 
         private void CopyAll(DirectoryInfo source, DirectoryInfo target)
         {
+            if (target.Exists)
+            {
+                // try our best to clean up
+                try
+                {
+                    target.Delete(true);
+                }
+                catch
+                {
+                }
+            }
+
             Directory.CreateDirectory(target.FullName);
 
             foreach (FileInfo fi in source.GetFiles())

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>PublicKey.snk</AssemblyOriginatorKeyFile>
     <DelaySign>true</DelaySign>
@@ -9,15 +9,17 @@
     <RootNamespace>Microsoft.NET.Sdk.Functions.Test</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="FluentAssertions.Json" Version="4.19.0" />
+    <PackageReference Include="FluentAssertions.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventHubs" Version="3.0.6" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="3.2.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.10" />
+	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />	
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.NET.Sdk.Functions.Generator\Microsoft.NET.Sdk.Functions.Generator.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.NET.Sdk.Functions\Microsoft.NET.Sdk.Functions.csproj" />
   </ItemGroup>
 
 </Project>

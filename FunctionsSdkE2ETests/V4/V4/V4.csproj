@@ -1,22 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\SdkVersion.props" />
+  <Import Project="..\..\SdkVersion.props" />
+
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <FunctionsPreservedDependencies Include="Microsoft.Azure.WebJobs.dll" />
-    <FunctionsPreservedDependencies Include="Microsoft.Azure.WebJobs.Host.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="$(ExtensionsMetadataGeneratorDirectReferenceVersion)" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.10" />    
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="$(MicrosoftNetSdkFunctionsV4Version)" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharedStartup\SharedStartup.csproj" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Update="Function2\function.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

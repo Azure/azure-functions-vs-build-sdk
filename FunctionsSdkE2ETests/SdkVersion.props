@@ -1,11 +1,10 @@
-<Project>
-  <Import Project="..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\Microsoft.NET.Sdk.Functions.Version.props"/>
+<Project>  
   <PropertyGroup>
     <!-- These are the latest SDK versions -->
-    <MicrosoftNetSdkFunctionsV3Version>$(FunctionsSdkVersion)</MicrosoftNetSdkFunctionsV3Version>
+    <MicrosoftNetSdkFunctionsV4Version>4.0.0-preview1</MicrosoftNetSdkFunctionsV4Version>
 
     <!-- Some tests only roll EMG forward, so keep these one behind the latest -->
-    <MicrosoftNetSdkFunctionsV3PreviousVersion>3.0.11</MicrosoftNetSdkFunctionsV3PreviousVersion>
+    <MicrosoftNetSdkFunctionsV4PreviousVersion>4.0.0-preview1</MicrosoftNetSdkFunctionsV4PreviousVersion>
 
     <!-- Some tests directly reference EMG; this should be latest -->
     <ExtensionsMetadataGeneratorDirectReferenceVersion>1.2.2</ExtensionsMetadataGeneratorDirectReferenceVersion>

@@ -1,9 +1,0 @@
-<Project>
-  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
-
- <PropertyGroup>
-    <FunctionsBuildVersion Condition="'$(APPVEYOR_BUILD_NUMBER)' != ''">$(APPVEYOR_BUILD_NUMBER)</FunctionsBuildVersion>
-    <FunctionsBuildVersion Condition="'$(FunctionsBuildVersion)' == ''">0</FunctionsBuildVersion>
-    <Version>$(FunctionsSdkVersion).$(FunctionsBuildVersion)</Version>
- </PropertyGroup>
-</Project>

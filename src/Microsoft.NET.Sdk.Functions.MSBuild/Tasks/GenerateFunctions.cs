@@ -23,7 +23,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
         public bool FunctionsInDependencies { get; set; }
 
-        private const string NETCoreAppFolder = "netcoreapp3.1";
+        private const string NETCoreAppFolder = "net6.0";
 
         public override bool Execute()
         {

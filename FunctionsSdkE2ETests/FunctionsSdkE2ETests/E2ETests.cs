@@ -77,18 +77,18 @@ namespace FunctionsSdkE2ETests
             RunDotNet("clean", workingDir, solutionFile);
             RunDotNet("build", workingDir, solutionFile);
 
-            ValidateExtensionsJsonRecursive(projectDir, 1, expectedFolder: @"Debug\netcoreapp2.1",
+            ValidateExtensionsJsonRecursive(projectDir, 1, expectedFolder: @"Debug\net6.0",
                 t =>
                 {
                     return t["name"].ToString() == "AzureStorage"
-                        && t["typeName"].ToString() == "Microsoft.Azure.WebJobs.Extensions.Storage.AzureStorageWebJobsStartup, Microsoft.Azure.WebJobs.Extensions.Storage, Version=3.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+                        && t["typeName"].ToString() == "Microsoft.Azure.WebJobs.Extensions.Storage.AzureStorageWebJobsStartup, Microsoft.Azure.WebJobs.Extensions.Storage, Version=3.0.10.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
                 });
         }
 		
 		[Fact]
-        public void Build_V3()
+        public void Build_V4()
         {
-            RunBasicValidation("V3");
+            RunBasicValidation("V4");
         }
 
         [Fact]
@@ -105,7 +105,7 @@ namespace FunctionsSdkE2ETests
 
             ValidateExtensionsJsonRecursive(projectDir, 1, expectedFolder: _expectedBinFolder, ValidateSharedStartupExtension);
 
-            string[] expectedCleanedOutputPath = new string[] { projectDir, "bin", "Debug", "netcoreapp3.1", "bin" };
+            string[] expectedCleanedOutputPath = new string[] { projectDir, "bin", "Debug", "net6.0", "bin" };
             string cleanedOutputDir = Path.Combine(expectedCleanedOutputPath);
             List<string> preservedFiles = new List<string>() { "Microsoft.Azure.WebJobs.dll", "Microsoft.Azure.WebJobs.Host.dll" };
             List<string> cleanedFiles = new List<string>() { "Microsoft.Net.Http.Headers.dll", "Microsoft.Azure.WebJobs.Extensions.Http.dll" };

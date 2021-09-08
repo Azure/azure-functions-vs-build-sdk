@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29509.3
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{14D6456E-2F9D-4483-A378-03701A6EB12D}"
 EndProject
@@ -14,7 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{03DEE129-17B6-4CE0-B2D8-5B648D5BEE64}"
 	ProjectSection(SolutionItems) = preProject
 		build.cmd = build.cmd
-		build.fsx = build.fsx
+		common.props = common.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NET.Sdk.Functions.MSBuild.Tests", "test\Microsoft.NET.Sdk.Functions.MSBuild.Tests\Microsoft.NET.Sdk.Functions.MSBuild.Tests.csproj", "{B80DA350-8A69-4CD2-9E60-01C51B5A8633}"
