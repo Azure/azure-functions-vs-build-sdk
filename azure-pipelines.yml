@@ -2,6 +2,7 @@ name: $(Build.SourceBranchName)_$(Build.Reason)_$(BuildNumber)
 
 trigger:
 - v4.x
+- release/4
 
 pool:
   vmImage: 'windows-2019'
