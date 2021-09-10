@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.NET.Sdk.Functions;
+﻿using Microsoft.NET.Sdk.Functions.Generator;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

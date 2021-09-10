@@ -1,14 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\common.props"/>
+    
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release'">
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>PublicKey.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>true</DelaySign>
-    <DefineConstants>$(DefineConstants);RELESE_BUILD</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

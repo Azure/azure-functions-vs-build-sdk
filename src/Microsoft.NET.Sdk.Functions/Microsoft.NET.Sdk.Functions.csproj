@@ -1,11 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\ExtensionsMetadataGeneratorVersion.props" />
+  <Import Project="..\..\common.props"/>
 
-  <PropertyGroup>
-    <!-- Version of the package should not contain the build version -->
-    <Version>$(FunctionsSdkVersion)</Version>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+  <PropertyGroup>    
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
     <Authors>Microsoft</Authors>
     <ProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</ProjectUrl>
@@ -24,49 +23,41 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
 
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release'">
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>PublicKey.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>true</DelaySign>
-    <DefineConstants>$(DefineConstants);RELESE_BUILD</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <Content Include="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\**\*">
       <Pack>true</Pack>
       <PackagePath>build\</PackagePath>
+	  <Visible>false</Visible>
     </Content>
-  </ItemGroup>
 
-  <ItemGroup>
     <!-- MSBuild task assemblies -->    
     <None Include="$(FunctionsBuildTaskOutputPath)\netstandard2.0\Microsoft.NET.Sdk.Functions.MSBuild.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp3.1\</PackagePath>
+      <PackagePath>tools\net6.0\</PackagePath>
+	  <Visible>false</Visible>
     </None>
 
     <!-- Generator and dependent assemblies-->
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.1\Newtonsoft.Json.dll">
+    <None Include="$(FunctionsGeneratorOutputPath)\net6.0\Newtonsoft.Json.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp3.1\</PackagePath>
+      <PackagePath>tools\net6.0\</PackagePath>
+	  <Visible>false</Visible>
     </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.1\Mono.Cecil.dll">
+    <None Include="$(FunctionsGeneratorOutputPath)\net6.0\Mono.Cecil.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp3.1\</PackagePath>
+      <PackagePath>tools\net6.0\</PackagePath>
+	  <Visible>false</Visible>
     </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.1\Microsoft.NET.Sdk.Functions.Generator.dll">
+    <None Include="$(FunctionsGeneratorOutputPath)\net6.0\Microsoft.NET.Sdk.Functions.Generator.dll">
       <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp3.1\</PackagePath>
+      <PackagePath>tools\net6.0\</PackagePath>
+      <Visible>false</Visible>
     </None>
-    <None Include="$(FunctionsGeneratorOutputPath)\netcoreapp3.1\Microsoft.NET.Sdk.Functions.Generator.runtimeconfig.json">
+    <None Include="$(FunctionsGeneratorOutputPath)\net6.0\Microsoft.NET.Sdk.Functions.Generator.runtimeconfig.json">
       <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp3.1\</PackagePath>
-    </None>
-    <None Include="$(OutputPath)\netcoreapp3.1\Microsoft.NET.Sdk.Functions.dll">
-      <Pack>true</Pack>
-      <PackagePath>tools\netcoreapp3.1\</PackagePath>
-    </None>
+      <PackagePath>tools\net6.0\</PackagePath>
+      <Visible>false</Visible>
+    </None>   
   </ItemGroup>
 
   <ItemGroup>
@@ -76,6 +67,15 @@
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="3.0.6" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[3.0.2,3.1.0)" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="$(ExtensionsMetadataGeneratorVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.NET.Sdk.Functions.MSBuild\Microsoft.NET.Sdk.Functions.MSBuild.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.NET.Sdk.Functions.Generator\Microsoft.NET.Sdk.Functions.Generator.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>  
 
 </Project>

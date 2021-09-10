@@ -27,6 +27,8 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
                 startInfo.Arguments = arguments;
             }
 
+            testOutputHelper.WriteLine($"Running from '{startInfo.WorkingDirectory}': '{startInfo.FileName} {string.Join(" ", startInfo.Arguments)}'");
+
             Process testProcess = Process.Start(startInfo);
             processId = testProcess?.Id;
             if (waitForExit)
@@ -36,6 +38,10 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
                 var standardError = testProcess.StandardError.ReadToEnd();
                 testOutputHelper?.WriteLine(standardOut);
                 testOutputHelper?.WriteLine(standardError);
+
+                Console.WriteLine("----");
+                Console.WriteLine(standardOut);
+
                 return testProcess?.ExitCode;
             }
 

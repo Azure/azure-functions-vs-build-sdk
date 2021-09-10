@@ -1,4 +1,0 @@
-<Project>
-  <Import Project="src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\Microsoft.NET.Sdk.Functions.Version.props"/>
-  
-</Project>

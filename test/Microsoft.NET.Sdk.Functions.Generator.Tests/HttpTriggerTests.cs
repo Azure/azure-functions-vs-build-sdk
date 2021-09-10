@@ -18,7 +18,7 @@ namespace Microsoft.NET.Sdk.Functions.Test
             var jObject = attribute.ToJObject();
 
             jObject.Should().HaveElement("authLevel");
-            jObject["authLevel"].Should().Be("function");
+            jObject["authLevel"].Should().HaveValue("function");
         }
     }
 }
