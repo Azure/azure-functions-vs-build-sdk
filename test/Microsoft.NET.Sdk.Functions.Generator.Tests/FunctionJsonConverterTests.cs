@@ -40,6 +40,36 @@ namespace Microsoft.NET.Sdk.Functions.Test
             public static void Run8() { }
         }
 
+        public class NestedFunctionsClass
+        {
+            public class FunctionsClass
+            {
+                [FunctionName("MyHttpTrigger")]
+                public static void Run1([HttpTrigger] HttpRequestMessage request) { }
+
+                [FunctionName("MyBlobTrigger")]
+                public static void Run2([BlobTrigger("blob.txt")] string blobContent) { }
+
+                [FunctionName("MyQueueTrigger")]
+                public static void Run3([QueueTrigger("queue")] CloudQueue queue) { }
+
+                [FunctionName("MyEventHubTrigger")]
+                public static void Run4([EventHubTrigger("hub")] EventData message) { }
+
+                [FunctionName("MyTimerTrigger")]
+                public static void Run5([TimerTrigger("00:30:00")] TimerInfo timer) { }
+
+                [FunctionName("MyServiceBusTrigger")]
+                public static void Run6([ServiceBusTrigger("queue")] string message) { }
+
+                [FunctionName("MyManualTrigger"), NoAutomaticTrigger]
+                public static void Run7(string input) { }
+
+                [FunctionName("MyManualTriggerWithoutParameters"), NoAutomaticTrigger]
+                public static void Run8() { }
+            }
+        }
+
         [Theory]
         [InlineData("MyHttpTrigger", "httpTrigger", "request", "authLevel", "function")]
         [InlineData("MyBlobTrigger", "blobTrigger", "blobContent", "path", "blob.txt")]
@@ -54,6 +84,32 @@ namespace Microsoft.NET.Sdk.Functions.Test
             var logger = new RecorderLogger();
             var converter = new FunctionJsonConverter(logger, ".", ".", functionsInDependencies: false);
             var functions = converter.GenerateFunctions(new[] { TestUtility.GetTypeDefinition(typeof(FunctionsClass)) });
+            var schema = functions.Single(e => Path.GetFileName(e.Value.outputFile.DirectoryName) == functionName).Value.schema;
+            var binding = schema.Bindings.Single();
+            binding.Value<string>("type").Should().Be(type);
+            binding.Value<string>("name").Should().Be(parameterName);
+            if (bindingName != null)
+            {
+                binding.Value<string>(bindingName).Should().Be(bindingValue);
+            }
+            logger.Errors.Should().BeEmpty();
+            logger.Warnings.Should().BeEmpty();
+        }
+
+        [Theory]
+        [InlineData("MyHttpTrigger", "httpTrigger", "request", "authLevel", "function")]
+        [InlineData("MyBlobTrigger", "blobTrigger", "blobContent", "path", "blob.txt")]
+        [InlineData("MyQueueTrigger", "queueTrigger", "queue", "queueName", "queue")]
+        [InlineData("MyTimerTrigger", "timerTrigger", "timer", "schedule", "00:30:00")]
+        [InlineData("MyServiceBusTrigger", "serviceBusTrigger", "message", "queueName", "queue")]
+        [InlineData("MyManualTrigger", "manualTrigger", "input", null, null)]
+        [InlineData("MyManualTriggerWithoutParameters", "manualTrigger", null, null, null)]
+        [InlineData("MyEventHubTrigger", "eventHubTrigger", "message", "eventHubName", "hub")]
+        public void NestedFunctionMethodsAreExported(string functionName, string type, string parameterName, string bindingName, string bindingValue)
+        {
+            var logger = new RecorderLogger();
+            var converter = new FunctionJsonConverter(logger, ".", ".", functionsInDependencies: false);
+            var functions = converter.GenerateFunctions(new[] { TestUtility.GetTypeDefinition(typeof(NestedFunctionsClass)) });
             var schema = functions.Single(e => Path.GetFileName(e.Value.outputFile.DirectoryName) == functionName).Value.schema;
             var binding = schema.Bindings.Single();
             binding.Value<string>("type").Should().Be(type);
