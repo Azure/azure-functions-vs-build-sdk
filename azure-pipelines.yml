@@ -46,8 +46,8 @@ steps:
     UseMinimatch: true
     FolderPath: 'src\'
     Pattern: |
-      Microsoft.NET.Sdk.Functions.MSBuild\bin\Release\**\Microsoft.NET.Sdk.Functions.MSBuild.dll
-      Microsoft.NET.Sdk.Functions.Generator\bin\Release\**\Microsoft.NET.Sdk.Functions.Generator.dll
+      Microsoft.NET.Sdk.Functions.MSBuild\bin\Release\*\Microsoft.NET.Sdk.Functions.MSBuild.dll
+      Microsoft.NET.Sdk.Functions.Generator\bin\Release\*\Microsoft.NET.Sdk.Functions.Generator.dll
     signConfigType: inlineSignParams
     inlineOperation: |
         [
