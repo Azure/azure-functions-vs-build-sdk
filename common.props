@@ -7,7 +7,7 @@
     <PatchProductVersion>0</PatchProductVersion>
     
     <!-- Clear this value for non-preview releases -->
-    <PreviewProductVersion>1</PreviewProductVersion>
+    <PreviewProductVersion>2</PreviewProductVersion>
 
     <VersionPrefix>$(MajorProductVersion).$(MinorProductVersion).$(PatchProductVersion)</VersionPrefix>
     
