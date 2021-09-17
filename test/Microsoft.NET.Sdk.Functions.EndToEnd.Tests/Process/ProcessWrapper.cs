@@ -39,9 +39,6 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
                 testOutputHelper?.WriteLine(standardOut);
                 testOutputHelper?.WriteLine(standardError);
 
-                Console.WriteLine("----");
-                Console.WriteLine(standardOut);
-
                 return testProcess?.ExitCode;
             }
 

@@ -21,7 +21,7 @@ steps:
       Invoke-WebRequest 'https://dot.net/v1/dotnet-install.ps1' -OutFile 'dotnet-install.ps1'
       # Official release versions can be found at: https://dotnet.microsoft.com/download/dotnet/6.0
       # Newer versions can be found at: https://github.com/dotnet/installer#installers-and-binaries
-      ./dotnet-install.ps1 -InstallDir 'C:\Program Files\dotnet' -Verbose -Version 6.0.100-preview.7.21379.14
+      ./dotnet-install.ps1 -InstallDir 'C:\Program Files\dotnet' -Verbose -Version 6.0.100-rc.1.21458.32
 - task: DotNetCoreCLI@2
   displayName: 'Build'
   inputs:
@@ -46,12 +46,25 @@ steps:
     UseMinimatch: true
     FolderPath: 'src\'
     Pattern: |
-      Microsoft.NET.Sdk.Functions\bin\Release\**\Microsoft.NET.Sdk.Functions.dll
-      Microsoft.NET.Sdk.Functions.MSBuild\bin\Release\**\Microsoft.NET.Sdk.Functions.MSBuild.dll
-      Microsoft.NET.Sdk.Functions.Generator\bin\Release\**\Microsoft.NET.Sdk.Functions.Generator.dll
+      Microsoft.NET.Sdk.Functions.MSBuild\bin\Release\*\Microsoft.NET.Sdk.Functions.MSBuild.dll
+      Microsoft.NET.Sdk.Functions.Generator\bin\Release\*\Microsoft.NET.Sdk.Functions.Generator.dll
     signConfigType: inlineSignParams
     inlineOperation: |
         [
+          {
+            "KeyCode" : "CP-233863-SN",
+            "OperationCode" : "StrongNameSign",
+            "Parameters" : {},
+            "ToolName" : "sign",
+            "ToolVersion" : "1.0"
+          },
+          {
+            "KeyCode" : "CP-233863-SN",
+            "OperationCode" : "StrongNameVerify",
+            "Parameters" : {},
+            "ToolName" : "sign",
+            "ToolVersion" : "1.0"
+          },
           {
             "KeyCode": "CP-230012",
             "OperationCode": "SigntoolSign",
