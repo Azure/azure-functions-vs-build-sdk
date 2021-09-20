@@ -11,7 +11,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <ExtensionsMetadataGeneratorVersion>1.2.2</ExtensionsMetadataGeneratorVersion>
+    <ExtensionsMetadataGeneratorVersion>4.0.0-preview1</ExtensionsMetadataGeneratorVersion>
   </PropertyGroup>
 
 </Project>
