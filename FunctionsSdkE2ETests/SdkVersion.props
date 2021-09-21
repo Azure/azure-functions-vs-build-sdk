@@ -7,6 +7,6 @@
     <MicrosoftNetSdkFunctionsV4PreviousVersion>4.0.0-preview1</MicrosoftNetSdkFunctionsV4PreviousVersion>
 
     <!-- Some tests directly reference EMG; this should be latest -->
-    <ExtensionsMetadataGeneratorDirectReferenceVersion>1.2.2</ExtensionsMetadataGeneratorDirectReferenceVersion>
+    <ExtensionsMetadataGeneratorDirectReferenceVersion>4.0.0-preview1</ExtensionsMetadataGeneratorDirectReferenceVersion>
   </PropertyGroup>
 </Project>
