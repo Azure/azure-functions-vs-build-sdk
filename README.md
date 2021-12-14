@@ -2,7 +2,10 @@
 
 |Branch|Status|
 |---|---|
-|master|[![Build status](https://ci.appveyor.com/api/projects/status/54b2dh9ge9f8g3mg/branch/master?svg=true)](https://ci.appveyor.com/project/appsvc/azure-functions-vs-build-sdk/branch/master)|
+|main|[![Build Status](https://azfunc.visualstudio.com/Azure%20Functions/_apis/build/status/Azure.azure-functions-vs-build-sdk?branchName=main)](https://azfunc.visualstudio.com/Azure%20Functions/_build/latest?definitionId=52&branchName=main)|
+|v4.x|[![Build Status](https://azfunc.visualstudio.com/Azure%20Functions/_apis/build/status/Azure.azure-functions-vs-build-sdk?branchName=v4.x)](https://azfunc.visualstudio.com/Azure%20Functions/_build/latest?definitionId=52&branchName=v4.x)|
+|release/4|[![Build Status](https://azfunc.visualstudio.com/Azure%20Functions/_apis/build/status/Azure.azure-functions-vs-build-sdk?branchName=release%2F4)](https://azfunc.visualstudio.com/Azure%20Functions/_build/latest?definitionId=52&branchName=release%2F4)|
+|v3.x|[![Build Status](https://azfunc.visualstudio.com/Azure%20Functions/_apis/build/status/Azure.azure-functions-vs-build-sdk?branchName=v3.x)](https://azfunc.visualstudio.com/Azure%20Functions/_build/latest?definitionId=52&branchName=v3.x)|
 
 # FAQ:
 
