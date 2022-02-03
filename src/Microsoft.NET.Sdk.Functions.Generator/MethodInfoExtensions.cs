@@ -107,9 +107,11 @@ namespace MakeFunctionJson
                 }
 
                 var bindingJObject = attribute.ToReflection().ToJObject();
-                
+
+                // return binding must have the direction attribute set to out.
+                // https://github.com/Azure/azure-functions-host/blob/dev/src/WebJobs.Script/Utility.cs#L561
                 bindingJObject["name"] = "$return";
-                bindingJObject["Direction"] = "out";
+                bindingJObject["direction"] = "out";
 
                 outputBindings.Add(bindingJObject);
             }
