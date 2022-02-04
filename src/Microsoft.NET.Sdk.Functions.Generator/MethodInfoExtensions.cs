@@ -64,8 +64,7 @@ namespace MakeFunctionJson
             // Every parameter can potentially contain more than 1 attribute that will be converted into a binding object.
             var bindingsFromParameters = method.HasNoAutomaticTriggerAttribute() ? new[] { method.ManualTriggerBinding() } : method.Parameters
                                             .Select(p => p.ToFunctionJsonBindings())
-                                            .SelectMany(i => i)
-                                            .ToArray();
+                                            .SelectMany(i => i);
 
             // Get binding if a return attribute is used.
             // Ex:  [return: Queue("myqueue-items-a", Connection = "MyStorageConnStr")]
