@@ -69,7 +69,7 @@ namespace MakeFunctionJson
             // Get binding if a return attribute is used.
             // Ex:  [return: Queue("myqueue-items-a", Connection = "MyStorageConnStr")]
             var returnBindings = GetOutputBindingsFromReturnAttribute(method);
-            var allBindings = bindingsFromParameters.Concat(returnBindings);
+            var allBindings = bindingsFromParameters.Concat(returnBindings).ToArray();
 
             return new FunctionJsonSchema
             {
@@ -98,13 +98,8 @@ namespace MakeFunctionJson
             }
 
             var outputBindings = new List<JObject>();
-            foreach (var attribute in method.MethodReturnType.CustomAttributes)
+            foreach (var attribute in method.MethodReturnType.CustomAttributes.Where(a=>a.IsWebJobsAttribute()))
             {
-                if (!attribute.AttributeType.FullName.StartsWith("Microsoft.Azure.WebJobs"))
-                {
-                    continue;
-                }
-
                 var bindingJObject = attribute.ToReflection().ToJObject();
 
                 // return binding must have the direction attribute set to out.

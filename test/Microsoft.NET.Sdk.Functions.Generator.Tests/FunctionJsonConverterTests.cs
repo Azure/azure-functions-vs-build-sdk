@@ -10,6 +10,7 @@ using MakeFunctionJson;
 using Microsoft.Azure.EventHubs;
 using Microsoft.Azure.WebJobs;
 using Microsoft.WindowsAzure.Storage.Queue;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace Microsoft.NET.Sdk.Functions.Test
@@ -26,22 +27,24 @@ namespace Microsoft.NET.Sdk.Functions.Test
             [FunctionName("MyHttpTrigger")]
             public static void Run1([HttpTrigger] HttpRequestMessage request) { }
 
-            [FunctionName("HttpTriggerWriteToQueue1")]
-            [return: Queue("myqueue-items-a", Connection = "MyStorageConnStra")]
-            public static string HttpTriggerWriteToQueue1([HttpTrigger] HttpRequestMessage request) => "foo";
+            [FunctionName("HttpTriggerQueueReturn")]
+            [return: Queue("myqueue-items-a", Connection = "MyStorageConnStrA")]
+            public static string HttpTriggerQueueReturn([HttpTrigger] HttpRequestMessage request) => "foo";
 
-            [FunctionName("HttpTriggerWriteToQueue2")]
-            public static void HttpTriggerWriteToQueue2([HttpTrigger] HttpRequestMessage request,
-                [Queue("myqueue-items-b", Connection = "MyStorageConnStrb")] out string msg)
+            [FunctionName("HttpTriggerQueueOutParam")]
+            public static void HttpTriggerQueueOutParam([HttpTrigger] HttpRequestMessage request,
+                [Queue("myqueue-items-b", Connection = "MyStorageConnStrB")] out string msg)
             {
                 msg = "foo";
             }
 
-            [FunctionName("HttpTriggerWriteToQueue3")]
-            public static void HttpTriggerWriteToQueue3([HttpTrigger] HttpRequestMessage request,
-            [Queue("myqueue-items-c", Connection = "MyStorageConnStrc")] IAsyncCollector<string> collector)
+            [FunctionName("HttpTriggerMultipleOutputs")]
+            public static void HttpTriggerMultipleOutputs([HttpTrigger] HttpRequestMessage request,
+                [Blob("binding-metric-test/sample-text.txt", Connection = "MyStorageConnStrC")] out string myBlob,
+                [Queue("myqueue-items-c", Connection = "MyStorageConnStrC")] IAsyncCollector<string> qCollector)
             {
-                collector.AddAsync("foo");
+                myBlob = "foo-blob";
+                qCollector.AddAsync("foo-queue");
             }
 
             [FunctionName("MyBlobTrigger")]
@@ -69,9 +72,8 @@ namespace Microsoft.NET.Sdk.Functions.Test
         public class BindingAssertionItem
         {
             public string FunctionName { set; get; }
-
-            // key is binding type, value is binding parameter name.
-            public Dictionary<string, string> Bindings { set; get; }
+            
+            public Dictionary<string, string>[] Bindings { set; get; }
         }
 
         public class BindingTestData : IEnumerable<object[]>
@@ -82,105 +84,189 @@ namespace Microsoft.NET.Sdk.Functions.Test
                     new BindingAssertionItem
                     {
                         FunctionName="MyHttpTrigger",
-                        Bindings= new Dictionary<string, string>
+                        Bindings = new Dictionary<string, string>[]
                         {
-                            {"httpTrigger", "request"}
+                            new Dictionary<string, string>
+                            {
+                               {"type", "httpTrigger" },
+                               {"name" , "request"},
+                               {"authLevel" , "function"}
+                            }
                         }
                     }
                 };
+
                 yield return new object[] {
                     new BindingAssertionItem
                     {
-                        FunctionName="HttpTriggerWriteToQueue1",
-                        Bindings= new Dictionary<string, string>
+                        FunctionName="HttpTriggerQueueReturn",
+                        Bindings = new Dictionary<string, string>[]
                         {
-                           {"httpTrigger", "request"},
-                           {"queue", "$return"}
+                            new Dictionary<string, string>
+                            {
+                               {"type", "httpTrigger" },
+                               {"name" , "request"},
+                               {"authLevel" , "function"}
+                            },
+                            new Dictionary<string, string>
+                            {
+                               {"type", "queue" },
+                               {"name" , "$return"},
+                               {"connection" , "MyStorageConnStrA"},
+                               {"queueName","myqueue-items-a" }
+                            }
                         }
                     }
                 };
+
                 yield return new object[] {
                     new BindingAssertionItem
                     {
-                        FunctionName="HttpTriggerWriteToQueue2",
-                        Bindings= new Dictionary<string, string>
+                        FunctionName="HttpTriggerQueueOutParam",
+                        Bindings = new Dictionary<string, string>[]
                         {
-                           {"httpTrigger", "request"},
-                           {"queue", "msg"}
+                            new Dictionary<string, string>
+                            {
+                               {"type", "httpTrigger" },
+                               {"name" , "request"},
+                               {"authLevel" , "function"}
+                            },
+                            new Dictionary<string, string>
+                            {
+                               {"type", "queue" },
+                               {"name" , "msg"},
+                               {"connection" , "MyStorageConnStrB"},
+                               {"queueName","myqueue-items-b" }
+                            }
                         }
                     }
                 };
+
                 yield return new object[] {
                     new BindingAssertionItem
                     {
-                        FunctionName="HttpTriggerWriteToQueue3",
-                        Bindings= new Dictionary<string, string>
+                        FunctionName="HttpTriggerMultipleOutputs",
+                        Bindings = new Dictionary<string, string>[]
                         {
-                           {"httpTrigger", "request"},
-                           {"queue", "collector"}
+                            new Dictionary<string, string>
+                            {
+                               {"type", "httpTrigger" },
+                               {"name" , "request"},
+                               {"authLevel" , "function"}
+                            },
+                            new Dictionary<string, string>
+                            {
+                               {"type", "queue" },
+                               {"name" , "qCollector"},
+                               {"connection" , "MyStorageConnStrC"},
+                               {"queueName","myqueue-items-c" }
+                            },
+                            new Dictionary<string, string>
+                            {
+                               {"type", "blob" },
+                               {"name" , "myBlob"},
+                               {"blobPath", "binding-metric-test/sample-text.txt" },
+                               {"connection" , "MyStorageConnStrC"}
+                            }
                         }
                     }
                 };
+
                 yield return new object[] {
                     new BindingAssertionItem
                     {
                         FunctionName="MyBlobTrigger",
-                        Bindings= new Dictionary<string, string>
+                        Bindings = new Dictionary<string, string>[]
                         {
-                            {"blobTrigger", "blobContent"}
+                            new Dictionary<string, string>
+                            {
+                               {"type", "blobTrigger" },
+                               {"name" , "blobContent"},
+                               {"path" , "blob.txt"}
+                            }
                         }
                     }
                 };
+
                 yield return new object[] {
                     new BindingAssertionItem
                     {
                         FunctionName="MyEventHubTrigger",
-                        Bindings= new Dictionary<string, string>
+                        Bindings = new Dictionary<string, string>[]
                         {
-                            {"eventHubTrigger", "message"}
+                            new Dictionary<string, string>
+                            {
+                               {"type", "eventHubTrigger" },
+                               {"name" , "message"},
+                               {"eventHubName" , "hub"}
+                            }
                         }
                     }
                 };
+
                 yield return new object[] {
                     new BindingAssertionItem
                     {
                         FunctionName="MyTimerTrigger",
-                        Bindings= new Dictionary<string, string>
+                        Bindings = new Dictionary<string, string>[]
                         {
-                            {"timerTrigger", "timer"}
+                            new Dictionary<string, string>
+                            {
+                               {"type", "timerTrigger" },
+                               {"name" , "timer"},
+                               {"schedule" , "00:30:00"},
+                               {"useMonitor" , "True"},
+                               {"runOnStartup" , "False"}
+                            }
                         }
                     }
                 };
+
                 yield return new object[] {
                     new BindingAssertionItem
                     {
                         FunctionName="MyServiceBusTrigger",
-                        Bindings= new Dictionary<string, string>
+                        Bindings = new Dictionary<string, string>[]
                         {
-                            {"serviceBusTrigger", "message"}
+                            new Dictionary<string, string>
+                            {
+                               {"type", "serviceBusTrigger" },
+                               {"name" , "message"},
+                               {"queueName" , "queue"},
+                               {"isSessionsEnabled" , "False"}
+                            }
                         }
                     }
                 };
+
                 yield return new object[] {
                     new BindingAssertionItem
                     {
                         FunctionName="MyManualTrigger",
-                        Bindings= new Dictionary<string, string>
+                        Bindings = new Dictionary<string, string>[]
                         {
-                            {"manualTrigger", "input"}
+                            new Dictionary<string, string>
+                            {
+                               {"type", "manualTrigger" },
+                               {"name" , "input"}
+                            }
                         }
                     }
                 };
+
                 yield return new object[] {
                     new BindingAssertionItem
                     {
                         FunctionName="MyManualTriggerWithoutParameters",
-                        Bindings= new Dictionary<string, string>
+                        Bindings = new Dictionary<string, string>[]
                         {
-                            {"manualTrigger", null}
+                            new Dictionary<string, string>
+                            {
+                               {"type", "manualTrigger" }
+                            }
                         }
                     }
-                };
+                };                
             }
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
@@ -192,16 +278,26 @@ namespace Microsoft.NET.Sdk.Functions.Test
             var logger = new RecorderLogger();
             var converter = new FunctionJsonConverter(logger, ".", ".", functionsInDependencies: false);
             var functions = converter.GenerateFunctions(new[] { TestUtility.GetTypeDefinition(typeof(FunctionsClass)) }).ToArray();
-            var schema = functions.Single(e => Path.GetFileName(e.Value.outputFile.DirectoryName) == item.FunctionName).Value.schema;
+            var schemaActual = functions.Single(e => Path.GetFileName(e.Value.outputFile.DirectoryName) == item.FunctionName).Value.schema;
 
-            schema.Bindings.Count().Should().Be(item.Bindings.Count);
-
-            foreach (var binding in schema.Bindings)
+            foreach (var expectedBindingItem in item.Bindings)
             {
-                var type=binding.Value<string>("type");
-                var name=binding.Value<string>("name");
+                var expectedBindingType = expectedBindingItem.FirstOrDefault(a => a.Key == "type");
 
-                name.Should().Be(item.Bindings[type]);
+                // query binding entry from actual using the type.
+                var matchingBindingFromActual = schemaActual.Bindings
+                                                            .First(a => a.Properties().Any(g => g.Name == "type"
+                                                                                             && g.Value.ToString()== expectedBindingType.Value));
+
+                // compare all props of binding entry from expected entry with actual.
+                foreach (var prop in expectedBindingItem)
+                {
+                    // make sure the prop exist in the binding.
+                    matchingBindingFromActual.ContainsKey(prop.Key).Should().BeTrue();
+
+                    // Verify the prop values matches between expected and actual.
+                    expectedBindingItem[prop.Key].Should().Be(matchingBindingFromActual[prop.Key].ToString());
+                }
             }
 
             logger.Errors.Should().BeEmpty();
