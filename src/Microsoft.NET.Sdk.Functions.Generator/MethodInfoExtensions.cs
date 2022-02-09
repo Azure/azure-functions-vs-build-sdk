@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Mono.Cecil;
@@ -59,15 +60,20 @@ namespace MakeFunctionJson
         /// <returns><see cref="FunctionJsonSchema"/> object that represents the passed in <paramref name="method"/>.</returns>
         public static FunctionJsonSchema ToFunctionJson(this MethodDefinition method, string assemblyPath)
         {
+            // For every SDK parameter, convert it to a FunctionJson bindings.
+            // Every parameter can potentially contain more than 1 attribute that will be converted into a binding object.
+            var bindingsFromParameters = method.HasNoAutomaticTriggerAttribute() ? new[] { method.ManualTriggerBinding() } : method.Parameters
+                                            .Select(p => p.ToFunctionJsonBindings())
+                                            .SelectMany(i => i);
+
+            // Get binding if a return attribute is used.
+            // Ex:  [return: Queue("myqueue-items-a", Connection = "MyStorageConnStr")]
+            var returnBindings = GetOutputBindingsFromReturnAttribute(method);
+            var allBindings = bindingsFromParameters.Concat(returnBindings).ToArray();
+
             return new FunctionJsonSchema
             {
-                // For every SDK parameter, convert it to a FunctionJson bindings.
-                // Every parameter can potentially contain more than 1 attribute that will be converted into a binding object.
-                Bindings = method.HasNoAutomaticTriggerAttribute() ? new[] { method.ManualTriggerBinding() } : method.Parameters
-                    .Where(p => p.IsWebJobSdkTriggerParameter())
-                    .Select(p => p.ToFunctionJsonBindings())
-                    .SelectMany(i => i)
-                    .ToArray(),
+                Bindings = allBindings,
                 // Entry point is the fully qualified name of the function
                 EntryPoint = $"{method.DeclaringType.FullName}.{method.Name}",
                 ScriptFile = assemblyPath,
@@ -75,6 +81,36 @@ namespace MakeFunctionJson
                 // or if the method itself or class have the [Disabled] attribute.
                 Disabled = method.GetDisabled()
             };
+        }
+
+        /// <summary>
+        /// Gets bindings from return expression used with a binding expression.
+        /// Ex:
+        ///     [FunctionName("HttpTriggerWriteToQueue1")]
+        ///     [return: Queue("myqueue-items-a", Connection = "MyStorageConnStra")]
+        ///     public static string Run([HttpTrigger] HttpRequestMessage request) => "foo";
+        /// </summary>
+        private static JObject[] GetOutputBindingsFromReturnAttribute(MethodDefinition method)
+        {
+            if (method.MethodReturnType == null)
+            {
+                return Array.Empty<JObject>();
+            }
+
+            var outputBindings = new List<JObject>();
+            foreach (var attribute in method.MethodReturnType.CustomAttributes.Where(a=>a.IsWebJobsAttribute()))
+            {
+                var bindingJObject = attribute.ToReflection().ToJObject();
+
+                // return binding must have the direction attribute set to out.
+                // https://github.com/Azure/azure-functions-host/blob/dev/src/WebJobs.Script/Utility.cs#L561
+                bindingJObject["name"] = "$return";
+                bindingJObject["direction"] = "out";
+
+                outputBindings.Add(bindingJObject);
+            }
+
+            return outputBindings.ToArray();
         }
 
         /// <summary>
