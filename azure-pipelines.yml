@@ -12,6 +12,12 @@ variables:
 
 steps:
 - task: UseDotNet@2
+  displayName: 'Install dotnet v2.x'
+  inputs:
+    packageType: 'sdk'
+    version: '2.2.x'
+    performMultiLevelLookup: true
+- task: UseDotNet@2
   displayName: 'Install dotnet v3.x'
   inputs:
     packageType: 'sdk'
