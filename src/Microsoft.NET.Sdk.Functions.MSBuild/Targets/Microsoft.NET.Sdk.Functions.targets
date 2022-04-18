@@ -20,6 +20,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <IsPackable Condition="'$(IsPackable)' == ''">false</IsPackable>
     <WarnOnPackingNonPackableProject Condition="'$(WarnOnPackingNonPackableProject)' == '' and '$(IsPackable)' == 'false'">true</WarnOnPackingNonPackableProject>
     <IsZipDeploySupported>true</IsZipDeploySupported>
+    <MSBuildFunctionsTargetsPath>$(MSBuildExtensionsPath)\Microsoft\VisualStudio\Managed.Functions\</MSBuildFunctionsTargetsPath>
   </PropertyGroup>
 
   <UsingTask TaskName="GenerateFunctions"
@@ -50,6 +51,14 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
  -->
   <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.targets"
           Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.targets')" />
+
+  <!--
+  ***********************************************************************************************
+  Import the Functions designtime targets if they exist
+  ***********************************************************************************************
+-->
+  <Import Project="$(MSBuildFunctionsTargetsPath)Microsoft.Azure.Functions.Designtime.targets" 
+         Condition="Exists('$(MSBuildFunctionsTargetsPath)Microsoft.Azure.Functions.Designtime.targets')" />
 
   <!--
   ***********************************************************************************************
