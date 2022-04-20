@@ -4,7 +4,7 @@
 
     <MajorProductVersion>4</MajorProductVersion>
     <MinorProductVersion>1</MinorProductVersion>
-    <PatchProductVersion>0</PatchProductVersion>
+    <PatchProductVersion>1</PatchProductVersion>
     
     <!-- Clear this value for non-preview releases -->
     <PreviewProductVersion></PreviewProductVersion>
