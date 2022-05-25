@@ -13,7 +13,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="[11.0.2]" />
     <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
-    <PackageReference Include="Mono.Cecil" Version="0.11.1" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.3" />
   </ItemGroup>
   
 </Project>
