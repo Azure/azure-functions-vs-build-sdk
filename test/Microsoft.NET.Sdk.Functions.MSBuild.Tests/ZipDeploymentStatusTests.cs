@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.NET.Sdk.Functions.Http;
+using Microsoft.NET.Sdk.Functions.MSBuild.Properties;
 using Microsoft.NET.Sdk.Functions.MSBuild.Tasks;
 using Moq;
 using Newtonsoft.Json;
@@ -96,6 +97,41 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
 
             // Assert
             verifyStep(client, expectedDeployStatus == actualdeployStatus);
+        }
+
+        [Fact]
+        public async Task PollDeploymentStatusTest_WithDeploymentSummary_Succeeds()
+        {
+            // Arrange
+            string deployUrl = "https://sitename.scm.azurewebsites.net/DeploymentStatus?Id=knownId";
+            Action<Mock<IHttpClient>, DeployStatus> verifyStep = (client, status) =>
+            {
+                client.Verify(c => c.GetAsync(
+                It.Is<Uri>(uri => string.Equals(uri.AbsoluteUri, deployUrl, StringComparison.Ordinal)), It.IsAny<CancellationToken>()));
+                Assert.Equal($"{UserAgentName}/{UserAgentVersion}", client.Object.DefaultRequestHeaders.GetValues("User-Agent").FirstOrDefault());
+                Assert.Equal(DeployStatus.Failed, status);
+            };
+
+            Mock<IHttpClient> client = new Mock<IHttpClient>();
+            HttpRequestMessage requestMessage = new HttpRequestMessage();
+            client.Setup(x => x.DefaultRequestHeaders).Returns(requestMessage.Headers);
+            client.Setup(c => c.GetAsync(new Uri(deployUrl, UriKind.RelativeOrAbsolute), It.IsAny<CancellationToken>())).Returns(() =>
+            {
+                HttpContent httpContent = new StringContent(Properties.Resources.DeploymentResponse, Encoding.UTF8, "application/json");
+                HttpResponseMessage responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = httpContent
+                };
+                return Task.FromResult(responseMessage);
+            });
+
+            ZipDeploymentStatus deploymentStatus = new ZipDeploymentStatus(client.Object, $"{UserAgentName}/{UserAgentVersion}", null, false);
+
+            // Act
+            var actualdeployStatus = await deploymentStatus.PollDeploymentStatusAsync(deployUrl, userName, password);
+
+            // Assert
+            verifyStep(client, actualdeployStatus);
         }
     }
 }

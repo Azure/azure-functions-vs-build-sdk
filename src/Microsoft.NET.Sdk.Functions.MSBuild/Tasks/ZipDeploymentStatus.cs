@@ -10,6 +10,7 @@ using Microsoft.Build.Utilities;
 using Microsoft.NET.Sdk.Functions.Http;
 using Microsoft.NET.Sdk.Functions.MSBuild.Properties;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Task = System.Threading.Tasks.Task;
 
 namespace Microsoft.NET.Sdk.Functions.MSBuild.Tasks
@@ -65,14 +66,10 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tasks
 
         private async Task<DeployStatus> GetDeploymentStatusAsync(string deploymentUrl, string userName, string password, int retryCount, TimeSpan retryDelay, CancellationTokenSource cts)
         {
-            Dictionary<string, string> json = await InvokeGetRequestWithRetryAsync<Dictionary<string, string>>(deploymentUrl, userName, password, retryCount, retryDelay, cts);
-            string statusString = null;
-            if (json!= null && !json.TryGetValue("status", out statusString))
-            {
-                return DeployStatus.Unknown;
-            }
-
-            if (Enum.TryParse(statusString, out DeployStatus result))
+            var json = await InvokeGetRequestWithRetryAsync<JObject>(deploymentUrl, userName, password, retryCount, retryDelay, cts);
+            if (json != null
+                && json.TryGetValue("status", out JToken statusString)
+                && Enum.TryParse(statusString.Value<string>(), out DeployStatus result))
             {
                 return result;
             }
