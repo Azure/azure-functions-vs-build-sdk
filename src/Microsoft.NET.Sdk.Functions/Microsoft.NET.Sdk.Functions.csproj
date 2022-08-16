@@ -3,7 +3,7 @@
   <Import Project="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\ExtensionsMetadataGeneratorVersion.props" />
   <Import Project="..\..\common.props"/>
 
-  <PropertyGroup>    
+  <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
     <Authors>Microsoft</Authors>
@@ -27,26 +27,26 @@
     <Content Include="..\..\src\Microsoft.NET.Sdk.Functions.MSBuild\Targets\**\*">
       <Pack>true</Pack>
       <PackagePath>build\</PackagePath>
-	  <Visible>false</Visible>
+      <Visible>false</Visible>
     </Content>
 
-    <!-- MSBuild task assemblies -->    
+    <!-- MSBuild task assemblies -->
     <None Include="$(FunctionsBuildTaskOutputPath)\netstandard2.0\Microsoft.NET.Sdk.Functions.MSBuild.dll">
       <Pack>true</Pack>
       <PackagePath>tools\net6.0\</PackagePath>
-	  <Visible>false</Visible>
+      <Visible>false</Visible>
     </None>
 
     <!-- Generator and dependent assemblies-->
     <None Include="$(FunctionsGeneratorOutputPath)\net6.0\Newtonsoft.Json.dll">
       <Pack>true</Pack>
       <PackagePath>tools\net6.0\</PackagePath>
-	  <Visible>false</Visible>
+      <Visible>false</Visible>
     </None>
     <None Include="$(FunctionsGeneratorOutputPath)\net6.0\Mono.Cecil.dll">
       <Pack>true</Pack>
       <PackagePath>tools\net6.0\</PackagePath>
-	  <Visible>false</Visible>
+      <Visible>false</Visible>
     </None>
     <None Include="$(FunctionsGeneratorOutputPath)\net6.0\Microsoft.NET.Sdk.Functions.Generator.dll">
       <Pack>true</Pack>
@@ -57,15 +57,15 @@
       <Pack>true</Pack>
       <PackagePath>tools\net6.0\</PackagePath>
       <Visible>false</Visible>
-    </None>   
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Functions.Analyzers" Version="[1.0.0,2.0.0)" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.23,3.1.0)" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.32,3.1.0)" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="3.0.6" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[3.0.2,3.1.0)" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="[3.2.0,3.3.0)" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="$(ExtensionsMetadataGeneratorVersion)" />
   </ItemGroup>
 
@@ -76,6 +76,6 @@
     <ProjectReference Include="..\Microsoft.NET.Sdk.Functions.Generator\Microsoft.NET.Sdk.Functions.Generator.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-  </ItemGroup>  
+  </ItemGroup>
 
 </Project>
