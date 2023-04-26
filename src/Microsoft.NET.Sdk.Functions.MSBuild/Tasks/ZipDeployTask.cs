@@ -35,8 +35,8 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         public string SiteName { get; set; }
 
         public override bool Execute()
-        { 
-            using(DefaultHttpClient client = new DefaultHttpClient())
+        {
+            using (DefaultHttpClient client = new DefaultHttpClient())
             {
                 System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, PublishUrl, SiteName, UserAgentVersion, client, true);
                 t.Wait();
@@ -53,7 +53,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
             string zipDeployPublishUrl = null;
 
-            if(!string.IsNullOrEmpty(publishUrl))
+            if (!string.IsNullOrEmpty(publishUrl))
             {
                 if (!publishUrl.EndsWith("/"))
                 {
@@ -62,13 +62,13 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
                 zipDeployPublishUrl = publishUrl + "api/zipdeploy";
             }
-            else if(!string.IsNullOrEmpty(siteName))
+            else if (!string.IsNullOrEmpty(siteName))
             {
                 zipDeployPublishUrl = $"https://{siteName}.scm.azurewebsites.net/api/zipdeploy";
             }
             else
             {
-                if(logMessages)
+                if (logMessages)
                 {
                     Log.LogError(Resources.NeitherSiteNameNorPublishUrlGivenError);
                 }
@@ -83,7 +83,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
             Uri uri = new Uri(zipDeployPublishUrl, UriKind.Absolute);
             FileStream stream = File.OpenRead(zipToPublishPath);
-            IHttpResponse response = await client.PostWithBasicAuthAsync(uri, userName, password, "application/zip", $"{UserAgentName}/{userAgentVersion}", Encoding.UTF8, stream);
+            IHttpResponse response = await client.PostRequestAsync(uri, userName, password, "application/zip", $"{UserAgentName}/{userAgentVersion}", Encoding.UTF8, stream);
             if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.Accepted)
             {
                 if (logMessages)
