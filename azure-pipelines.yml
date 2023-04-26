@@ -6,27 +6,11 @@ trigger:
 
 pool:
   vmImage: 'windows-2019'
-  
+
 variables:
   devops_buildNumber: $[counter(format(''), 289)]
 
 steps:
-- task: UseDotNet@2
-  displayName: 'Install dotnet v3.x'
-  inputs:
-    packageType: 'sdk'
-    version: '3.1.x'
-    performMultiLevelLookup: true
-- task: CmdLine@2
-  inputs:
-    script: |
-      .paket\paket.exe install
-      packages\FAKE\tools\fake .\build.fsx
-  env:
-    FILES_ACCOUNT_KEY: $(FILES_ACCOUNT_KEY)
-    FILES_ACCOUNT_NAME: $(FILES_ACCOUNT_NAME)
-    BUILD_VERSION: 1.1.$(devops_buildNumber)
-  displayName: 'Build'
 - task: PowerShell@2
   displayName: 'Set dotnet path'
   inputs:
@@ -48,6 +32,22 @@ steps:
     packageType: 'sdk'
     version: '2.2.207'
     installationPath: $(DotNetPath)
+- task: UseDotNet@2
+  displayName: 'Install dotnet v3.x'
+  inputs:
+    packageType: 'sdk'
+    version: '3.1.x'
+    performMultiLevelLookup: true
+- task: CmdLine@2
+  inputs:
+    script: |
+      .paket\paket.exe install
+      packages\FAKE\tools\fake .\build.fsx
+  env:
+    FILES_ACCOUNT_KEY: $(FILES_ACCOUNT_KEY)
+    FILES_ACCOUNT_NAME: $(FILES_ACCOUNT_NAME)
+    BUILD_VERSION: 1.1.$(devops_buildNumber)
+  displayName: 'Build'
 - task: DotNetCoreCLI@2
   displayName: 'Run End to End tests'
   inputs:
