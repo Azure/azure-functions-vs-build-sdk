@@ -112,8 +112,18 @@ namespace MakeFunctionJson
             }
         }
 
+        private static IEnumerable<TypeDefinition> GetNestedTypes(TypeDefinition type)
+        {
+            if (type.HasNestedTypes)
+                return type.NestedTypes.Concat(type.NestedTypes.SelectMany(GetNestedTypes));
+            else
+                return Enumerable.Empty<TypeDefinition>();
+        }
+
         public IEnumerable<(FunctionJsonSchema schema, FileInfo outputFile)?> GenerateFunctions(IEnumerable<TypeDefinition> types)
         {
+            types = types.Concat(types.SelectMany(GetNestedTypes));
+
             foreach (var type in types)
             {
                 foreach (var method in type.Methods)
