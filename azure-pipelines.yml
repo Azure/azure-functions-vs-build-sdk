@@ -39,7 +39,7 @@ steps:
       test\**\Microsoft.NET.Sdk.Functions.Generator.Tests.csproj
       test\**\Microsoft.NET.Sdk.Functions.MSBuild.Tests.csproj
       test\**\Microsoft.NET.Sdk.Functions.EndToEnd.Tests.csproj
-- task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+- task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@2
   displayName: 'ESRP CodeSigning'
   inputs:
     ConnectedServiceName: 'ESRP Service'
@@ -86,7 +86,7 @@ steps:
             "ToolVersion": "1.0"
           }
         ]
-- task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+- task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@2
   displayName: 'ESRP CodeSigning: Third party'
   inputs:
     ConnectedServiceName: 'ESRP Service'
@@ -128,7 +128,7 @@ steps:
     arguments: '--no-build -c Release -o artifacts'
     projects: |
       **\Microsoft.Net.Sdk.Functions.csproj
-- task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+- task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@2
   displayName: 'ESRP CodeSigning: Nupkg'
   inputs:
     ConnectedServiceName: 'ESRP Service'
