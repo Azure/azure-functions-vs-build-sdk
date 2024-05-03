@@ -12,7 +12,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
          xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <_FunctionsTaskFramework>net6.0</_FunctionsTaskFramework>
+    <_FunctionsTaskFramework>$(TargetFramework)</_FunctionsTaskFramework>
     <_FunctionsTasksDir Condition=" '$(_FunctionsTasksDir)'=='' ">$(MSBuildThisFileDirectory)..\tools\$(_FunctionsTaskFramework)\</_FunctionsTasksDir>
     <_FunctionsTaskAssemblyFullPath Condition=" '$(_FunctionsTaskAssemblyFullPath)'=='' ">$(_FunctionsTasksDir)\Microsoft.NET.Sdk.Functions.MSBuild.dll</_FunctionsTaskAssemblyFullPath>
     <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
@@ -22,11 +22,11 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <IsZipDeploySupported>true</IsZipDeploySupported>
     <MSBuildFunctionsTargetsPath>$(MSBuildExtensionsPath)\Microsoft\VisualStudio\Managed.Functions\</MSBuildFunctionsTargetsPath>
 
-	<_ToolingSuffix></_ToolingSuffix>
-	<_ToolingSuffix Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v8.0'">net8-in-process</_ToolingSuffix>
-	<AzureFunctionsVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v8.0'">v0</AzureFunctionsVersion>
+    <_ToolingSuffix></_ToolingSuffix>
+    <_ToolingSuffix Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v8.0'">net8-in-process</_ToolingSuffix>
+    <AzureFunctionsVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v8.0'">v0</AzureFunctionsVersion>
+    <FunctionsToolingSuffix Condition="'$(FunctionsToolingSuffix)' == ''">$(_ToolingSuffix)</FunctionsToolingSuffix>
 
-	<FunctionsToolingSuffix Condition="'$(FunctionsToolingSuffix)' == ''">$(_ToolingSuffix)</FunctionsToolingSuffix>
   </PropertyGroup>
 
   <UsingTask TaskName="GenerateFunctions"

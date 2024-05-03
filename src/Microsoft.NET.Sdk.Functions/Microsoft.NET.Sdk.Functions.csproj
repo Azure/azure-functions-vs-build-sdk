@@ -4,7 +4,7 @@
   <Import Project="..\..\common.props"/>
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <PackageName>Microsoft.NET.Sdk.Functions</PackageName>
     <Authors>Microsoft</Authors>
     <ProjectUrl>https://github.com/Azure/azure-functions-vs-build-sdk</ProjectUrl>
@@ -36,8 +36,13 @@
       <PackagePath>tools\net6.0\</PackagePath>
       <Visible>false</Visible>
     </None>
-
-    <!-- Generator and dependent assemblies-->
+    <None Include="$(FunctionsBuildTaskOutputPath)\netstandard2.0\Microsoft.NET.Sdk.Functions.MSBuild.dll">
+      <Pack>true</Pack>
+      <PackagePath>tools\net8.0\</PackagePath>
+      <Visible>false</Visible>
+    </None>	
+		
+	  <!-- Generator and dependent assemblies-->
     <None Include="$(FunctionsGeneratorOutputPath)\net6.0\Newtonsoft.Json.dll">
       <Pack>true</Pack>
       <PackagePath>tools\net6.0\</PackagePath>
@@ -58,6 +63,26 @@
       <PackagePath>tools\net6.0\</PackagePath>
       <Visible>false</Visible>
     </None>
+	<None Include="$(FunctionsGeneratorOutputPath)\net8.0\Newtonsoft.Json.dll">
+	  <Pack>true</Pack>
+	  <PackagePath>tools\net8.0\</PackagePath>
+	  <Visible>false</Visible>
+	</None>
+	<None Include="$(FunctionsGeneratorOutputPath)\net8.0\Mono.Cecil.dll">
+	  <Pack>true</Pack>
+	  <PackagePath>tools\net8.0\</PackagePath>
+	  <Visible>false</Visible>
+	</None>
+	<None Include="$(FunctionsGeneratorOutputPath)\net8.0\Microsoft.NET.Sdk.Functions.Generator.dll">
+	  <Pack>true</Pack>
+	  <PackagePath>tools\net8.0\</PackagePath>
+	  <Visible>false</Visible>
+	</None>
+	<None Include="$(FunctionsGeneratorOutputPath)\net8.0\Microsoft.NET.Sdk.Functions.Generator.runtimeconfig.json">
+	  <Pack>true</Pack>
+	  <PackagePath>tools\net8.0\</PackagePath>
+	  <Visible>false</Visible>
+	</None>
   </ItemGroup>
 
   <ItemGroup>
