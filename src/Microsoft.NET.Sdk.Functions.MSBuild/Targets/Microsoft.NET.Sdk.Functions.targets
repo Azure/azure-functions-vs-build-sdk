@@ -12,7 +12,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
          xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <_FunctionsTaskFramework>$(TargetFramework)</_FunctionsTaskFramework>
+    <_FunctionsTaskFramework>net6.0</_FunctionsTaskFramework>
     <_FunctionsTasksDir Condition=" '$(_FunctionsTasksDir)'=='' ">$(MSBuildThisFileDirectory)..\tools\$(_FunctionsTaskFramework)\</_FunctionsTasksDir>
     <_FunctionsTaskAssemblyFullPath Condition=" '$(_FunctionsTaskAssemblyFullPath)'=='' ">$(_FunctionsTasksDir)\Microsoft.NET.Sdk.Functions.MSBuild.dll</_FunctionsTaskAssemblyFullPath>
     <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
@@ -87,7 +87,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   <Target Name="_InitializeFunctionsSdk">
     <Warning Text="The ExtensionsMetadataGenerator package was not imported correctly. Are you missing '$(_ExtensionsMetadataGeneratorTargetsPath)' or '$(_ExtensionsMetadataGeneratorPropsPath)'?"
              Condition="!$(AzureFunctionsVersion.StartsWith('v1')) And ('$(_ExtensionsMetadataGeneratorTargetsImported)' == '' Or '$(_ExtensionsMetadataGeneratorPropsImported)' == '')" />
-
+   
     <GetAssemblyIdentity AssemblyFiles="$(_FunctionsTaskAssemblyFullPath)">
         <Output
             TaskParameter="Assemblies"
