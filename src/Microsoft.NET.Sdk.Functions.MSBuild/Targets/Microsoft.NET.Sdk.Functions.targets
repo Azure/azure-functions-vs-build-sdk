@@ -24,10 +24,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
     <_ToolingSuffix></_ToolingSuffix>
     <_ToolingSuffix Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v8.0'">net8-in-process</_ToolingSuffix>
-    <_ToolingSuffix Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v6.0'">net6-in-process</_ToolingSuffix>
   	<AzureFunctionsVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v8.0'">v0</AzureFunctionsVersion>
-    <AzureFunctionsVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v6.0'">v4</AzureFunctionsVersion>
-    <AzureFunctionsVersion>$(AzureFunctionsVersion)$(ReleaseQuality)</AzureFunctionsVersion>
     <FunctionsToolingSuffix Condition="'$(FunctionsToolingSuffix)' == ''">$(_ToolingSuffix)</FunctionsToolingSuffix>
   </PropertyGroup>
 
