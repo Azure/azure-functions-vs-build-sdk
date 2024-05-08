@@ -12,7 +12,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
          xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <_FunctionsTaskFramework>net6.0</_FunctionsTaskFramework>
+    <_FunctionsTaskFramework>$(TargetFramework)</_FunctionsTaskFramework>
     <_FunctionsTasksDir Condition=" '$(_FunctionsTasksDir)'=='' ">$(MSBuildThisFileDirectory)..\tools\$(_FunctionsTaskFramework)\</_FunctionsTasksDir>
     <_FunctionsTaskAssemblyFullPath Condition=" '$(_FunctionsTaskAssemblyFullPath)'=='' ">$(_FunctionsTasksDir)\Microsoft.NET.Sdk.Functions.MSBuild.dll</_FunctionsTaskAssemblyFullPath>
     <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
@@ -21,6 +21,11 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <WarnOnPackingNonPackableProject Condition="'$(WarnOnPackingNonPackableProject)' == '' and '$(IsPackable)' == 'false'">true</WarnOnPackingNonPackableProject>
     <IsZipDeploySupported>true</IsZipDeploySupported>
     <MSBuildFunctionsTargetsPath>$(MSBuildExtensionsPath)\Microsoft\VisualStudio\Managed.Functions\</MSBuildFunctionsTargetsPath>
+
+    <_ToolingSuffix></_ToolingSuffix>
+    <_ToolingSuffix Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v8.0'">net8-in-process</_ToolingSuffix>
+    <FunctionsToolingSuffix Condition="'$(FunctionsToolingSuffix)' == ''">$(_ToolingSuffix)</FunctionsToolingSuffix>
+    <AzureFunctionsVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v8.0' And $(AzureFunctionsVersion.StartsWith('v4'))">$(AzureFunctionsVersion.Replace("v4","v0"))</AzureFunctionsVersion>
   </PropertyGroup>
 
   <UsingTask TaskName="GenerateFunctions"
@@ -82,7 +87,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   <Target Name="_InitializeFunctionsSdk">
     <Warning Text="The ExtensionsMetadataGenerator package was not imported correctly. Are you missing '$(_ExtensionsMetadataGeneratorTargetsPath)' or '$(_ExtensionsMetadataGeneratorPropsPath)'?"
              Condition="!$(AzureFunctionsVersion.StartsWith('v1')) And ('$(_ExtensionsMetadataGeneratorTargetsImported)' == '' Or '$(_ExtensionsMetadataGeneratorPropsImported)' == '')" />
-   
+
     <GetAssemblyIdentity AssemblyFiles="$(_FunctionsTaskAssemblyFullPath)">
         <Output
             TaskParameter="Assemblies"
