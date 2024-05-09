@@ -4,9 +4,10 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <RollForward>Major</RollForward>
   </PropertyGroup>
 
   <ItemGroup>
