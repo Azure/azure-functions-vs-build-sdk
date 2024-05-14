@@ -235,7 +235,7 @@ namespace MakeFunctionJson
                 if (values != null)
                 {
                     // FirstOrDefault returns a KeyValuePair<string, string> which is a struct so it can't be null.
-                    var azureWebJobsStorage = values.FirstOrDefault(pair => pair.Key.Equals("AzureWebJobsStorage", StringComparison.OrdinalIgnoreCase)).Value;
+                    var azureWebJobsStorage = values.FirstOrDefault(pair => pair.Key.StartsWith("AzureWebJobsStorage", StringComparison.OrdinalIgnoreCase)).Value;
                     var allWithoutStorageTriggers = functionJson
                         .Bindings
                         .Where(b => b["type"] != null)
