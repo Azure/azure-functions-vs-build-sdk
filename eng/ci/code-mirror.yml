@@ -5,7 +5,6 @@ trigger:
     - main
     - release/*
     - v3.x
-    - v4.x
 
 resources:
   repositories:
