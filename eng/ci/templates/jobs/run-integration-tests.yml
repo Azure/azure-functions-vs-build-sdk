@@ -1,0 +1,17 @@
+jobs:
+- job: RunIntegrationTests
+  displayName: 'Run integration tests'
+
+  pool:
+    name: 1es-pool-azfunc
+    image: 1es-windows-2022
+    os: windows
+
+  steps:
+  - task: DotNetCoreCLI@2
+    displayName: Run End to End tests
+    inputs:
+      command: test
+      projects: |
+        **\FunctionsSdkE2ETests\FunctionsSdkE2ETests.sln
+      arguments: -v n

@@ -1,0 +1,4 @@
+variables:
+  BuildNumber: $[counter(format(''), 289)]
+  ${{ if contains( variables['Build.SourceBranch'], 'release/4' ) }}:
+    UseSuffix: false

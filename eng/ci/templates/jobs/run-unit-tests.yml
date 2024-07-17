@@ -1,0 +1,18 @@
+jobs:
+- job: RunUnitTests
+  displayName: Run unit tests
+
+  pool:
+    name: 1es-pool-azfunc
+    image: 1es-windows-2022
+    os: windows
+
+  steps:
+  - task: DotNetCoreCLI@2
+    displayName: Unit Tests
+    inputs:
+      command: test
+      projects: |
+        **\Microsoft.NET.Sdk.Functions.Generator.Tests.csproj
+        **\Microsoft.NET.Sdk.Functions.MSBuild.Tests.csproj
+        **\Microsoft.NET.Sdk.Functions.EndToEnd.Tests.csproj
