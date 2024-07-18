@@ -49,7 +49,7 @@ extends:
       os: windows
 
     stages:
-    - stage: Test
+    - stage: Build
       jobs:
       - template: /eng/ci/templates/jobs/build-and-test.yml@self
         parameters:

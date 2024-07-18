@@ -4,7 +4,6 @@ parameters:
     default: false
 
 jobs:
-
 - job: BuildAndTest
   displayName: Build and Test
 
