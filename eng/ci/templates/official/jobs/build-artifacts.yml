@@ -13,10 +13,12 @@ jobs:
     outputs:
     - output: pipelineArtifact
       displayName: Publish artifacts
-      path: $(Build.ArtifactStagingDirectory)
+      path: $(Build.ArtifactStagingDirectory)/pkg
       artifact: drop
 
   steps:
+  - template: /eng/ci/templates/steps/install-dotnet.yml@self
+
   - task: DotNetCoreCLI@2
     displayName: 'Build'
     inputs:
@@ -60,17 +62,13 @@ jobs:
     inputs:
       command: 'custom'
       custom: 'pack'
-      arguments: '--no-build -c Release -o artifacts'
+      arguments: '--no-build -c Release -o $(Build.ArtifactStagingDirectory)/pkg'
       projects: |
         **\Microsoft.Net.Sdk.Functions.csproj
 
   - template: ci/sign-files.yml@eng
     parameters:
       displayName: Sign NugetPackages
-      folderPath: artifacts
+      folderPath: $(Build.ArtifactStagingDirectory)/pkg
       pattern: Microsoft.Net.Sdk.Functions*.nupkg
       signType: nuget
-
-  - pwsh: |
-      Move-Item -Path '$(Build.Repository.LocalPath)\artifacts\Microsoft.NET.Sdk.Functions.*' -Destination '$(Build.ArtifactStagingDirectory)'
-    displayName: 'Move artifacts'

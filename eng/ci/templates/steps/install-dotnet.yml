@@ -1,0 +1,6 @@
+steps:
+
+- task: UseDotNet@2 # Needed by our projects and CI steps
+  displayName: Install .NET 6
+  inputs:
+    version: 6.x

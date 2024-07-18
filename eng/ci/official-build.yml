@@ -9,15 +9,15 @@ trigger:
     - v3.x
 
 schedules:
-  # Ensure we build nightly to catch any new CVEs and report SDL often.
-  - cron: "0 0 * * *"
-    displayName: Nightly Build
-    branches:
-      include:
-      - main
-      - release/*
-      - v3.x
-    always: true
+# Ensure we build nightly to catch any new CVEs and report SDL often.
+- cron: "0 0 * * *"
+  displayName: Nightly Build
+  branches:
+    include:
+    - main
+    - release/*
+    - v3.x
+  always: true
 
 # CI only, does not trigger on PRs.
 pr: none
@@ -47,17 +47,10 @@ extends:
       os: windows
 
     stages:
-    - stage: Initialize
-      jobs:
-      - template: /eng/ci/templates/jobs/install-dotnet.yml@self
-
     - stage: Build
-      dependsOn: Initialize
       jobs:
       - template: /eng/ci/templates/official/jobs/build-artifacts.yml@self
 
     - stage: Test
-      dependsOn: Initialize
       jobs:
-      - template: /eng/ci/templates/jobs/run-unit-tests.yml@self
-      - template: /eng/ci/templates/jobs/run-integration-tests.yml@self
+      - template: /eng/ci/templates/jobs/run-tests.yml@self
