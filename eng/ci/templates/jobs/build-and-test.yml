@@ -2,17 +2,10 @@ parameters:
   - name: SkipBuildArtifacts
     type: boolean
     default: false
-  - name: PoolName
-    type: string
 
 jobs:
 - job: BuildAndTest
   displayName: Build and Test
-
-  pool:
-    name: ${{ parameters.PoolName }}
-    image: 1es-windows-2022
-    os: windows
 
   templateContext:
     outputParentDirectory: $(Build.ArtifactStagingDirectory)
