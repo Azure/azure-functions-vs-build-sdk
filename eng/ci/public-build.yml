@@ -51,4 +51,5 @@ extends:
       jobs:
       - template: /eng/ci/templates/jobs/build-and-test.yml@self
         parameters:
+          PoolName: 1es-pool-azfunc-public
           SkipBuildArtifacts: true
