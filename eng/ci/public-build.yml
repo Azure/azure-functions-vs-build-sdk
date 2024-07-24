@@ -36,15 +36,13 @@ resources:
     ref: refs/tags/release
 
 variables:
-  - template: ci/variables/build.yml@eng
-  - template: ci/variables/cfs.yml@eng
   - template: /eng/ci/templates/variables/build.yml@self
 
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1es
   parameters:
     pool:
-      name: 1es-pool-azfunc
+      name: 1es-pool-azfunc-public
       image: 1es-windows-2022
       os: windows
 
