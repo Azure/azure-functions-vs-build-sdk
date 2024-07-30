@@ -43,13 +43,13 @@ namespace MakeFunctionJson
          };
 
         /// <summary>
-        ///
+        /// Checks if a custom attribute is a WebJobs attribute.
         /// </summary>
-        /// <param name="attribute"></param>
-        /// <returns></returns>
+        /// <param name="attribute">The custom attribute to check.</param>
+        /// <returns>True if the attribute is a WebJobs attribute; otherwise, False.</returns>
         public static bool IsWebJobsAttribute(this CustomAttribute attribute)
         {
-            var attributeTypeDefinition = attribute.AttributeType.Resolve();
+            var attributeTypeDefinition = attribute.AttributeType?.Resolve();
 
             if (attributeTypeDefinition == null)
             {
