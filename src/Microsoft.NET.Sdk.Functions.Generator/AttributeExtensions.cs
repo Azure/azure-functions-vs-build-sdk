@@ -49,7 +49,14 @@ namespace MakeFunctionJson
         /// <returns></returns>
         public static bool IsWebJobsAttribute(this CustomAttribute attribute)
         {
-            return attribute.AttributeType.Resolve().CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.Azure.WebJobs.Description.BindingAttribute")
+            var attributeTypeDefinition = attribute.AttributeType.Resolve();
+
+            if (attributeTypeDefinition == null)
+            {
+                return false;
+            }
+
+            return attributeTypeDefinition.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.Azure.WebJobs.Description.BindingAttribute")
                 || _supportedAttributes.Contains(attribute.AttributeType.FullName);
         }
 
