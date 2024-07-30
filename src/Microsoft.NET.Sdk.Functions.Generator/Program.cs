@@ -10,6 +10,12 @@ namespace Microsoft.NET.Sdk.Functions.Console
         private static void Main(string[] args)
         {
             var logger = new ConsoleLogger();
+            logger.LogWarning($"Microsoft.NET.Sdk.Functions.Console running from {typeof(Program).Assembly.Location}");
+#if NET6_0
+            logger.LogWarning("Running on .NET6_0");
+#elif NET8_0
+            logger.LogWarning("Running on .NET8_0");
+#endif
             if (args.Length < 3 || args.Length > 4)
             {
                 logger.LogError("USAGE: <assemblyPath> <outputPath> <functionsInDependencies> <excludedFunctionName1;excludedFunctionName2;...>");

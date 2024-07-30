@@ -32,7 +32,8 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <GenerateFunctions
       TargetPath="$(TargetDir)bin\$(TargetFileName)"
       OutputPath="$(TargetDir)"
-      UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)" 
+      TargetFramework="$(TargetFramework)"
+      UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)"
       FunctionsInDependencies="$(FunctionsInDependencies)"
       TaskAssemblyDirectory="$(_FunctionsTasksDir)"/>
   </Target>
@@ -54,7 +55,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     </ItemGroup>
 
   </Target>
-  
+
   <!--
     ============================================================
         _FunctionsPostBuildCopyFiles
@@ -62,7 +63,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     Copies the dlls from build output to the bin folder.
     ============================================================
     -->
-  <Target Name="_FunctionsPostBuildCopyFiles" 
+  <Target Name="_FunctionsPostBuildCopyFiles"
           Inputs="@(FunctionsBuildAssemblies)"
           Outputs="$(TargetDir)bin\%(RecursiveDir)%(Filename)%(Extension)">
 
@@ -70,7 +71,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <Copy SourceFiles="@(FunctionsBuildAssemblies)"
           DestinationFiles="$(TargetDir)bin\%(RecursiveDir)%(Filename)%(Extension)"
           OverwriteReadOnlyFiles="true" />
-    
+
   </Target>
 
   <!--
@@ -80,15 +81,15 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     Copies the deps file to the Functions bin folder
     ============================================================
     -->
-  <Target Name="_FunctionsPostBuildDepsCopy" 
-          AfterTargets="PostBuildEvent" 
+  <Target Name="_FunctionsPostBuildDepsCopy"
+          AfterTargets="PostBuildEvent"
           Condition="'$(SkipFunctionsDepsCopy)' != 'true'">
-    
-    <Copy SourceFiles="$(OutDir)$(AssemblyName).deps.json" 
-          DestinationFiles="$(OutDir)bin\function.deps.json" 
+
+    <Copy SourceFiles="$(OutDir)$(AssemblyName).deps.json"
+          DestinationFiles="$(OutDir)bin\function.deps.json"
           Condition="Exists('$(OutDir)$(AssemblyName).deps.json')"/>
   </Target>
- 
+
 
   <!--
     ============================================================

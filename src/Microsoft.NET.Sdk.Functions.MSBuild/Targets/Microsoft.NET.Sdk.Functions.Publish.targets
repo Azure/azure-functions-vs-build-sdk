@@ -14,7 +14,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
   <Import Sdk="Microsoft.NET.Sdk.Publish"
           Project="Sdk.targets" />
 
-  <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.$(PublishProtocol).targets"  
+  <Import Project="$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.$(PublishProtocol).targets"
           Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.NET.Sdk.Functions.Publish.$(PublishProtocol).targets')"/>
 
   <!--
@@ -32,14 +32,14 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       <Output TaskParameter="AbsolutePaths"
               PropertyName="FunctionsDir"/>
     </ConvertToAbsolutePath>
-    
+
     <PropertyGroup>
       <PublishDir>$(FunctionsDir)</PublishDir>
       <PublishDir Condition="!HasTrailingSlash('$(PublishDir)')">$(PublishDir)\</PublishDir>
       <FunctionsTargetPath>$(PublishDir)bin\$(TargetFileName)</FunctionsTargetPath>
       <FunctionsOutputPath>$(FunctionsDir)</FunctionsOutputPath>
     </PropertyGroup>
-    
+
   </Target>
 
   <!--
@@ -56,7 +56,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
       <Output TaskParameter="AbsolutePaths"
               PropertyName="PublishIntermediateOutputPath"/>
     </ConvertToAbsolutePath>
-    
+
     <PropertyGroup>
       <PublishDir>$(PublishIntermediateOutputPath)</PublishDir>
       <PublishDir Condition="!HasTrailingSlash('$(PublishDir)')">$(PublishDir)\</PublishDir>
@@ -135,21 +135,22 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
 
     <ItemGroup>
       <FunctionsPublishAssemblies Include="$(PublishDir)**\*.dll;
-                                           $(PublishDir)**\*.pdb" 
+                                           $(PublishDir)**\*.pdb"
                                   Exclude="$(PublishDir)bin\**"/>
     </ItemGroup>
-    
+
     <!-- Move the additional assemblies to the bin folder. 
     we move the assemblies rather than copy because we want to reduce the publish payload -->
     <Move SourceFiles="@(FunctionsPublishAssemblies)"
       DestinationFiles="$(PublishDir)bin\%(RecursiveDir)%(Filename)%(Extension)"
       OverwriteReadOnlyFiles="true" />
-    
+
     <GenerateFunctions
       TargetPath="$(FunctionsTargetPath)"
       OutputPath="$(FunctionsOutputPath)"
+      TargetFramework="$(TargetFramework)"
       UserProvidedFunctionJsonFiles="@(UserProvidedFunctionJsonFiles)"
-      FunctionsInDependencies="$(FunctionsInDependencies)" 
+      FunctionsInDependencies="$(FunctionsInDependencies)"
       TaskAssemblyDirectory="$(_FunctionsTasksDir)"/>
   </Target>
 

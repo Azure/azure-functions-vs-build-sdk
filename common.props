@@ -4,10 +4,10 @@
 
     <MajorProductVersion>4</MajorProductVersion>
     <MinorProductVersion>4</MinorProductVersion>
-    <PatchProductVersion>0</PatchProductVersion>
+    <PatchProductVersion>4</PatchProductVersion>
 
     <!-- Clear this value for non-preview releases -->
-    <PreviewProductVersion></PreviewProductVersion>
+    <PreviewProductVersion>1</PreviewProductVersion>
 
     <VersionPrefix>$(MajorProductVersion).$(MinorProductVersion).$(PatchProductVersion)</VersionPrefix>
 

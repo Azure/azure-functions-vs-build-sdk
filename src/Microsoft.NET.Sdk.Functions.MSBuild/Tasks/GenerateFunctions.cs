@@ -23,7 +23,8 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
         public bool FunctionsInDependencies { get; set; }
 
-        private const string NETCoreAppFolder = "net6.0";
+        [Required]
+        public string TargetFramework { get; set; }
 
         public override bool Execute()
         {
@@ -67,7 +68,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
         private ProcessStartInfo GetProcessStartInfo(string baseLocation)
         {
-            string workingDirectory = Path.Combine(baseLocation, NETCoreAppFolder);
+            string workingDirectory = Path.Combine(baseLocation, this.TargetFramework);
             string exePath = DotNetMuxer.MuxerPathOrDefault();
             string arguments = $"Microsoft.NET.Sdk.Functions.Generator.dll \"{TargetPath} \" \"{OutputPath} \" \"{FunctionsInDependencies} \"";
 
