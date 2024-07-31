@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventHubs" Version="3.0.6" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="3.2.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.10" />
-	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />	
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
@@ -21,5 +21,18 @@
     <ProjectReference Include="..\..\src\Microsoft.NET.Sdk.Functions.Generator\Microsoft.NET.Sdk.Functions.Generator.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.NET.Sdk.Functions\Microsoft.NET.Sdk.Functions.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Reference Include="Microsoft.Data.Edm, Version=5.8.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <HintPath>..\packages\Microsoft.Data.Edm.5.8.4\lib\netstandard1.1\Microsoft.Data.Edm.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Data.OData, Version=5.8.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <HintPath>..\packages\Microsoft.Data.OData.5.8.4\lib\netstandard1.1\Microsoft.Data.OData.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Spatial, Version=5.8.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <HintPath>..\packages\System.Spatial.5.8.4\lib\netstandard1.1\System.Spatial.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
 </Project>
