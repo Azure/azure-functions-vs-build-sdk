@@ -11,11 +11,11 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
         private string _testsDirectory;
         private TestInitialize _testInitializer;
         private ITestOutputHelper _testOutputHelper;
-        private const string _testVersion = "v4";
+        private const string TestVersion = "v4";
 
         public FunctionsV4SdkTests(ITestOutputHelper testOutputHelper)
         {
-            _testInitializer = new TestInitialize(testOutputHelper, _testVersion);
+            _testInitializer = new TestInitialize(testOutputHelper, TestVersion);
             _testOutputHelper = testOutputHelper;
             _functionsSdkPackageSource = _testInitializer.FunctionsSdkPackageSource;
             _testsDirectory = _testInitializer.TestDirectory;
@@ -68,7 +68,7 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
             Assert.True(Directory.Exists(additionalBinDir));
             var files = Directory.EnumerateFiles(additionalBinDir, "*.dll", SearchOption.AllDirectories);
             Assert.True(files.Count() > 1);
-            // Test addional runtimes
+            // Test additional runtimes
             files = Directory.EnumerateFiles(Path.Combine(additionalBinDir, "runtimes"), "*.dll", SearchOption.AllDirectories);
             Assert.True(files.Count() > 1);
 
@@ -99,7 +99,7 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
             string dotnetArgs = $"build {projectFileToTest}.csproj --configuration {TestInitialize.Configuration}";
             int? exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
             Assert.True(exitCode.HasValue && exitCode.Value == 0);
-            // Test addional bin
+            // Test additional bin
             string binDir = Path.Combine(projectFileDirectory, "bin", TestInitialize.Configuration, TestInitialize.NetCoreFramework);
             string additionalBinDir = Path.Combine(binDir, "bin");
             Assert.True(Directory.Exists(additionalBinDir));
@@ -108,6 +108,8 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
             // Test functions generator output
             string httpTriggerFunctionpath = Path.Combine(binDir, "HttpFunction", "function.json");
             Assert.True(File.Exists(httpTriggerFunctionpath));
+            string httpTrigger2Functionpath = Path.Combine(binDir, "HttpFunction2", "function.json");
+            Assert.True(File.Exists(httpTrigger2Functionpath));
 
             // Publish
             dotnetArgs = $"publish {projectFileToTest}.csproj --configuration {TestInitialize.Configuration}";
@@ -122,6 +124,8 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
             // Test functions generator output
             httpTriggerFunctionpath = Path.Combine(publishDir, "HttpFunction", "function.json");
             Assert.True(File.Exists(httpTriggerFunctionpath));
+            httpTrigger2Functionpath = Path.Combine(publishDir, "HttpFunction2", "function.json");
+            Assert.True(File.Exists(httpTrigger2Functionpath));
         }
 
         private void UpdatePackageReference(string projectFileToTest, string projectFileDirectory)

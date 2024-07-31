@@ -31,5 +31,13 @@ namespace FunctionApp1
 
             return new OkObjectResult(responseMessage);
         }
+
+        // A function which uses nullable type for parameter.
+        [FunctionName("HttpFunction2")]
+        public static async Task<IActionResult> Run2(
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "hello/{id}")] HttpRequest req, ILogger log, string? id)
+        {
+            return new OkObjectResult($"Hello {id}");
+        }
     }
 }
