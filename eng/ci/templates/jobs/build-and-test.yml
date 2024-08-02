@@ -77,11 +77,11 @@ jobs:
         **\FunctionsSdkE2ETests\FunctionsSdkE2ETests.sln
       arguments: -v n
 
-    - task: DotNetCoreCLI@2
-      displayName: 'Pack Microsoft.Net.Sdk.Functions package'
-      inputs:
-        command: 'custom'
-        custom: 'pack'
-        arguments: '--no-build -c Release -o $(Build.ArtifactStagingDirectory)/pkg'
-        projects: |
-          **\Microsoft.Net.Sdk.Functions.csproj
+  - task: DotNetCoreCLI@2
+    displayName: 'Pack Microsoft.Net.Sdk.Functions package'
+    inputs:
+      command: 'custom'
+      custom: 'pack'
+      arguments: '--no-build -c Release -o $(Build.ArtifactStagingDirectory)/pkg'
+      projects: |
+        **\Microsoft.Net.Sdk.Functions.csproj
