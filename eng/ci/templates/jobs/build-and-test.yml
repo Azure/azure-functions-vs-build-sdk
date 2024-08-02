@@ -77,6 +77,34 @@ jobs:
         **\FunctionsSdkE2ETests\FunctionsSdkE2ETests.sln
       arguments: -v n
 
+  - template: ci/sign-files.yml@eng
+    parameters:
+      displayName: Sign Functions assemblies
+      folderPath: src/Microsoft.NET.Sdk.Functions.MSBuild/bin/Release/
+      pattern: Microsoft.NET.Sdk.Functions.MSBuild.dll
+      signType: dll-strong-name      
+
+  - template: ci/sign-files.yml@eng
+    parameters:
+      displayName: Sign Functions assemblies
+      folderPath: src/Microsoft.NET.Sdk.Functions.Generator/bin/Release/
+      pattern: Microsoft.NET.Sdk.Functions.Generator.dll
+      signType: dll-strong-name      
+
+  - template: ci/sign-files.yml@eng
+    parameters:
+      displayName: Sign third party assemblies
+      folderPath: src/Microsoft.NET.Sdk.Functions.Generator/bin/Release/
+      pattern: Newtonsoft.Json.dll
+      signType: dll
+
+  - template: ci/sign-files.yml@eng
+    parameters:
+      displayName: Sign third party assemblies
+      folderPath: src/Microsoft.NET.Sdk.Functions.Generator/bin/Release
+      pattern: Mono.Cecil.dll
+      signType: dll
+
   - task: DotNetCoreCLI@2
     displayName: 'Pack Microsoft.Net.Sdk.Functions package'
     inputs:
@@ -85,3 +113,10 @@ jobs:
       arguments: '--no-build -c Release -o $(Build.ArtifactStagingDirectory)/pkg'
       projects: |
         **\Microsoft.Net.Sdk.Functions.csproj
+
+  - template: ci/sign-files.yml@eng
+    parameters:
+      displayName: Sign NugetPackages
+      folderPath: $(Build.ArtifactStagingDirectory)/pkg
+      pattern: Microsoft.Net.Sdk.Functions*.nupkg
+      signType: nuget

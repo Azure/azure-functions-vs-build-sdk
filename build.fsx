@@ -186,12 +186,5 @@ Dependencies
 "Clean"
     ==> "Build"
     ==> "UnitTest"
-    ==> "GenerateZipToSign"
-    ==> "UploadZipToSign"
-    ==> "EnqueueSignMessage"
-    ==> "WaitForSigning"
-    ==> "Pack"
-    ==> "SignNupkg"
-    ==> "Publish"
 
-RunTargetOrDefault "Publish"
+RunTargetOrDefault "UnitTest"
