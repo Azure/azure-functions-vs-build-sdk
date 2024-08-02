@@ -40,14 +40,34 @@ jobs:
         src\**\Microsoft.NET.Sdk.Functions.Generator.csproj
         src\**\Microsoft.NET.Sdk.Functions.csproj
 
-  - task: DotNetCoreCLI@2
-    displayName: Unit Tests
+  - task: CmdLine@2
     inputs:
-      command: test
-      projects: |
-        **\Microsoft.NET.Sdk.Functions.Generator.Tests.csproj
-        **\Microsoft.NET.Sdk.Functions.MSBuild.Tests.csproj
-        **\Microsoft.NET.Sdk.Functions.EndToEnd.Tests.csproj
+      script: |
+        powershell Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile '%TEMP%\dotnet-install.ps1'
+        powershell %TEMP%\dotnet-install.ps1 -Architecture x64 -Version '3.1.301' -InstallDir '%ProgramFiles%\dotnet'
+        .paket\paket.exe install
+        packages\FAKE\tools\fake .\build.fsx
+    env:
+      FILES_ACCOUNT_KEY: $(FILES_ACCOUNT_KEY)
+      FILES_ACCOUNT_NAME: $(FILES_ACCOUNT_NAME)
+      BUILD_VERSION: 1.1.$(devops_buildNumber)
+    displayName: 'Build'
+
+  - task: PowerShell@2
+    displayName: 'Set dotnet path'
+    inputs:
+      targetType: 'inline'
+      script: |
+        $infoContent = dotnet --info
+        $sdkBasePath = $infoContent  |
+            Where-Object {$_ -match 'Base Path:'} |
+            ForEach-Object {
+                ($_ -replace '\s+Base Path:','').trim()
+            }    
+        Write-Host  "dotnet SDK path: $sdkBasePath"
+        $dotnetPath = (Get-Item $sdkBasePath).Parent.Parent.FullName
+        Write-Host "dotnet path: $dotnetPath"
+        Write-Host "##vso[task.setvariable variable=DotNetPath]$dotnetPath"
 
   - task: DotNetCoreCLI@2
     displayName: End to End tests

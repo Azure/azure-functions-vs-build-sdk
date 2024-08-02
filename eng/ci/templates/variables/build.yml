@@ -1,4 +1,3 @@
 variables:
-  BuildNumber: $[counter(format(''), 289)]
-  ${{ if startswith( variables['Build.SourceBranch'], 'refs/heads/release/4' ) }}:
-    UseSuffix: false
+  devops_buildNumber: $[counter(format(''), 289)]
+  BuildNumber: $(Build.SourceBranchName)_$(Build.Reason)_$(devops_buildNumber)
