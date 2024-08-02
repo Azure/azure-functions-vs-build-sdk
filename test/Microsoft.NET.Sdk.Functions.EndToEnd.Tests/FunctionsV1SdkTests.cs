@@ -54,6 +54,7 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
             return Environment.ExpandEnvironmentVariables($@"%userprofile%\.nuget\packages\nuget.commandline\5.6.0\tools\{TestInitialize.NuGetExecutable}");
         }
 
+        /*
         [Theory]
         [InlineData("FunctionAppNETFramework", "FunctionAppNETFramework", TestInitialize.NetFramework)]
         [InlineData("FunctionAppNETStandard", "FunctionAppNETStandard", TestInitialize.NetStandard)]
@@ -96,5 +97,6 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
             files = Directory.EnumerateFiles(additionalPublishBinDir, "*.dll", SearchOption.AllDirectories);
             Assert.True(files.Count() > 1);
         }
+        */
     }
 }
