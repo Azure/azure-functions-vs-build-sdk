@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -30,6 +29,7 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
         public string PublishUrl { get; set; }
 
+        public bool UseBlobContainerDeploy { get; set; }
 
         /// <summary>
         /// Our fallback if PublishUrl is not given, which is the case for ZIP Deploy profiles created prior to 15.8 Preview 4.
@@ -41,13 +41,18 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
         { 
             using(DefaultHttpClient client = new DefaultHttpClient())
             {
-                System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, PublishUrl, SiteName, UserAgentVersion, client, true);
+                System.Threading.Tasks.Task<bool> t = ZipDeployAsync(ZipToPublishPath, DeploymentUsername, DeploymentPassword, PublishUrl, SiteName, UserAgentVersion, UseBlobContainerDeploy, client, logMessages: true);
                 t.Wait();
                 return t.Result;
             }
         }
 
-        internal async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string publishUrl, string siteName, string userAgentVersion, IHttpClient client, bool logMessages)
+        internal System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string publishUrl, string siteName, string userAgentVersion, IHttpClient client, bool logMessages)
+        {
+            return ZipDeployAsync(zipToPublishPath, userName, password, publishUrl, siteName, userAgentVersion, useBlobContainerDeploy: false, client, logMessages);
+        }
+
+        internal async System.Threading.Tasks.Task<bool> ZipDeployAsync(string zipToPublishPath, string userName, string password, string publishUrl, string siteName, string userAgentVersion, bool useBlobContainerDeploy, IHttpClient client, bool logMessages)
         {
             if (!File.Exists(zipToPublishPath) || client == null)
             {
@@ -62,11 +67,11 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
                     publishUrl += "/";
                 }
 
-                zipDeployPublishUrl = publishUrl + "api/zipdeploy";
+                zipDeployPublishUrl = publishUrl + "api";
             }
             else if(!string.IsNullOrEmpty(siteName))
             {
-                zipDeployPublishUrl = $"https://{siteName}.scm.azurewebsites.net/api/zipdeploy";
+                zipDeployPublishUrl = $"https://{siteName}.scm.azurewebsites.net/api";
             }
             else
             {
@@ -77,6 +82,12 @@ namespace Microsoft.NET.Sdk.Functions.Tasks
 
                 return false;
             }
+
+            // publish endpoint differs when using a blob storage container
+            var publishUriPath = useBlobContainerDeploy ? "publish" : "zipdeploy";
+
+            // "<publishUrl>/api/zipdeploy" or "<publishUrl>/api/publish"
+            zipDeployPublishUrl = $"{zipDeployPublishUrl}/{publishUriPath}";
 
             if (logMessages)
             {

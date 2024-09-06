@@ -144,4 +144,8 @@
   <data name="ZipFileUploaded" xml:space="preserve">
     <value>Uploaded the Zip file to the target.</value>
   </data>
+  <data name="DeploymentStatusWithText" xml:space="preserve">
+    <value>Deployment status is {0}: {1}</value>
+    <comment>0 - name, 1 - text message</comment>
+  </data>
 </root>

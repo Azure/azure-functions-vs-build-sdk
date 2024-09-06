@@ -41,7 +41,7 @@ namespace ZipDeployPublish.Test
             Mock<IHttpClient> client = new Mock<IHttpClient>();
             ZipDeployTask zipDeployer = new ZipDeployTask();
 
-            bool result = await zipDeployer.ZipDeployAsync(string.Empty, "username", "password", "publishUrl", null, "Foo", client.Object, false);
+            bool result = await zipDeployer.ZipDeployAsync(string.Empty, "username", "password", "publishUrl", null, "Foo", false, client.Object, false);
 
             client.Verify(c => c.PostAsync(It.IsAny<Uri>(), It.IsAny<StreamContent>()), Times.Never);
             Assert.False(result);
@@ -51,12 +51,17 @@ namespace ZipDeployPublish.Test
         /// ZipDeploy should use PublishUrl if not null or empty, else use SiteName.
         /// </summary>
         [Theory]
-        [InlineData("https://sitename.scm.azurewebsites.net", null, "https://sitename.scm.azurewebsites.net/api/zipdeploy?isAsync=true")]
-        [InlineData("https://sitename.scm.azurewebsites.net", "", "https://sitename.scm.azurewebsites.net/api/zipdeploy?isAsync=true")]
-        [InlineData("https://sitename.scm.azurewebsites.net", "shouldNotBeUsed", "https://sitename.scm.azurewebsites.net/api/zipdeploy?isAsync=true")]
-        [InlineData(null, "sitename", "https://sitename.scm.azurewebsites.net/api/zipdeploy?isAsync=true")]
-        [InlineData("", "sitename", "https://sitename.scm.azurewebsites.net/api/zipdeploy?isAsync=true")]
-        public async Task ExecuteZipDeploy_PublishUrlOrSiteNameGiven(string publishUrl, string siteName, string expectedZipDeployEndpoint)
+        [InlineData("https://sitename.scm.azurewebsites.net", null, false, "https://sitename.scm.azurewebsites.net/api/zipdeploy?isAsync=true")]
+        [InlineData("https://sitename.scm.azurewebsites.net", null, true, "https://sitename.scm.azurewebsites.net/api/publish?isAsync=true")]
+        [InlineData("https://sitename.scm.azurewebsites.net", "", false, "https://sitename.scm.azurewebsites.net/api/zipdeploy?isAsync=true")]
+        [InlineData("https://sitename.scm.azurewebsites.net", "", true, "https://sitename.scm.azurewebsites.net/api/publish?isAsync=true")]
+        [InlineData("https://sitename.scm.azurewebsites.net", "shouldNotBeUsed", false, "https://sitename.scm.azurewebsites.net/api/zipdeploy?isAsync=true")]
+        [InlineData("https://sitename.scm.azurewebsites.net", "shouldNotBeUsed", true, "https://sitename.scm.azurewebsites.net/api/publish?isAsync=true")]
+        [InlineData(null, "sitename", false, "https://sitename.scm.azurewebsites.net/api/zipdeploy?isAsync=true")]
+        [InlineData(null, "sitename", true, "https://sitename.scm.azurewebsites.net/api/publish?isAsync=true")]
+        [InlineData("", "sitename", false, "https://sitename.scm.azurewebsites.net/api/zipdeploy?isAsync=true")]
+        [InlineData("", "sitename", true, "https://sitename.scm.azurewebsites.net/api/publish?isAsync=true")]
+        public async Task ExecuteZipDeploy_PublishUrlOrSiteNameGiven(string publishUrl, string siteName, bool useBlobContainerDeploy, string expectedZipDeployEndpoint)
         {
             Action<Mock<IHttpClient>, bool> verifyStep = (client, result) =>
             {
@@ -68,7 +73,7 @@ namespace ZipDeployPublish.Test
                 Assert.True(result);
             };
 
-            await RunZipDeployAsyncTest(publishUrl, siteName, UserAgentVersion, HttpStatusCode.OK, verifyStep);
+            await RunZipDeployAsyncTest(publishUrl, siteName, UserAgentVersion, useBlobContainerDeploy, HttpStatusCode.OK, verifyStep);
         }
 
         [Theory]
@@ -88,32 +93,43 @@ namespace ZipDeployPublish.Test
                 Assert.False(result);
             };
 
-            await RunZipDeployAsyncTest(publishUrl, siteName, UserAgentVersion, HttpStatusCode.OK, verifyStep);
+            await RunZipDeployAsyncTest(publishUrl, siteName, UserAgentVersion, useBlobContainerDeploy: false, HttpStatusCode.OK, verifyStep);
         }
 
         [Theory]
-        [InlineData(HttpStatusCode.OK, true)]
-        [InlineData(HttpStatusCode.Accepted, true)]
-        [InlineData(HttpStatusCode.Forbidden, false)]
-        [InlineData(HttpStatusCode.NotFound, false)]
-        [InlineData(HttpStatusCode.RequestTimeout, false)]
-        [InlineData(HttpStatusCode.InternalServerError, false)]
-        public async Task ExecuteZipDeploy_VaryingHttpResponseStatuses(HttpStatusCode responseStatusCode, bool expectedResult)
+        [InlineData(HttpStatusCode.OK, false, true)]
+        [InlineData(HttpStatusCode.OK, true, true)]
+        [InlineData(HttpStatusCode.Accepted, false, true)]
+        [InlineData(HttpStatusCode.Accepted, true, true)]
+        [InlineData(HttpStatusCode.Forbidden, false, false)]
+        [InlineData(HttpStatusCode.Forbidden, true, false)]
+        [InlineData(HttpStatusCode.NotFound, false, false)]
+        [InlineData(HttpStatusCode.NotFound, true, false)]
+        [InlineData(HttpStatusCode.RequestTimeout, false, false)]
+        [InlineData(HttpStatusCode.RequestTimeout, true, false)]
+        [InlineData(HttpStatusCode.InternalServerError, false, false)]
+        [InlineData(HttpStatusCode.InternalServerError, true, false)]
+        public async Task ExecuteZipDeploy_VaryingHttpResponseStatuses(
+            HttpStatusCode responseStatusCode, bool useBlobContainerDeploy, bool expectedResult)
         {
+            var zipDeployPublishUrl = useBlobContainerDeploy
+                ? "https://sitename.scm.azurewebsites.net/api/publish?isAsync=true"
+                : "https://sitename.scm.azurewebsites.net/api/zipdeploy?isAsync=true";
+
             Action<Mock<IHttpClient>, bool> verifyStep = (client, result) =>
             {
                 client.Verify(c => c.PostAsync(
-                It.Is<Uri>(uri => string.Equals(uri.AbsoluteUri, "https://sitename.scm.azurewebsites.net/api/zipdeploy?isAsync=true", StringComparison.Ordinal)),
+                It.Is<Uri>(uri => string.Equals(uri.AbsoluteUri, zipDeployPublishUrl, StringComparison.Ordinal)),
                 It.Is<StreamContent>(streamContent => IsStreamContentEqualToFileContent(streamContent, TestZippedPublishContentsPath))),
                 Times.Once);
                 Assert.Equal($"{UserAgentName}/{UserAgentVersion}", client.Object.DefaultRequestHeaders.GetValues("User-Agent").FirstOrDefault());
                 Assert.Equal(expectedResult, result);
             };
 
-            await RunZipDeployAsyncTest("https://sitename.scm.azurewebsites.net", null, UserAgentVersion, responseStatusCode, verifyStep);
+            await RunZipDeployAsyncTest("https://sitename.scm.azurewebsites.net", null, UserAgentVersion, useBlobContainerDeploy, responseStatusCode, verifyStep);
         }
 
-        private async Task RunZipDeployAsyncTest(string publishUrl, string siteName, string userAgentVersion, HttpStatusCode responseStatusCode, Action<Mock<IHttpClient>, bool> verifyStep)
+        private async Task RunZipDeployAsyncTest(string publishUrl, string siteName, string userAgentVersion, bool useBlobContainerDeploy, HttpStatusCode responseStatusCode, Action<Mock<IHttpClient>, bool> verifyStep)
         {
             Mock<IHttpClient> client = new Mock<IHttpClient>();
 
@@ -138,7 +154,7 @@ namespace ZipDeployPublish.Test
 
             ZipDeployTask zipDeployer = new ZipDeployTask();
 
-            bool result = await zipDeployer.ZipDeployAsync(TestZippedPublishContentsPath, "username", "password", publishUrl, siteName, userAgentVersion, client.Object, false);
+            bool result = await zipDeployer.ZipDeployAsync(TestZippedPublishContentsPath, "username", "password", publishUrl, siteName, userAgentVersion, useBlobContainerDeploy, client.Object, false);
 
             verifyStep(client, result);
         }

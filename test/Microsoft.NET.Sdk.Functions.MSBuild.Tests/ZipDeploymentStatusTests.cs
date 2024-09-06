@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.NET.Sdk.Functions.Http;
-using Microsoft.NET.Sdk.Functions.MSBuild.Properties;
 using Microsoft.NET.Sdk.Functions.MSBuild.Tasks;
 using Moq;
 using Newtonsoft.Json;
@@ -55,13 +54,13 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
         }
 
         [Theory]
-        [InlineData(HttpStatusCode.OK, DeployStatus.Success)]
-        [InlineData(HttpStatusCode.Accepted, DeployStatus.Success)]
-        [InlineData(HttpStatusCode.OK, DeployStatus.Failed)]
-        [InlineData(HttpStatusCode.Accepted, DeployStatus.Failed)]
-        [InlineData(HttpStatusCode.OK, DeployStatus.Unknown)]
-        [InlineData(HttpStatusCode.Accepted, DeployStatus.Unknown)]
-        public async Task PollDeploymentStatusTest_ForValidResponses(HttpStatusCode responseStatusCode, DeployStatus expectedDeployStatus)
+        [InlineData(HttpStatusCode.OK, "", DeployStatus.Success)]
+        [InlineData(HttpStatusCode.Accepted, null, DeployStatus.Success)]
+        [InlineData(HttpStatusCode.OK, "Instance configuration is not valid", DeployStatus.Failed)]
+        [InlineData(HttpStatusCode.Accepted, "", DeployStatus.Failed)]
+        [InlineData(HttpStatusCode.OK, null, DeployStatus.Unknown)]
+        [InlineData(HttpStatusCode.Accepted, null, DeployStatus.Unknown)]
+        public async Task PollDeploymentStatusTest_ForValidResponses(HttpStatusCode responseStatusCode, string statusMessage, DeployStatus expectedDeployStatus)
         {
             // Arrange
             string deployUrl = "https://sitename.scm.azurewebsites.net/DeploymentStatus?Id=knownId";
@@ -80,7 +79,8 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tests
             {
                 string statusJson = JsonConvert.SerializeObject(new
                 {
-                    status = Enum.GetName(typeof(DeployStatus), expectedDeployStatus)
+                    status = Enum.GetName(typeof(DeployStatus), expectedDeployStatus),
+                    status_text = statusMessage
                 }, Formatting.Indented);
 
                 HttpContent httpContent = new StringContent(statusJson, Encoding.UTF8, "application/json");

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -37,8 +36,10 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tasks
 
         public async Task<DeployStatus> PollDeploymentStatusAsync(string deploymentUrl, string userName, string password)
         {
-            DeployStatus deployStatus = DeployStatus.Pending;
+            var deployStatus = DeployStatus.Pending;
+            var deployStatusText = string.Empty;
             var tokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(MaxMinutesToWait));
+
             if (_logMessages)
             {
                 _log.LogMessage(Resources.DeploymentStatusPolling);
@@ -47,10 +48,16 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tasks
             {
                 try
                 {
-                    deployStatus = await GetDeploymentStatusAsync(deploymentUrl, userName, password, RetryCount, TimeSpan.FromSeconds(RetryDelaySeconds), tokenSource);
+                    (deployStatus, deployStatusText) = await GetDeploymentStatusAsync(deploymentUrl, userName, password, RetryCount, TimeSpan.FromSeconds(RetryDelaySeconds), tokenSource);
                     if (_logMessages)
                     {
-                        _log.LogMessage(String.Format(Resources.DeploymentStatus, Enum.GetName(typeof(DeployStatus), deployStatus)));
+                        var deployStatusName = Enum.GetName(typeof(DeployStatus), deployStatus);
+
+                        var message = string.IsNullOrEmpty(deployStatusText)
+                            ? string.Format(Resources.DeploymentStatus, deployStatusName)
+                            : string.Format(Resources.DeploymentStatusWithText, deployStatusName, deployStatusText);
+
+                        _log.LogMessage(message);
                     }
                 }
                 catch (HttpRequestException)
@@ -64,17 +71,28 @@ namespace Microsoft.NET.Sdk.Functions.MSBuild.Tasks
             return deployStatus;
         }
 
-        private async Task<DeployStatus> GetDeploymentStatusAsync(string deploymentUrl, string userName, string password, int retryCount, TimeSpan retryDelay, CancellationTokenSource cts)
+        private async Task<(DeployStatus, string)> GetDeploymentStatusAsync(string deploymentUrl, string userName, string password, int retryCount, TimeSpan retryDelay, CancellationTokenSource cts)
         {
-            var json = await InvokeGetRequestWithRetryAsync<JObject>(deploymentUrl, userName, password, retryCount, retryDelay, cts);
-            if (json != null
-                && json.TryGetValue("status", out JToken statusString)
-                && Enum.TryParse(statusString.Value<string>(), out DeployStatus result))
-            {
-                return result;
+            var status = DeployStatus.Unknown;
+            var statusText = string.Empty;
+
+            var json = await InvokeGetRequestWithRetryAsync<JObject>(deploymentUrl, userName, password, retryCount, retryDelay, cts);            
+            if (json is not null) 
+            { 
+                if (json.TryGetValue("status", out JToken statusString)
+                    && Enum.TryParse(statusString.Value<string>(), out DeployStatus result))
+                {
+                    status = result;
+                }
+
+                if (json.TryGetValue("status_text", out JToken textString)
+                    && textString is not null)
+                {
+                    statusText = textString.ToString();
+                }
             }
 
-            return DeployStatus.Unknown;
+            return (status, statusText);
         }
 
         private async Task<T> InvokeGetRequestWithRetryAsync<T>(string url, string userName, string password, int retryCount, TimeSpan retryDelay, CancellationTokenSource cts)
