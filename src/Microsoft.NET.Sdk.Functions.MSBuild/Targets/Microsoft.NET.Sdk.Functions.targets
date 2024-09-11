@@ -26,6 +26,7 @@ WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and
     <_ToolingSuffix Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v8.0'">net8-in-process</_ToolingSuffix>
     <FunctionsToolingSuffix Condition="'$(FunctionsToolingSuffix)' == ''">$(_ToolingSuffix)</FunctionsToolingSuffix>
     <AzureFunctionsVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v8.0' And $(AzureFunctionsVersion.StartsWith('v4'))">$(AzureFunctionsVersion.Replace("v4","v0"))</AzureFunctionsVersion>
+    <AzureFunctionsVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And '$(TargetFrameworkVersion)' == 'v6.0' And $(AzureFunctionsVersion.StartsWith('v4'))">$(AzureFunctionsVersion.Replace("v4","v0"))</AzureFunctionsVersion>
   </PropertyGroup>
 
   <UsingTask TaskName="GenerateFunctions"
