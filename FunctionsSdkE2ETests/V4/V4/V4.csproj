@@ -9,7 +9,7 @@
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.10" />    
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="$(MicrosoftNetSdkFunctionsV4Version)" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Function2\function.json">
