@@ -5,12 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Loader;
+using Azure.Messaging.EventHubs;
 using FluentAssertions;
 using MakeFunctionJson;
-using Microsoft.Azure.EventHubs;
 using Microsoft.Azure.WebJobs;
 using Microsoft.WindowsAzure.Storage.Queue;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace Microsoft.NET.Sdk.Functions.Test
