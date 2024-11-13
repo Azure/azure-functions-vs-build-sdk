@@ -3,7 +3,7 @@
     <ContinuousIntegrationBuild Condition="'$(TF_BUILD)' == 'true'">true</ContinuousIntegrationBuild>
 
     <MajorProductVersion>4</MajorProductVersion>
-    <MinorProductVersion>6</MinorProductVersion>
+    <MinorProductVersion>7</MinorProductVersion>
     <PatchProductVersion>0</PatchProductVersion>
 
     <!-- Clear this value for non-preview releases -->
