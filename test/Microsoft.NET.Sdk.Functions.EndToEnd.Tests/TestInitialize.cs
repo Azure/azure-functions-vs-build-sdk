@@ -20,7 +20,7 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
         public const string NetStandard = "netstandard2.0";
 
         // NuGet Sources
-        public const string NuGetPackageSource = @"https://api.nuget.org/v3/index.json";
+        public const string NuGetPackageSource = @"https://pkgs.dev.azure.com/azfunc/public/_packaging/upstream-public/nuget/v3/index.json";
         // Paths and executables
         public static readonly string DotNetExecutable = "dotnet";
         public static readonly string MSBuildExecutable = "msbuild.exe";

@@ -22,6 +22,9 @@ jobs:
     inputs:
       version: 6.x
 
+  - task: NuGetAuthenticate@1
+    displayName: Authenticate NuGet feeds
+
   - task: DotNetCoreCLI@2
     displayName: 'Build'
     inputs:

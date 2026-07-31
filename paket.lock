@@ -1,5 +1,5 @@
 NUGET
-  remote: https://www.nuget.org/api/v2
+  remote: https://pkgs.dev.azure.com/azfunc/public/_packaging/upstream-public/nuget/v3/index.json
     FAKE (4.64.10)
     Microsoft.Azure.KeyVault.Core (2.0.4) - restriction: || (>= net45) (>= wp8)
     Microsoft.CSharp (4.5) - restriction: || (&& (< net20) (>= net45) (>= netstandard1.3) (< netstandard2.0)) (&& (< net20) (>= net45) (< netstandard1.3)) (&& (< net20) (>= netstandard1.0) (< netstandard1.3) (< win8)) (&& (< net20) (>= netstandard1.3) (< netstandard2.0) (< win8)) (&& (< netstandard1.0) (>= netstandard1.3) (>= win8)) (&& (>= netstandard1.3) (< netstandard2.0) (>= wpa81)) (&& (< netstandard1.3) (>= wpa81)) (>= wp8)
