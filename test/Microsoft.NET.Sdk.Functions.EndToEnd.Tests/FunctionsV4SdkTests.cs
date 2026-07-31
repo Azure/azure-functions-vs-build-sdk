@@ -131,16 +131,16 @@ namespace Microsoft.NET.Sdk.Functions.EndToEnd.Tests
         private void UpdatePackageReference(string projectFileToTest, string projectFileDirectory)
         {
             // Update package
-            string dotnetArgs = $"remove {projectFileToTest}.csproj package {TestInitialize.FunctionsNetSdkProject}";
+            string dotnetArgs = $"remove \"{projectFileToTest}.csproj\" package {TestInitialize.FunctionsNetSdkProject}";
             int? exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
             Assert.True(exitCode.HasValue && exitCode.Value == 0);
 
-            dotnetArgs = $"add {projectFileToTest}.csproj package {TestInitialize.FunctionsNetSdkProject} --source {TestInitialize.NuGetPackageSource} --prerelease --no-restore";
+            dotnetArgs = $"add \"{projectFileToTest}.csproj\" package {TestInitialize.FunctionsNetSdkProject} --source \"{TestInitialize.NuGetPackageSource}\" --prerelease --no-restore";
             exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
             Assert.True(exitCode.HasValue && exitCode.Value == 0);
 
             // Restore
-            dotnetArgs = $"restore {projectFileToTest}.csproj --source {TestInitialize.NuGetPackageSource};{_functionsSdkPackageSource}";
+            dotnetArgs = $"restore \"{projectFileToTest}.csproj\" --source \"{TestInitialize.NuGetPackageSource}\" --source \"{_functionsSdkPackageSource}\"";
             exitCode = new ProcessWrapper().RunProcess(TestInitialize.DotNetExecutable, dotnetArgs, projectFileDirectory, out int? _, createDirectoryIfNotExists: false, testOutputHelper: _testOutputHelper);
             Assert.True(exitCode.HasValue && exitCode.Value == 0);
         }
