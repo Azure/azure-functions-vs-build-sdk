@@ -22,6 +22,8 @@ steps:
       # Official release versions can be found at: https://dotnet.microsoft.com/download/dotnet/6.0
       # Newer versions can be found at: https://github.com/dotnet/installer#installers-and-binaries
       ./dotnet-install.ps1 -InstallDir 'C:\Program Files\dotnet' -Verbose -Version 6.0.101
+- task: NuGetAuthenticate@1
+  displayName: 'Authenticate NuGet feeds'
 - task: DotNetCoreCLI@2
   displayName: 'Build'
   inputs:
