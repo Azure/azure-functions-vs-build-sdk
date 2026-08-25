@@ -17,8 +17,6 @@ schedules:
     branches:
       include:
       - main
-      - release/*
-      - v3.x
     always: true
 
 pr:
